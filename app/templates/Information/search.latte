@@ -1,0 +1,48 @@
+
+{block content}
+<h2>{_ "Search in database"}</h2>
+{snippet searchForm}
+	{control searchForm}
+{/snippet}
+{snippet planetList}
+{if $results}
+	{control vp}
+{/if}
+<table id="searchResults">
+	<thead>
+		<tr>
+			<th>{_ "Coordinates"}</th>
+			<th>{_ "Moon"}</th>
+			<th>{_ "DF"}</th>
+			<th>{_ "Alliance"}</th>
+			<th>{_ "Planet name"}</th>
+			<th>{_ "Player name"}</th>
+			<th>{_ "Status"}</th>
+			<th>{_ "Last updated"}</th>
+			<th>{_ "Planet info"}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach $results as $result}
+			{if $iterator->isOdd()}
+				<tr class="odd">
+			{else}
+				<tr>
+			{/if}
+					<td>{$result["galaxy"]}:{$result["system"]}:{$result["position"]}:</td>
+					<td>{$result["moon_size"]}</td>
+					<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
+					<td>{$result["_alliances_tag"]}</td>
+					<td>{$result["name"]}</td>
+					<td><a n:href="Information:playerInfo $result['id_player_ogame']">{$result["playername"]}</a></td>
+					<td>{$result["status"]}</td>
+					<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
+					<td>
+						{control planetInfo, $result}
+					</td>
+				</tr>
+		{/foreach}
+	</tbody>
+</table>
+{/snippet}
+{/block}

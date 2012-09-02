@@ -1,0 +1,102 @@
+{**
+ * My Application layout template.
+ *
+ * @param string   $basePath web base path
+ * @param string   $robots   tell robots how to index the content of a page (optional)
+ * @param array    $flashes  flash messages
+ *}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<meta name="description" content="Nette Framework web application skeleton">
+	<meta name="robots" content="{$robots}" n:ifset="$robots">
+
+	<title>{block title|striptags|upper}GLOTR{/block}</title>
+
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/common.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/jquery-ui-1.8.23.custom.css" type="text/css">
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+	<!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+	<script type="text/javascript" src="{$basePath}/js/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery-ui-1.8.23.custom.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/netteForms.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.nette.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.ajaxform.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/glotr.js"></script>
+
+	{block head}{/block}
+</head>
+
+<body>
+	<script> document.body.className+=' js' </script>
+
+	<div id="panel-top">
+		<div id="header">
+			{_ "GLOTR tool"}
+		</div>
+		<div id="user-panel">
+			{if $user->isLoggedIn()}
+				{_ "Logged as: "}{$user->getIdentity()->username}
+			<a n:href="Sign:out" n:attr="title => _('Logout')">{_ "Logout"}</a>
+			{/if}
+		</div>
+		<div class="clear"></div>
+	</div>
+	<div id="inside">
+		<div id="sidebar">
+			{if $user->isLoggedIn()}
+			{control nav_info}
+			<div id="update-panel">
+				<script type="text/javascript">
+				// checks for updates from Ogame API
+				function update()
+				{
+						$.ajax({
+						dataType: "json",
+						cache: false,
+						url: "{!$presenter->link("Update:updateAll")}",
+						success: function (data)
+						{
+							if(data["status"] == "ok")
+							{
+								$("#update-panel p.update").remove();
+								$("#update-panel").append("<p class='update success'>{!_ "Everything is up to date!"}</p>");
+							}
+							else if(data["status"] == "continue")
+							{
+								if(data["what"])
+								{
+									$("#update-panel p.update").remove();
+									$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} " + data["what"] + " {!_ "from Ogame API!"}</p>");
+								}
+								update();
+							}
+
+						}
+					});
+				}
+				$(document).ready(function() {
+					update();
+				});
+
+
+				</script>
+
+			</div>
+
+			{/if}
+		</div>
+		<div id="content">
+			<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+			{include #content}
+		</div>
+		<div class="clear"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+
+
+{block content}
+
+<script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawVisualization);
+
+     function drawVisualization() {
+
+		 var data = google.visualization.arrayToDataTable([
+    ['{!_ "Time"}', '{!_ "Galaxyview"}', '{!_ "Message"}', '{!_ "Manual"}', '{!_ "Inactivity"}', '{!_ "Alliance page"}', '{!_ "Espionage"}'],
+	{foreach $results["activity"] as $key => $result}
+				{dump $result}
+    [{$result["label"]},  {$result["galaxyview"]}, {$result["message"]}, {$result["manual"]},{$result["inactivity"]}, {$result["alliance_page"]}, {$result["scan"]}], // {$key}
+	{/foreach}
+
+  ]);
+
+  // Create and draw the visualization.
+  new google.visualization.ColumnChart(document.getElementById('activity_chart')).
+      draw(data,
+           { title:"{!_ "Activity chart for player"}",
+            width:900, height:400,
+            hAxis: { title: "{!_ "Time"}", slantedText: false, textStyle: { fontSize: 8}, maxAlteration: 1, showTextEvery: 4},
+
+            isStacked: true,
+			lineWidth: 10
+		}
+      );
+}
+    </script>
+	<div id="activity_chart"></div>
+{/block}

@@ -1,0 +1,17 @@
+{block content}
+<div id="galaxyplugin-settings">
+	<table>
+		<tr>
+			<td>{_ "Galaxyplugin update URL"}</td>
+			<td>{link //Update:|replaceRe: '/\?lang=.*/'}galaxyplugin.php</td>
+		</tr>
+		<tr>
+			<td>{_ "Logon key"}</td>
+			<td>{snippet logonKey}{isset($user->getIdentity()->logon_key) ? $user->getIdentity()->logon_key : ""}{/snippet}</td>
+		</tr>
+		<tr>
+			<td colspan="2"><a n:href="getNewKey!" class="ajax">{_ "Get new key"}</a></td>
+		</tr>
+	</table>
+</div>
+{/block}

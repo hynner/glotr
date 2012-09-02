@@ -1,0 +1,145 @@
+body {
+	font: 16px/1.5 Georgia, serif;
+	color: #fff;
+	background-color: #203041;
+	/*margin: 20px auto;*/
+	margin: 0;
+	padding: 0;
+	/*max-width: 940px;*/
+	min-width: 770px;
+}
+a
+{
+	color: orange;
+}
+h1 {
+	font: bold 47px/1.5 sans-serif;
+	color: #fff;
+	margin: .6em 0
+}
+
+#ajax-spinner {
+	margin: 15px 0 0 15px;
+	padding: 13px;
+	background: white url('../images/spinner.gif') no-repeat 50% 50%;
+	font-size: 0;
+	z-index: 123456;
+	display: none;
+}
+
+div.flash {
+	color: black;
+	background: #FFF9D7;
+	border: 1px solid #E2C822;
+	padding: 1em;
+	margin: 1em 0;
+}
+
+a[href^="error:"] {
+	background: red;
+	color: white;
+}
+#panel-top
+{
+	padding: 10px;
+	/*background-color: #1A1A1A;*/
+	background: #1a1a1a; /* Old browsers */
+	background: -moz-linear-gradient(top, #323438 0%, #1a1a1a 53%, #0c0c0c 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#323438), color-stop(53%,#1a1a1a), color-stop(100%,#0c0c0c)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #323438 0%,#1a1a1a 53%,#0c0c0c 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #323438 0%,#1a1a1a 53%,#0c0c0c 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #323438 0%,#1a1a1a 53%,#0c0c0c 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #323438 0%,#1a1a1a 53%,#0c0c0c 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#323438', endColorstr='#0c0c0c',GradientType=0 ); /* IE6-9 */
+	text-shadow: 1px 1px 2px #888888;
+	color: #fff;
+
+}
+#header
+{
+	width: 49%;
+	float: left;
+}
+#user-panel
+{
+	width: 50%;
+	float: right;
+	text-align: right;
+}
+#inside
+{
+	position: relative;
+}
+#sidebar
+{
+	width: 15%;
+	min-width: 120px;
+	float: left;
+
+	height: 100%;
+}
+#content
+{
+	width: 80%;
+	float: right;
+	padding: 0 1% 5% 1%;
+	border-left: 1px solid #fff;
+
+}
+.planet-info
+{
+	font-size: 0.6em;
+}
+.planet-info caption
+{
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.planet-info caption .font-small
+{
+	font-size: 0.8em;
+	font-weight: normal;
+}
+.info-block table
+{
+	width: 100%;
+}
+.planet-info
+{
+	display: none;
+}
+.planet-info-title
+{
+	display: none;
+}
+
+
+
+.paginator {
+	margin: 1em 0;
+	font-size: 90%;
+}
+
+.paginator a, .paginator span {
+	margin-right: 0.1em;
+	padding: 0.2em 0.5em;
+	color: #999999;
+}
+
+.paginator a {
+	border: 1px solid #fff;
+	text-decoration: none;
+	color: orange;
+}
+
+.paginator span.button {
+	border: 1px solid orange;
+}
+
+.paginator .current {
+	background: #2E6AB1;
+	border: 1px solid orange;
+	color: white;
+	font-weight: bold;
+}
+
