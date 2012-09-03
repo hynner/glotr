@@ -1,36 +1,76 @@
 
 
 {block content}
+<div class="tabs-container">
+	<ul>
+		<li><a href="#detail">{_ "Detail"}</a></li>
+		<li><a href="#activity">{_ "Activity"}</a></li>
+	</ul>
+	<div id="detail">
+		<table>
+			<caption>{_ "Information about player"} {$results["player"]["playername"]}</caption>
+			<tr>
+				<td>{_ "Alliance"}:</td>
+				<td>
+					{($results["alliance"]) ? $results["alliance"]["tag"]: "-" }
 
-	{snippet activityChart}
-		{control activityChart, $results["activity"]}
-	{/snippet}
+				</td>
+			</tr>
+			{foreach $scores as $num => $label}
+			<tr>
+				<td>{_ $label}:</td>
+				<td>{$results["player"]["score_$num"]} #{$results["player"]["score_".$num."_position"]}</td>
+			</tr>
+			{/foreach}
+			<tr>
+				<td>{_ "Known planets"}:</td>
+				<td>
+					{count($results["planets"])} -
+					{foreach $results["planets"] as $planet}
+					<a href="">
+							{$planet["galaxy"].":".$planet["system"].":".$planet["position"]}
+					</a>
+					{if $planet["planet_res_updated"]}
+						{control planetInfo, array_merge( $results["player"], $planet)}
 
-	{snippet manualActivityForm}
-		{control manualActivityForm}
-	{/snippet}
-	{control activityFilterForm}
-<table>
-	<caption>{_ "Activity text view:"}</caption>
-	<thead>
-		<tr>
-			<th>{_ "Date"}</th>
-			<th>{_ "Day of week"}</th>
-			<th>{_ "Type"}</th>
-			<th>{_ "Coordinates"}</th>
-			<th>{_ "Planets"}</th>
-		</tr>
-	<tbody>
-		{foreach $results["activity_all"] as $a}
-		<tr n:class="$iterator->odd ? odd">
-			<td>{$a["timestamp"]|date:'j. n. Y H:i:s'}</td>
-			<td>{_(date("l", $a["timestamp"]))}</td>
-			<td>{_ $a["type"]}</td>
-			<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"] : "-"}</td>
-			<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["planets"] : "-"}</td>
-		</tr>
-		{/foreach}
-	</tbody>
-	</thead>
-</table>
+					{/if},
+					{/foreach}
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="activity">
+		{snippet activityChart}
+			{control activityChart, $results["activity"]}
+		{/snippet}
+
+		{snippet manualActivityForm}
+			{control manualActivityForm}
+		{/snippet}
+		{control activityFilterForm}
+		<table>
+			<caption>{_ "Activity text view:"}</caption>
+			<thead>
+				<tr>
+					<th>{_ "Date"}</th>
+					<th>{_ "Day of week"}</th>
+					<th>{_ "Type"}</th>
+					<th>{_ "Coordinates"}</th>
+					<th>{_ "Planets"}</th>
+				</tr>
+			<tbody>
+				{foreach $results["activity_all"] as $a}
+				<tr n:class="$iterator->odd ? odd">
+					<td>{$a["timestamp"]|date:'j. n. Y H:i:s'}</td>
+					<td>{_(date("l", $a["timestamp"]))}</td>
+					<td>{_ $a["type"]}</td>
+					<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"] : "-"}</td>
+					<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["planets"] : "-"}</td>
+				</tr>
+				{/foreach}
+			</tbody>
+			</thead>
+		</table>
+	</div>
+</div>
 {/block}

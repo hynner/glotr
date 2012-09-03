@@ -45,6 +45,16 @@ class InformationPresenter extends BasePresenter
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
 		$this->template->results = $this->context->players->search($id);
+		$this->template->scores = array(
+			0 => "Total",
+			1 => "Economy",
+			2 => "Research",
+			3 => "Military",
+			5 => "Military Built",
+			6 => "Military Destroyed",
+			4 => "Military Lost",
+			7 => "Honor"
+		);
 		$this->id_player = $id;
 	}
 	protected function createComponentSearchForm()

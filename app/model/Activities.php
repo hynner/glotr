@@ -111,7 +111,7 @@ class Activities extends Table
 
 		while($r = $activities->fetch())
 		{
-			$results[] = $r;
+			$results[] = $r->toArray();
 		}
 		return $results;
 	}

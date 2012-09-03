@@ -69,6 +69,7 @@ $(document).ready(function () {
 		$(document).on("click",".date",  function() {$(this).datepicker(datepickerOpt);
 
 		});
+		$(".tabs-container").tabs();
 });
 
 

@@ -198,19 +198,25 @@ class Espionages extends Table
 					// select planet by id, don´t overwrite newer data
 					// for buildings there is $empty parameter, because from planetinfo I get this data in parts (resources + factories), so I don´t want to overwrite mines when i update factories
 					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_buildings"}, $empty), array($key => $tmp[$key])));
-
+					if(isset($dbData["planetinfo"])) // another workaround, for GTP planetinfo update
+						goto fleet;
 				case "defence":
+
 					$key = $prefix."_defence_updated";
 					$tmp[$key] = $dbData["timestamp"];
 					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_defence"}), array($key => $tmp[$key])));
+					if(isset($dbData["planetinfo"])) // another workaround, for GTP planetinfo update
+						goto resources;
+				fleet:
 				case "fleet":
 					// a little workaround, because in GTP update of buildings(resources) is also solar satellite and this caused erasing of the fleet
 					$prf = "";
+
 					if($prefix == "moon")
 						$prf = $prefix."_";
 					if($empty == false && $dbData["scan_depth"] == "building"):
 						$empty = false;
-					elseif($dbData["scan_depth"] == "fleet" && !$dbData[$prf."solar_satellite"]):
+					elseif($dbData["scan_depth"] == "fleet" && !isset($dbData[$prf."solar_satellite"])): // this means that this is update from fleet page, not espionage
 							unset( $dbData[$prf."solar_satellite"]);
 							$empty = true;
 					else:
@@ -219,6 +225,7 @@ class Espionages extends Table
 					$key = $prefix."_fleet_updated";
 					$tmp[$key] = $dbData["timestamp"];
 					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_fleet"}, $empty), array($key => $tmp[$key])));
+				resources:
 				default:
 					$key = $prefix."_res_updated";
 					$tmp[$key] = $dbData["timestamp"];

@@ -97,6 +97,19 @@ class Players extends Table
 	{
 		$ret["activity"]  = $this->container->activities->search($id_player);
 		$ret["activity_all"]  = $this->container->activities->searchUngrouped($id_player);
+		$ret["player"] = $this->getTable()->where(array("id_player_ogame" => $id_player))->fetch()->toArray();
+
+		if($ret["player"]["id_alliance"])
+		{
+			$ret["alliance"] = $this->container->alliances->find($ret["player"]["id_alliance"])->toArray();
+		}
+		else
+		{
+			$ret["alliance"] = false;
+		}
+		$res = $this->container->universe->findBy(array("id_player" => $id_player));
+		while($r = $res->fetch())
+			$ret["planets"][] = $r->toArray();
 
 		return $ret;
 	}

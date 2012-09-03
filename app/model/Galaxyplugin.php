@@ -198,7 +198,7 @@ class Galaxyplugin extends Nette\Object
 								"timestamp" => time(),
 								"type" => "apg_inactivity"
 							);
-								
+
 
 									$act["timestamp"] = time()+(15*60); // add 15 minutes, I will be substracting it again
 									// inactvity shows after 60minutes => 4*15
@@ -254,7 +254,7 @@ class Galaxyplugin extends Nette\Object
 						{
 							$dbData = $this->container->espionages->addPrefixToKeys("moon_", $dbData, array("timestamp", "scan_depth", "id_planet", "moon"));
 						}
-
+						$dbData["planetinfo"] = 1;
 						$this->container->espionages->setPlanetInfo($dbData, false);
 
 
