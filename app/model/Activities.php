@@ -100,4 +100,19 @@ class Activities extends Table
 		}
 		return $activities;
 	}
+	public function searchUngrouped($id_player, $filter = array())
+	{
+		$activities = $this->container->activities->getTable()
+				->where(array("id_player" => $id_player))
+				->where($filter)
+				->order("timestamp DESC");
+
+		$results = array();
+
+		while($r = $activities->fetch())
+		{
+			$results[] = $r;
+		}
+		return $results;
+	}
 }

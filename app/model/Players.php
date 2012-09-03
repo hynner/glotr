@@ -95,9 +95,9 @@ class Players extends Table
 	}
 	public function search($id_player)
 	{
-		$activities = $this->container->activities->search($id_player);
+		$ret["activity"]  = $this->container->activities->search($id_player);
+		$ret["activity_all"]  = $this->container->activities->searchUngrouped($id_player);
 
-		$ret["activity"] = $activities;
 		return $ret;
 	}
 }

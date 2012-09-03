@@ -10,4 +10,27 @@
 		{control manualActivityForm}
 	{/snippet}
 	{control activityFilterForm}
+<table>
+	<caption>{_ "Activity text view:"}</caption>
+	<thead>
+		<tr>
+			<th>{_ "Date"}</th>
+			<th>{_ "Day of week"}</th>
+			<th>{_ "Type"}</th>
+			<th>{_ "Coordinates"}</th>
+			<th>{_ "Planets"}</th>
+		</tr>
+	<tbody>
+		{foreach $results["activity_all"] as $a}
+		<tr n:class="$iterator->odd ? odd">
+			<td>{$a["timestamp"]|date:'j. n. Y H:i:s'}</td>
+			<td>{_(date("l", $a["timestamp"]))}</td>
+			<td>{_ $a["type"]}</td>
+			<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"] : "-"}</td>
+			<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["planets"] : "-"}</td>
+		</tr>
+		{/foreach}
+	</tbody>
+	</thead>
+</table>
 {/block}
