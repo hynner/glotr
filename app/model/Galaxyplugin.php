@@ -177,6 +177,18 @@ class Galaxyplugin extends Nette\Object
 								"timestamp" => mktime((int) $player->activity["hour"], (int) $player->activity["minute"], 0, (int) $player->activity["month"], (int) $player->activity["day"], (int) $player->activity["year"]),
 								"type" => "alliance_page"
 							);
+							$inactivities = floor((time() - $act["timestamp"])/(15*60));
+
+							if($inactivities > 0)
+							{
+								for($i = 1; $i <= $inactivities; $i++)
+								{
+									$tmp = $act;
+									$tmp["timestamp"] += $i*(15*60); // add x*15 minutes to timestamp
+									$tmp["type"] = "apg_inactivity";
+									$this->container->activities->insertActivity($tmp);
+								}
+							}
 						}
 						// save inactivity
 						else
@@ -184,8 +196,18 @@ class Galaxyplugin extends Nette\Object
 								$act = array(
 								"id_player" => $id_player,
 								"timestamp" => time(),
-								"type" => "inactivity"
+								"type" => "apg_inactivity"
 							);
+								
+
+									$act["timestamp"] = time()+(15*60); // add 15 minutes, I will be substracting it again
+									// inactvity shows after 60minutes => 4*15
+									for($i = 1; $i <= 4; $i++)
+									{
+										$act["timestamp"] -= 15*60;
+
+										$this->container->activities->insertActivity($act);
+									}
 						}
 
 

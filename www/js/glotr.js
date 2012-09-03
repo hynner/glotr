@@ -61,6 +61,15 @@ $(document).ready(function () {
 	$(document).on("dblclick",".planet-info", function () {
 		$(this).dialog("close");
 	});
+	var datepickerOpt = {
+			maxDate: 0,
+			dateFormat: "yy-mm-dd"
+		}
+		$(".date").datepicker(datepickerOpt);
+		$(document).on("click",".date",  function() {$(this).datepicker(datepickerOpt);
 
+		});
 });
+
+
 

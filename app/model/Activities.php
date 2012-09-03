@@ -14,8 +14,8 @@ class Activities extends Table
 	{
 		parent::__construct($database, $container);
 
-		$this->strongTypes = array("alliance_page", "message", "scan");
-		$this->types = array("galaxyview", "inactivity", "manual");
+		$this->strongTypes = array("alliance_page", "message", "scan", "apg_inactivity");
+		$this->types = array("galaxyview", "inactivity", "manual", "manual_inactivity");
 		$this->types = array_merge($this->types, $this->strongTypes);
 
 	}
@@ -53,5 +53,51 @@ class Activities extends Table
 	public function getTypes()
 	{
 		return $this->types;
+	}
+	public function search($id_player, $filter = array())
+	{
+		$activities = $this->container->activities->getTable()->select("id, type, id_player, timestamp, ((hour(from_unixtime(timestamp))*3600 + minute(from_unixtime(timestamp))*60) DIV (15*60)) AS period, count(id) AS records, max(planets) AS planet_factor")
+				->where(array("id_player" => $id_player))
+				->where($filter)
+				->group("type, period")
+				->order("period ASC");
+
+		$results = array();
+
+		while($r = $activities->fetch())
+		{
+			$results[] = $r;
+		}
+		$activities = array();
+		$ret = array();
+		// there are 4*15minutes in a hour and 24hours/day = 96
+		for($i = 0; $i <= 95; $i++)
+		{
+
+			// initialize activities
+			foreach($this->container->activities->types as $type)
+			{
+				$activities[$i][$type] = 0;
+				$activities[$i]["label"] = floor(($i)/4);
+				if((15*(($i)%4)) != 0)
+					$activities[$i]["label"] .= ":".(15*(($i)%4));
+				else
+					$activities[$i]["label"] .= ":00";
+			}
+
+		}
+		foreach($results as $result)
+		{
+			$value = 0;
+			switch($result["type"]):
+				case "galaxyview": case "inactivity":
+					$value = $result["records"]/$result["planet_factor"];
+					break;
+				default:
+					$value = $result["records"];
+			endswitch;
+			$activities[$result["period"]][$result["type"]] += $value;
+		}
+		return $activities;
 	}
 }

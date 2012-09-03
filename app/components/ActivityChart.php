@@ -21,6 +21,7 @@ class ActivityChart extends Control
 		$template->setTranslator($this->context->translator);
 		$template->results = $results;
 		$template->redraw = $this->redraw;
+		$template->types = $this->context->activities->types;
 
 		$template->render();
 	}

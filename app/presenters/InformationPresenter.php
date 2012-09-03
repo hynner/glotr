@@ -6,6 +6,7 @@ use Nette\Application\UI\Form,
 
 class InformationPresenter extends BasePresenter
 {
+	protected $id_player;
 	protected function startup()
 	{
 		parent::startup();
@@ -44,6 +45,7 @@ class InformationPresenter extends BasePresenter
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
 		$this->template->results = $this->context->players->search($id);
+		$this->id_player = $id;
 	}
 	protected function createComponentSearchForm()
 	{
@@ -162,7 +164,7 @@ class InformationPresenter extends BasePresenter
 		else
 			$this->redirect("this");
 	}
-	public function createComponentPlanetInfo()
+	protected function createComponentPlanetInfo()
 	{
 			$control = new GLOTR\PlanetInfo;
 			$control->setContext($this->context);
@@ -173,5 +175,124 @@ class InformationPresenter extends BasePresenter
 	{
 
 		return new \VisualPaginator($this, "vp");
+	}
+	protected function createComponentManualActivityForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		\Nette\Forms\Container::extensionMethod('addDatePicker', function (\Nette\Forms\Container $container, $name, $label = NULL) {
+            return $container[$name] = new \JanTvrdik\Components\DatePicker($label);
+        });
+		$form->addDatePicker("activity_date", "Activity date")
+				->addRule(Form::FILLED, "Activity date must be filled!");
+		$form->addText("hour", "Hour")
+				->addRule(Form::FILLED, "Hour must be filled!")
+				->addRule(Form::RANGE, "Hour must be in range from %d to %d", array(0,23));
+		$form->addText("minute", "Minute")
+				->addRule(Form::FILLED, "Minute must be filled!")
+				->addRule(Form::RANGE, "Minute must be in range from %d to %d", array(0,59));
+
+		$form->addRadioList("type", "Activity type", array("inactivity" => "Inactivity", "activity" => "Activity"))
+				->addRule(Form::FILLED, "Please choose activity type")
+				->getSeparatorPrototype()->setName(NULL);
+		$form->addSubmit("send_activity", "Send");
+		$form->setDefaults(array("type" => "activity"/*, "activity_date" => date(\JanTvrdik\Components\DatePicker::W3C_DATE_FORMAT)*/));
+		$form->setTranslator($this->context->translator);
+		$form->onSuccess[] = $this->manualActivityFormSubmitted;
+		return $form;
+	}
+	public function manualActivityFormSubmitted($form)
+	{
+		$values = $form->values;
+		$type = "manual";
+		if($values["type"] == "inactivity")
+			$type = "manual_inactivity";
+
+		$act = array(
+						"id_player" => $this->id_player,
+						"timestamp" => $values["activity_date"]->getTimestamp() + 3600*$values["hour"] + 60*$values["minute"],
+						"type" => $type
+					);
+
+		$this->context->activities->insertActivity($act);
+
+		if($this->isAjax())
+		{
+			$this->invalidateControl("manualActivityForm");
+			$this->invalidateControl("activityChart");
+			$this->getComponent("activityChart")->redraw = true;
+			$this->template->results["activity"] = $this->context->activities->search($this->id_player);
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+	}
+	protected function createComponentActivityChart()
+	{
+		$control = new GLOTR\ActivityChart;
+		$control->setContext($this->context);
+		return $control;
+	}
+	protected function createComponentActivityFilterForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		\Nette\Forms\Container::extensionMethod('addDatePicker', function (\Nette\Forms\Container $container, $name, $label = NULL) {
+            return $container[$name] = new \JanTvrdik\Components\DatePicker($label);
+        });
+		$form->addDatePicker("activity_start", "From");
+		$form->addDatePicker("activity_end", "To");
+		$container = $form->addContainer("types");
+		foreach($this->context->activities->types as $type):
+			$container->addCheckbox("$type", $type)->setDefaultValue(TRUE);
+		endforeach;
+		$container = $form->addContainer("days");
+		$days = array(1 => "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" );
+		foreach($days as $key => $day)
+		{
+			$container->addCheckbox("$key", $day)->setDefaultValue(TRUE);
+		}
+
+		$form->addSubmit("filter", "Filter");
+		$form->setTranslator($this->context->translator);
+		$form->onSuccess[] = $this->activityFilterFormSubmitted;
+		return $form;
+	}
+	public function activityFilterFormSubmitted($form)
+	{
+		$values = $form->values;
+		$filter = array();
+		//dump($values);
+		if($values["activity_start"])
+		{
+			$filter["timestamp >= ?"] = $values["activity_start"]->getTimestamp();
+		}
+		if($values["activity_end"])
+		{
+			$filter["timestamp <= ?"] = $values["activity_end"]->getTimestamp();
+		}
+		if($values["days"])
+		{
+			$tmp = array();
+			foreach($values["days"] as $k => $day)
+				if($day)
+					$tmp[] = $k;
+			$filter["dayofweek(from_unixtime(timestamp))"] = $tmp;
+		}
+		if($values["types"])
+		{
+			$tmp = array();
+			foreach($values["types"] as $k => $type)
+				if($type)
+					$tmp[] = $k;
+			$filter["type"] = $tmp;
+		}
+		if($this->isAjax())
+		{
+			$this->invalidateControl("activityChart");
+			$this->getComponent("activityChart")->redraw = true;
+			$this->template->results["activity"] = $this->context->activities->search($this->id_player, $filter);
+		}
 	}
 }
