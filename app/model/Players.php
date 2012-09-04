@@ -98,7 +98,7 @@ class Players extends Table
 		$ret["activity"]  = $this->container->activities->search($id_player);
 		$ret["activity_all"]  = $this->container->activities->searchUngrouped($id_player);
 		$ret["player"] = $this->getTable()->where(array("id_player_ogame" => $id_player))->fetch()->toArray();
-
+		$ret["fs"] = $this->container->fs->search($id_player);
 		if($ret["player"]["id_alliance"])
 		{
 			$ret["alliance"] = $this->container->alliances->find($ret["player"]["id_alliance"])->toArray();

@@ -4,8 +4,10 @@
 <div class="tabs-container">
 	<ul>
 		<li><a href="#detail">{_ "Detail"}</a></li>
-		<li><a href="#activity">{_ "Activity"}</a></li>
 		<li><a href="#notes">{_ "Notes"}</a>
+		<li><a href="#fleetsave">{_ "Fleetsave"}</a>
+		<li><a href="#activity">{_ "Activity"}</a></li>
+
 	</ul>
 	<div id="detail">
 		<table>
@@ -43,6 +45,35 @@
 	<div id="notes">
 		{control playerNotesForm}
 	</div>
+	<div id="fleetsave">
+		{dump $results}
+		{control playerFSForm}
+		{snippet fsTable}
+		<table>
+			<caption>{_ "Fleetsave records"}</caption>
+			<thead>
+				<tr>
+					<th>{_ "Start:"}</th>
+					<th>{_ "End:"}</th>
+					<th>{_ "Precision:"}</th>
+					<th>{_ "Note:"}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{if !empty($results["fs"])}
+				{foreach $results["fs"] as $fs}
+				<tr>
+					<td>{$fs["start"]|date:'j. n. Y H:i:s'}</td>
+					<td>{$fs["end"]|date:'j. n. Y H:i:s'}</td>
+					<td>{$fs["precision"]}</td>
+					<td>{$fs["note"]}</td>
+				</tr>
+				{/foreach}
+				{/if}
+			</tbody>
+		</table>
+		{/snippet}
+	</div>
 	<div id="activity">
 		{snippet activityChart}
 			{control activityChart, $results["activity"]}
@@ -52,6 +83,7 @@
 			{control manualActivityForm}
 		{/snippet}
 		{control activityFilterForm}
+		{snippet activityTextView}
 		<table>
 			<caption>{_ "Activity text view:"}</caption>
 			<thead>
@@ -75,6 +107,7 @@
 			</tbody>
 			</thead>
 		</table>
+		{/snippet}
 	</div>
 </div>
 {/block}

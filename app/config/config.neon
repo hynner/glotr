@@ -54,6 +54,7 @@ common:
 		gtp: GLOTR\Galaxyplugin
 		activities: GLOTR\Activities
 		espionages: GLOTR\Espionages
+		fs: GLOTR\Fleetsaves
 
 	factories:
 

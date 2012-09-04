@@ -190,9 +190,6 @@ class InformationPresenter extends BasePresenter
 	{
 		$form = new GLOTR\MyForm;
 		$form->getElementPrototype()->class("ajax");
-		\Nette\Forms\Container::extensionMethod('addDatePicker', function (\Nette\Forms\Container $container, $name, $label = NULL) {
-            return $container[$name] = new \JanTvrdik\Components\DatePicker($label);
-        });
 		$form->addDatePicker("activity_date", "Activity date")
 				->addRule(Form::FILLED, "Activity date must be filled!");
 		$form->addText("hour", "Hour")
@@ -248,9 +245,7 @@ class InformationPresenter extends BasePresenter
 	{
 		$form = new GLOTR\MyForm;
 		$form->getElementPrototype()->class("ajax");
-		\Nette\Forms\Container::extensionMethod('addDatePicker', function (\Nette\Forms\Container $container, $name, $label = NULL) {
-            return $container[$name] = new \JanTvrdik\Components\DatePicker($label);
-        });
+
 		$form->addDatePicker("activity_start", "From");
 		$form->addDatePicker("activity_end", "To");
 		$container = $form->addContainer("types");
@@ -303,6 +298,8 @@ class InformationPresenter extends BasePresenter
 			$this->invalidateControl("activityChart");
 			$this->getComponent("activityChart")->redraw = true;
 			$this->template->results["activity"] = $this->context->activities->search($this->id_player, $filter);
+			$this->invalidateControl("activityTextView");
+			$this->template->results["activity_all"] = $this->context->activities->searchUngrouped($this->id_player, $filter);
 		}
 	}
 	protected function createComponentPlayerNotesForm()
@@ -324,5 +321,64 @@ class InformationPresenter extends BasePresenter
 		{
 			$this->invalidateControl("playerNotesForm");
 		}
+		else
+		{
+			$this->redirect("this");
+		}
+	}
+	protected function createComponentPlayerFSForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		$form->addGroup("Start");
+		$form->addDatePicker("start_date", "Date")
+				->addRule(Form::FILLED, "Start must be filled!");
+		$form->addText("start_hour", "Hour", 2)
+				->addRule(Form::RANGE, "Hour must be from %d to %d", array(0,23))
+				->addRule(Form::FILLED, "Start must be filled!");
+		$form->addText("start_minute", "Minute", 2)
+				->addRule(Form::RANGE, "Minute must be from %d to %d", array(0,59))
+				->addRule(Form::FILLED, "Start must be filled!");
+		$form->addGroup("End");
+		$form->addDatePicker("end_date", "Date")
+				->addRule(Form::FILLED, "End must be filled!");;
+		$form->addText("end_hour", "Hour", 2)
+				->addRule(Form::RANGE, "Hour must be from %d to %d", array(0,23))
+				->addRule(Form::FILLED, "End must be filled!");;
+		$form->addText("end_minute", "Minute", 2)
+				->addRule(Form::RANGE, "Minute must be from %d to %d", array(0,59))
+				->addRule(Form::FILLED, "End must be filled!");;
+		$form->addGroup("Optional");
+		$form->addText("precision", "Precision (in minutes)", 3);
+		$form->addTextArea("note", "Note:")	;
+
+		$form->addSubmit("save", "Save");
+		$form->setTranslator($this->context->translator);
+		$form->onSuccess[] = $this->playerFSFormSubmitted;
+		return $form;
+	}
+	public function playerFSFormSubmitted($form)
+	{
+		$values = $form->values;
+		$data = array(
+			"start" => $values["start_date"]->getTimestamp() + 3600*$values["start_hour"] + 60*$values["start_minute"],
+			"end" => $values["end_date"]->getTimestamp() + 3600*$values["end_hour"] + 60*$values["end_minute"],
+			"id_player" => $this->id_player,
+			"precision" => $values["precision"],
+			"note" => $values["note"]
+		);
+		if($data["start"] >= $data["end"])
+			throw new \Nette\Application\BadRequestException("FS start must be a date smaller than FS end!");
+		$this->context->fs->insertFS($data);
+		if($this->isAjax())
+		{
+			$this->invalidateControl("fsTable");
+			$this->template->results["fs"] = $this->context->fs->search($this->id_player);
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+
 	}
 }
