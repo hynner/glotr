@@ -305,4 +305,24 @@ class InformationPresenter extends BasePresenter
 			$this->template->results["activity"] = $this->context->activities->search($this->id_player, $filter);
 		}
 	}
+	protected function createComponentPlayerNotesForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		$form->addTextArea("notes", "Notes:")
+				->setDefaultValue($this->template->results["player"]["notes"]);
+		$form->addSubmit("save", "Save");
+		$form->setTranslator($this->context->translator);
+		$form->onSuccess[] = $this->playerNotesFormSubmitted;
+		return $form;
+	}
+	public function playerNotesFormSubmitted($form)
+	{
+		$values = $form->values;
+		$this->context->players->getTable()->where(array("id_player_ogame" => $this->id_player))->update(array("notes" => ($values["notes"]) ? $values["notes"] : ""));
+		if($this->isAjax())
+		{
+			$this->invalidateControl("playerNotesForm");
+		}
+	}
 }

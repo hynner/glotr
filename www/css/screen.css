@@ -143,3 +143,9 @@ a[href^="error:"] {
 	font-weight: bold;
 }
 
+#ajax-spinner
+{
+	background-image: url("../images/ajax-loader.gif");
+	width: 100px;
+	height: 100px;
+}

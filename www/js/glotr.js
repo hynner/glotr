@@ -9,20 +9,42 @@ jQuery.ajaxSetup({
         }
     }
 });
+function showSpinner(event)
+{
+	$("#ajax-spinner").show();
+}
 $(function () {
-	$(document).on("submit", "form.ajax",  function () {
-		$(this).ajaxSubmit();
-		return false;
-	});
 
-
-	$("form.ajax :submit").on("click", function () {
+	 $('<div id="ajax-spinner"></div>').appendTo("body").ajaxStop(function () {
+        
+        $(this).hide().css({
+            position: "fixed",
+            left: "50%",
+            top: "50%"
+        });
+    }).hide();
+	$(document).on("submit", "form.ajax",  function (event) {
+		event.preventDefault();
+		showSpinner(event);
 			$(this).ajaxSubmit();
+
 			return false;
 	});
-	$(document).on("click", "a.ajax", function ()
+
+
+	$("form.ajax :submit").on("click", function (event) {
+		event.preventDefault();
+			showSpinner(event);
+			$(this).ajaxSubmit();
+
+			return false;
+	});
+	$(document).on("click", "a.ajax", function (event)
 		{
+			event.preventDefault();
+			showSpinner(event);
 			$(this).ajaxLink();
+
 			return false;
 	});
 	$(document).on("keydown", "body", function(event) {
