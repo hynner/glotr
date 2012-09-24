@@ -12,7 +12,7 @@ class Users extends Table
 	}
 	public function getAdminCount()
 	{
-		return count($this->getAdmins);
+		return count($this->getAdmins());
 	}
 
 	public function getNewKey(Nette\Security\Identity $user)
@@ -32,6 +32,11 @@ class Users extends Table
 		catch(\PDOException $e)
 		{$this->getPresenter()->flashMessage("Error while updating logon key", "error");}
 
+	}
+	public function setPermissions($id, $permissions)
+	{
+		
+		$this->getTable()->where(array("id_user" => $id))->update($permissions);
 	}
 
 }

@@ -38,7 +38,8 @@ class Authenticator extends Nette\Object implements NS\IAuthenticator
 		if ($row->password !== $this->calculateHash($password, $row->password)) {
 			throw new NS\AuthenticationException("Invalid password.", self::INVALID_CREDENTIAL);
 		}
-
+		if($row->active == 0)
+			throw new NS\AuthenticationException("Your account hasn´t been activated yet.", self::NOT_APPROVED);
 		unset($row->password);
 		return new NS\Identity($row->id_user, null, $row->toArray());
 	}

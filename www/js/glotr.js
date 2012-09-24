@@ -1,3 +1,4 @@
+
 jQuery.ajaxSetup({
     cache: false,
     dataType: 'json',
@@ -12,17 +13,18 @@ jQuery.ajaxSetup({
 function showSpinner(event)
 {
 	$("#ajax-spinner").show();
-}
+}/*
 $(function () {
-
+		$(document).on("click", ".request_confirmation", function () {
+			var text = $(this).attr("conf_msg");
+			if(text == "")
+				text = "This step needs your confirmation";
+			if(!confirm(text))
+				return false;
+			return true;
+		});
 	 $('<div id="ajax-spinner"></div>').appendTo("body").ajaxStop(function () {
-        
-        $(this).hide().css({
-            position: "fixed",
-            left: "50%",
-            top: "50%"
-        });
-    }).hide();
+        $(this).hide()}).hide();
 	$(document).on("submit", "form.ajax",  function (event) {
 		event.preventDefault();
 		showSpinner(event);
@@ -65,7 +67,7 @@ $(function () {
 
 		}
 	});
-});
+});*/
 
 //planet info box
 $(document).ready(function () {

@@ -62,7 +62,7 @@ class SignPresenter extends BasePresenter
 		}
 	}
 	/**
-	 * Sign in form component factory.
+	 * Forgotten password form component factory.
 	 * @return Nette\Application\UI\Form
 	 */
 	protected function createComponentForgottenPasswordForm()
@@ -105,8 +105,8 @@ class SignPresenter extends BasePresenter
 						->setSubject($this->context->translator->translate("GLOTR password reset"))
 						->setHtmlBody($template)
 						->send();
-
-				$this->redirect("this");
+				$this->flashMessage("Your password was reset! You should get the email with new password soon.", "success");
+				$this->redirect("Sign:in");
 
 
 			}
@@ -143,9 +143,6 @@ class SignPresenter extends BasePresenter
 		$form->addSelect("id_player", "Ingame nickname:", $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
 				->setPrompt("Choose player")
 				->setTranslator(NULL);
-		$form->addSelect("id_alliance", "Ingame alliance:", $this->context->alliances->getTable()->order("tag")->fetchPairs("id_alliance_ogame", "tag"))
-				->setPrompt("Choose alliance")
-				->setTranslator(NULL);
 		$form->onSuccess[] = $this->registrationFormSubmitted;
 		$form->setTranslator($this->context->translator);
 		return $form;
@@ -158,10 +155,9 @@ class SignPresenter extends BasePresenter
 				"username" => $values["username"],
 				"password" => $this->context->authenticator->calculateHash($values["password"]),
 				"email" => $values["email"],
-				"is_admin" => 0,
+				"is_admin" => 0, // new user isn´t admin
 				"id_player" => $values["id_player"],
-				"id_alliance" => $values["id_alliance"],
-				"active" => 0
+				"active" => 0 // admin must activate this acc
 
 			));
 			$this->flashMessage("Your registration was submitted, now you have to wait untill administrator accepts it!", "success");

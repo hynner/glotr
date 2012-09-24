@@ -233,6 +233,7 @@ class Espionages extends Table
 
 			endswitch;
 	}
+
 	public function filterData($data, $filter, $empty = true)
 	{
 		$tmp = array();

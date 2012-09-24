@@ -1,0 +1,32 @@
+
+{block content}
+	{form permissionsForm, class => "ajax"}
+		{control $form errors}
+{dump $form->getComponents()}
+<table>
+	<thead>
+		<tr>
+			<th>Username</th>
+			{foreach $permissions as $perm}
+			<th>{$perm}</th>
+			{/foreach}
+		</tr>
+	</thead>
+	<tbody>
+		{foreach $form->getComponents() as $c}
+		{if substr($c->name,0, 4) == "user"}
+		<tr>
+			<td>{$users[str_replace("user", "", $c->name)]["username"]}</td>
+			{foreach $permissions as $name => $perm}
+				<td>{$c[$name]->getControl() }</td>
+			{/foreach}
+		</tr>
+		{/if}
+		{/foreach}
+		
+		<tr><td n:attr="colspan => count($permissions) +1">{input set }</td></tr>
+	</tbody>
+
+</table>
+	{/form}
+{/block}
