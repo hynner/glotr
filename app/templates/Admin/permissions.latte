@@ -1,8 +1,8 @@
 
 {block content}
+{snippet permissionsForm}
 	{form permissionsForm, class => "ajax"}
 		{control $form errors}
-{dump $form->getComponents()}
 <table>
 	<thead>
 		<tr>
@@ -23,10 +23,12 @@
 		</tr>
 		{/if}
 		{/foreach}
-		
+
 		<tr><td n:attr="colspan => count($permissions) +1">{input set }</td></tr>
 	</tbody>
 
 </table>
 	{/form}
+{/snippet}
+<p>{_ "Please note, that all permision changes will be used after next login of that user!"}</p>
 {/block}

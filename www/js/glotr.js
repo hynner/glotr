@@ -13,7 +13,7 @@ jQuery.ajaxSetup({
 function showSpinner(event)
 {
 	$("#ajax-spinner").show();
-}/*
+}
 $(function () {
 		$(document).on("click", ".request_confirmation", function () {
 			var text = $(this).attr("conf_msg");
@@ -67,7 +67,7 @@ $(function () {
 
 		}
 	});
-});*/
+});
 
 //planet info box
 $(document).ready(function () {

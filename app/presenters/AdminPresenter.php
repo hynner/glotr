@@ -92,6 +92,14 @@ class AdminPresenter extends BasePresenter
 				$perm = (int) $perm;
 			$this->context->users->setPermissions($id, $perms);
 		}
+		if($this->isAjax())
+		{
+			$this->invalidateControl("permissionsForm");
+		}
+		else
+		{
+			$this->redirect("this");
+		}
 
 	}
 
