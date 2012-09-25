@@ -40,7 +40,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$nav->setCurrentByUrl();
 
 		$nav = new Navigation\Navigation($this, "nav_admin");
-		$homepage = $nav->setupHomepage("Administration", $this->link("Admin:"));
+		$homepage = $nav->setupHomepage("Settings", $this->link("User:"));
+		$homepage->add("Your settings", $this->link("User:userSettings"));
 		$homepage->add("User management", $this->link("Admin:users"));
 		$homepage->add("Permissions", $this->link("Admin:permissions"));
 		$nav->setTranslator($this->context->translator);
@@ -50,6 +51,13 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$this->addPermission("perm_user_mng", "Manage users");
 		$this->addPermission("perm_perm_mng", "Manage permissions");
 
+		// setup timezone
+		if($this->getUser()->isLoggedIn())
+			$timezone = $this->getUser()->getIdentity()->timezone;
+		if(isset($timezone))
+			date_default_timezone_set($timezone);
+		else
+			date_default_timezone_set($this->context->server->timezone);
 
 	}
 	public function createTemplate($class= NULL)
@@ -64,6 +72,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	}
 	public function flashMessage($message, $type = "info")
 	{
+		if($this->isAjax())
+			$this->invalidateControl("flashMessages");
 		if($this->context->hasService("translator"))
 		{
 			$message = $this->context->translator->translate($message);
@@ -109,5 +119,11 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			$label = $name;
 
 		$this->permissions[$name] = $label;
+	}
+	protected function setUserParams($params)
+	{
+		$user = $this->getUser()->getIdentity();
+		foreach($params as $key => $value)
+				$user->$key = $value;
 	}
 }

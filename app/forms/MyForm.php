@@ -19,5 +19,6 @@ class MyForm extends Form
 
 		parent::addError($message);
 	}
+	
 }
 

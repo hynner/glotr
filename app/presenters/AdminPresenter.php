@@ -92,6 +92,7 @@ class AdminPresenter extends BasePresenter
 				$perm = (int) $perm;
 			$this->context->users->setPermissions($id, $perms);
 		}
+		$this->flashMessage("Users permissions has been changed!", "success");
 		if($this->isAjax())
 		{
 			$this->invalidateControl("permissionsForm");

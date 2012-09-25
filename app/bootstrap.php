@@ -25,7 +25,8 @@ $configurator->createRobotLoader()
 	->register();
 
 // Create Dependency Injection container from config.neon file
-$configurator->addConfig(__DIR__ . '/config/config.neon');
+$configurator->addConfig(__DIR__ . '/config/AppConf.neon');
+$configurator->addConfig(__DIR__ . '/config/ServerConf.neon');
 $container = $configurator->createContainer();
 
 // Setup router

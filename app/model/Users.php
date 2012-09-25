@@ -35,7 +35,6 @@ class Users extends Table
 	}
 	public function setPermissions($id, $permissions)
 	{
-		
 		$this->getTable()->where(array("id_user" => $id))->update($permissions);
 	}
 

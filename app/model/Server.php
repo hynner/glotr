@@ -69,4 +69,9 @@ class Server extends Table
 		$this->_get();
 		return $this->data["systems"];
 	}
+	public function getTimezone()
+	{
+		$this->_get();
+		return $this->data["timezone"];
+	}
 }

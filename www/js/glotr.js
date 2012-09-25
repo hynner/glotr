@@ -3,9 +3,15 @@ jQuery.ajaxSetup({
     cache: false,
     dataType: 'json',
     success: function (payload) {
+		if(payload.redirect)
+					document.location.href = payload.redirect;
         if (payload.snippets) {
             for (var i in payload.snippets) {
                 $('#' + i).html(payload.snippets[i]);
+				if(i == "snippet--flashMessages")
+				{
+					$(".flash").fadeOut(5000);
+				}
             }
         }
     }
@@ -23,6 +29,9 @@ $(function () {
 				return false;
 			return true;
 		});
+
+		$(".flash").fadeOut(5000);
+
 	 $('<div id="ajax-spinner"></div>').appendTo("body").ajaxStop(function () {
         $(this).hide()}).hide();
 	$(document).on("submit", "form.ajax",  function (event) {

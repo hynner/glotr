@@ -88,12 +88,16 @@ class Table extends Nette\Object
 	public function getPrefixedColumnList()
 	{
 		$cols = $this->getTable()->limit(1)->fetch();
-		$columns = " ";
+		if($cols)
+		{
+			$columns = " ";
 		foreach($cols as $name => $col)
 		{
 			$columns .= "$this->tableName.$name as $this->columnListPrefix"."$name, ";
 		}
 		return $columns;
+		}
+
 	}
 	/**
 	 * checks if model needs update from Ogame API
