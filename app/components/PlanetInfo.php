@@ -34,5 +34,10 @@ class PlanetInfo extends Control
 		$control->setContext($this->context);
 		return $control;
 	}
-
+	protected function createComponentSimulatorLinks()
+	{
+		$control = new SimulatorLinks;
+		$control->setContext($this->context);
+		return $control;
+	}
 }

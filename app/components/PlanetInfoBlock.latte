@@ -13,7 +13,7 @@
 				{if $iterator->isOdd()}
 					<tr>
 				{/if}
-						<td>{_ $key|replace:"moon_":""|replace:"_":" "}: {$value}</td>
+						<td>{_ $key|replace:"moon_":""|replace:"_":" "}: {(int) $value}</td>
 				{if $iterator->isEven()}
 					</tr>
 				{/if}
