@@ -22,16 +22,8 @@ class InformationPresenter extends BasePresenter
 		$sess = $this->getSession("searchForm");
 		if(isset($sess->searchFormValues))
 		{
+			$this->loadSearchResults($sess->searchFormValues);
 
-			$vp = $this->getComponent("vp");
-			$paginator = $vp->getPaginator();
-			$this->template->results = $this->context->universe->search($sess->searchFormValues, $paginator);
-			if($this->isAjax())
-			{
-				$this->invalidateControl ("planetList");
-				$this->invalidateControl ("searchForm");
-				$this->invalidateControl ("paginator");
-			}
 		}
 		else
 		{
@@ -149,18 +141,7 @@ class InformationPresenter extends BasePresenter
 		if(!$form->offsetExists("reset"))
 			$form->addButton("reset", "Reset filter")
 						->setAttribute("onclick", "$(this).ajax(".$this->link("resetSearchForm!").");");
-		$vp = $this->getComponent("vp");
-		$paginator = $vp->getPaginator();
-		$paginator->page = 1; // reset pages
-
-		$this->template->results = $this->context->universe->search($values, $paginator);
-		if($this->isAjax())
-		{
-			$this->invalidateControl ("planetList");
-			$this->invalidateControl ("searchForm");
-			$this->invalidateControl ("paginator");
-
-		}
+		$this->loadSearchResults($values);
 
 
 	}
@@ -380,5 +361,40 @@ class InformationPresenter extends BasePresenter
 			$this->redirect("this");
 		}
 
+	}
+	protected function loadSearchResults($search)
+	{
+			$vp = $this->getComponent("vp");
+			$paginator = $vp->getPaginator();
+			$this->template->results = $this->context->universe->search($search, $paginator);
+			$player2 = $this->context->players->search($this->getUser()->getIdentity()->id_player);
+			if(!empty($player2))
+				$player2 = $player2["player"];
+
+				foreach($this->template->results as &$r)
+				{
+					$r["_computed_player_status"] = $this->context->players->getRelativeStatus($r, $player2);
+					$r["_computed_status_class"] = "";
+					foreach($r["_computed_player_status"] as $key => $value)
+					{
+
+						if(is_integer($key))
+							$r["_computed_status_class"] .= " ".$value;
+						elseif(is_bool($value) && $value)
+							$r["_computed_status_class"] .= " ".$key;
+						elseif(!is_bool($value))
+							$r["_computed_status_class"] .= " "."$key-$value";
+					}
+				}
+
+
+
+
+			if($this->isAjax())
+			{
+				$this->invalidateControl ("planetList");
+				$this->invalidateControl ("searchForm");
+				$this->invalidateControl ("paginator");
+			}
 	}
 }

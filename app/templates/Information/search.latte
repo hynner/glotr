@@ -5,7 +5,7 @@
 	{control searchForm}
 {/snippet}
 {snippet planetList}
-{date("H:i:s")}
+<p>{_ "Last updated"}: {date("H:i:s")}</p>
 
 {if $results}
 	{control vp}
@@ -36,7 +36,7 @@
 					<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
 					<td>{$result["_alliances_tag"]}</td>
 					<td>{$result["name"]}</td>
-					<td><a n:href="Information:playerInfo $result['id_player_ogame']">{$result["playername"]}</a></td>
+					<td><a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => $result['_computed_status_class']">{$result["playername"]}</a></td>
 					<td>{$result["status"]}</td>
 					<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
 					<td>
