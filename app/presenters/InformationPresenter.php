@@ -7,6 +7,7 @@ use Nette\Application\UI\Form,
 class InformationPresenter extends BasePresenter
 {
 	protected $id_player;
+	protected $id_alliance;
 	protected function startup()
 	{
 		parent::startup();
@@ -48,6 +49,24 @@ class InformationPresenter extends BasePresenter
 			7 => "Honor"
 		);
 		$this->id_player = $id;
+	}
+	public function actionAllianceInfo($id)
+	{
+		if(!$id)
+			throw new Nette\Application\BadRequestException;
+		$this->template->results = $this->context->alliances->search($id);
+		$this->getRelativeStatusForResults($this->template->results["players"]);
+		$this->template->scores = array(
+			0 => "Total",
+			1 => "Economy",
+			2 => "Research",
+			3 => "Military",
+			5 => "Military Built",
+			6 => "Military Destroyed",
+			4 => "Military Lost",
+			7 => "Honor"
+		);
+		$this->id_alliance = $id;
 	}
 	protected function createComponentSearchForm()
 	{
@@ -222,6 +241,13 @@ class InformationPresenter extends BasePresenter
 		$control->setContext($this->context);
 		return $control;
 	}
+	protected function createComponentAllianceMembersChart()
+	{
+		$control = new GLOTR\AllianceMembersCharts;
+		$control->setContext($this->context);
+		return $control;
+	}
+
 	protected function createComponentActivityFilterForm()
 	{
 		$form = new GLOTR\MyForm;
@@ -367,34 +393,34 @@ class InformationPresenter extends BasePresenter
 			$vp = $this->getComponent("vp");
 			$paginator = $vp->getPaginator();
 			$this->template->results = $this->context->universe->search($search, $paginator);
-			$player2 = $this->context->players->search($this->getUser()->getIdentity()->id_player);
-			if(!empty($player2))
-				$player2 = $player2["player"];
-
-				foreach($this->template->results as &$r)
-				{
-					$r["_computed_player_status"] = $this->context->players->getRelativeStatus($r, $player2);
-					$r["_computed_status_class"] = "";
-					foreach($r["_computed_player_status"] as $key => $value)
-					{
-
-						if(is_integer($key))
-							$r["_computed_status_class"] .= " ".$value;
-						elseif(is_bool($value) && $value)
-							$r["_computed_status_class"] .= " ".$key;
-						elseif(!is_bool($value))
-							$r["_computed_status_class"] .= " "."$key-$value";
-					}
-				}
-
-
-
-
+			$this->getRelativeStatusForResults($this->template->results);
 			if($this->isAjax())
 			{
 				$this->invalidateControl ("planetList");
 				$this->invalidateControl ("searchForm");
 				$this->invalidateControl ("paginator");
+			}
+	}
+	protected function getRelativeStatusForResults(&$results)
+	{
+		$player2 = $this->context->players->search($this->getUser()->getIdentity()->id_player);
+		if(!empty($player2))
+			$player2 = $player2["player"];
+
+			foreach($results as &$r)
+			{
+				$r["_computed_player_status"] = $this->context->players->getRelativeStatus($r, $player2);
+				$r["_computed_status_class"] = "";
+				foreach($r["_computed_player_status"] as $key => $value)
+				{
+
+					if(is_integer($key))
+						$r["_computed_status_class"] .= " ".$value;
+					elseif(is_bool($value) && $value)
+						$r["_computed_status_class"] .= " ".$key;
+					elseif(!is_bool($value))
+						$r["_computed_status_class"] .= " "."$key-$value";
+				}
 			}
 	}
 }

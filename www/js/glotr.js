@@ -14,6 +14,7 @@ jQuery.ajaxSetup({
 				}
             }
         }
+		$("#ajax-spinner").hide();
     }
 });
 function showSpinner(event)

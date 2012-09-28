@@ -15,8 +15,10 @@
 			<tr>
 				<td>{_ "Alliance"}:</td>
 				<td>
-					{($results["alliance"]) ? $results["alliance"]["tag"]: "-" }
-
+					<a n:if="$results['alliance']" n:href="Information:allianceInfo $results['alliance']['id_alliance_ogame']">
+					 {$results["alliance"]["tag"]}
+					</a>
+					{if !$results["alliance"]}-{/if}
 				</td>
 			</tr>
 			{foreach $scores as $num => $label}
@@ -46,7 +48,7 @@
 		{control playerNotesForm}
 	</div>
 	<div id="fleetsave">
-		
+
 		{control playerFSForm}
 		{snippet fsTable}
 		<table>

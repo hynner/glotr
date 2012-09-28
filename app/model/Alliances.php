@@ -86,4 +86,19 @@ class Alliances extends Table
 		}
 		return true;
 	}
+	public function search($id_alliance)
+	{
+		if(!$id_alliance)
+			return array();
+		$ret["alliance"] = $this->getTable()->where(array("id_alliance_ogame" => $id_alliance))->fetch()->toArray();
+		$res = $this->container->players->findBy(array("id_alliance" => $id_alliance));
+		while($r = $res->fetch())
+			$ret["players"][$r->id_player_ogame] = $r->toArray();
+
+		$res = $this->container->universe->getTable()->where("id_player", array_keys($ret["players"]))->order("galaxy ASC, system ASC, position ASC");
+		while($r = $res->fetch())
+			$ret["planets"][] = $r->toArray();
+
+		return $ret;
+	}
 }
