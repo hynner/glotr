@@ -10,7 +10,7 @@ common:
 		langs: # list of all available languages
 			- en
 			- cz
-		server: http://uni670.ogame.org # URL of your ogame server, starting with http and WITHOUT / at the end!!!
+		server: http://uni680.ogame.org # URL of your ogame server, starting with http and WITHOUT / at the end!!!
 		tablePrefix: '' #if you want to have all your table names starting with the same prefix, table names themselves cannot be changed!
 		ogameApiExpirations: {players.xml: 86400, universe.xml: 604800, highscore.xml: 3600, alliances.xml: 86400, serverData.xml: 86400, playerData.xml: 604800}# don´t change it unless there is some change in ogameAPI, all values are in seconds
 		ogameApiRecordsAtOnce: 1000 #number of api records processed during one call of the script, decrease it if you runs to the end of the execution time, otherwise you can slightly increase it

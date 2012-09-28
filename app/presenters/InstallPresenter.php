@@ -14,8 +14,13 @@ class InstallPresenter extends BasePresenter
 	}
 	public function actionDefault()
 	{
-		if($this->users->getAdminCount() == 0)
-			$this->redirect("createAdmin");
+		$tables = unserialize(file_get_contents($this->context->parameters["tablesFile"]));
+		$columns = unserialize(file_get_contents($this->context->parameters["columnsFile"]));
+		$indexes = unserialize(file_get_contents($this->context->parameters["indexesFile"]));
+		
+		/*if($this->users->getAdminCount() == 0)
+			$this->redirect("createAdmin");*/
+
 	}
 	protected function createComponentUserRegistrationForm()
 	{
@@ -41,11 +46,37 @@ class InstallPresenter extends BasePresenter
 		}
 		catch(PDOException $e)
 		{
-			
+
 			$form->addError("Username already exists, please choose different one!");
 		}
 		endif;
 
 	}
 
+	public function actionSaveDatabase()
+	{
+		$conn = $this->users->getConnection();
+
+
+		$res = $conn->query("show tables");
+		$tables = array();
+		while($r = $res->fetch())
+			$tables[] = preg_replace("/^". $this->context->parameters["tablePrefix"]."/", "", $r->offsetGet(0));
+
+		$columns = array();
+		$indexes = array();
+		foreach($tables as $table)
+		{
+			$res = $conn->query("show columns from $table");
+				while($r = $res->fetch())
+					$columns[$table][] = $r;
+			$res = $conn->query("show indexes from $table");
+			while($r = $res->fetch())
+					$indexes[$table] = $r;
+		}
+
+		file_put_contents($this->context->parameters["tablesFile"], serialize($tables));
+		file_put_contents($this->context->parameters["columnsFile"], serialize($columns));
+		file_put_contents($this->context->parameters["indexesFile"], serialize($indexes));
+	}
 }
