@@ -8,9 +8,7 @@
 common:
 	parameters:
 		version: "1.0.0" # DON´T change this!
-		tablesFile: "../app/config/tables.gl"
-		columnsFile: "../app/config/columns.gl"
-		indexesFile: "../app/config/indexes.gl"
+		dbSetupFile: "../app/config/dbSetup.gl"
 	php:
 
 		# zlib.output_compression: yes
