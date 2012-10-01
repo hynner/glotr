@@ -29,6 +29,16 @@ class OgameApi extends Nette\Object
 		$data = $cache->load($file);
 		if($data === NULL)
 		{
+			if($this->container->parameters["testServer"])
+			{
+				$context = stream_context_create(array(
+					'http' => array(
+						'header'  => "Authorization: Basic " . base64_encode($this->container->parameters["testServerUsrname"].":".$this->container->parameters["testServerPass"])
+					)
+				));
+				$data = file_get_contents($this->url.$file, false, $context);
+			}
+
 			$data = @file_get_contents($this->url.$file);
 
 			if($data !== FALSE)

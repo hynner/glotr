@@ -57,7 +57,17 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		if(isset($timezone))
 			date_default_timezone_set($timezone);
 		else
-			date_default_timezone_set($this->context->server->timezone);
+		{
+			try{
+				date_default_timezone_set($this->context->server->timezone);
+			}
+			catch(\PDOException $e)
+			{
+				// database is not ready yet
+			}
+
+		}
+
 
 	}
 	public function createTemplate($class= NULL)
