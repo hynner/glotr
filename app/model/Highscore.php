@@ -125,5 +125,20 @@ class Highscore extends Table
 	{
 		return $this->types;
 	}
+	public function ogameApiGetFileNeeded()
+	{
+		$ret = array();
+		foreach($this->categories as $cat)
+			foreach($this->types as $type)
+			{
+				if($this->needApiUpdate($cat, $type))
+				{
+					$ret[] = $this->container->ogameApi->url.$this->apiFile."?category=$cat&type=$type";
+				}
+				else
+					$ret[] = false;
+			}
+		return $ret;
+	}
 
 }

@@ -109,4 +109,14 @@ class Table extends Nette\Object
 		return ($this->container->config->load("$this->tableName-finished")+$this->container->parameters["ogameApiExpirations"][$this->apiFile] < time());
 
 	}
+
+	public function ogameApiGetFileNeeded()
+	{
+		if($this->needApiUpdate())
+		{
+			return $this->container->ogameApi->url.$this->apiFile;
+		}
+		else
+			return false;
+	}
 }

@@ -10,13 +10,14 @@ jQuery.ajaxSetup({
                 $('#' + i).html(payload.snippets[i]);
 				if(i == "snippet--flashMessages")
 				{
-					$(".flash").fadeOut(5000);
+					$(".flash").fadeOut(10000);
 				}
             }
         }
 		$("#ajax-spinner").hide();
     }
 });
+
 function showSpinner(event)
 {
 	$("#ajax-spinner").show();

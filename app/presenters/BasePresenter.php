@@ -76,7 +76,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 
 
 		$template->setTranslator($this->context->translator);
-
+		$template->parameters = $this->context->parameters;
 		return $template;
 
 	}

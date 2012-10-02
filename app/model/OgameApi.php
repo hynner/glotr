@@ -15,6 +15,7 @@ class OgameApi extends Nette\Object
 	{
 		$expirationTime = $this->container->parameters["ogameApiExpirations"][$file];
 		$cache = new Cache($this->container->cacheStorage, 'OgameAPI');
+
 		if(!empty($params))
 		{
 			$p = "?";
@@ -29,31 +30,43 @@ class OgameApi extends Nette\Object
 		$data = $cache->load($file);
 		if($data === NULL)
 		{
-			if($this->container->parameters["testServer"])
+			if(ini_get("allow_url_fopen") == 0)
 			{
-				$context = stream_context_create(array(
-					'http' => array(
-						'header'  => "Authorization: Basic " . base64_encode($this->container->parameters["testServerUsrname"].":".$this->container->parameters["testServerPass"])
-					)
-				));
-				$data = file_get_contents($this->url.$file, false, $context);
+				throw new Nette\Application\ApplicationException("allow_url_fopen disabled!");
 			}
-
-			$data = @file_get_contents($this->url.$file);
-
-			if($data !== FALSE)
+			else
 			{
-			$xml = simplexml_load_string($data);
-			$exp = (int) $xml->attributes()->timestamp;
-			$exp += $expirationTime;
-			$cache->save($file, $data, array(
-					Cache::EXPIRE => $exp
-				));
+				if($this->container->parameters["testServer"])
+				{
+					
+					$context = stream_context_create(array(
+						'http' => array(
+							'header'  => "Authorization: Basic " . base64_encode($this->container->parameters["testServerUsrname"].":".$this->container->parameters["testServerPass"])
+						)
+					));
+					$data = file_get_contents($this->url.$file, false, $context);
+				}
+				else
+					$data = @file_get_contents($this->url.$file);
+
+				if($data !== FALSE)
+				{
+				$xml = simplexml_load_string($data);
+				$exp = (int) $xml->attributes()->timestamp;
+				$exp += $expirationTime;
+				$cache->save($file, $data, array(
+						Cache::EXPIRE => $exp
+					));
+				}
 			}
 		}
 		else
 			$xml = simplexml_load_string($data);
 		return $xml;
+	}
+	public function getUrl()
+	{
+		return $this->url;
 	}
 }
 

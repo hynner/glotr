@@ -79,4 +79,5 @@ class Server extends Table
 		$this->_get();
 		return $this->data;
 	}
+	
 }

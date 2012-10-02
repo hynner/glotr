@@ -7,12 +7,20 @@ class InstallPresenter extends BasePresenter
 
 	protected function startup()
 	{
-		parent::startup();
+		try
+		{
+			parent::startup();
+		}
+		catch(\Nette\Application\ApplicationException $e)
+		{
+			// allow_url_fopen disabled
+		}
+
 		$this->users = $this->context->users;
 
 
 	}
-	public function actionDefault()
+	public function actionSetupDatabase()
 	{
 		$conn = $this->users->getConnection();
 		$db = unserialize(file_get_contents($this->context->parameters["dbSetupFile"]));
@@ -66,6 +74,8 @@ class InstallPresenter extends BasePresenter
 					$query = substr($query, 0, -1);
 					$query .= ")";
 					$conn->query($query);
+					$query = "ALTER TABLE `$tblName` ENGINE = MyISAM";
+					$conn->query($query);
 				}
 
 			}
@@ -99,8 +109,27 @@ class InstallPresenter extends BasePresenter
 			}
 		}
 		$this->flashMessage("All tables are OK!");
-		if($this->users->getAdminCount() == 0)
+
+		if(ini_get("allow_url_fopen") != "1")
+		{
+			$this->flashMessage("allow_url_fopen directive disabled! You have to set server properties manually!", "warning");
+			$this->redirect("Install:serverSetup");
+		}
+		elseif(!$this->context->parameters["enableOgameApi"])
+		{
+			$this->flashMessage("Ogame API disabled by server administrator! You have to set server properties manually!", "warning");
+			$this->redirect("Install:serverSetup");
+		}
+		elseif($this->users->getAdminCount() == 0)
+		{
+			$this->flashMessage("No admin account found, you should now create one!", "info");
 			$this->redirect("createAdmin");
+		}
+		else
+		{
+			$this->flashMessage("Installation complete!", "success");
+			$this->redirect("Sign:in");
+		}
 
 	}
 	protected function getColDefinition($col)
@@ -144,7 +173,9 @@ class InstallPresenter extends BasePresenter
 				"is_admin" => 1,
 				"active" => 1
 			));
-			$this->redirect("this");
+			$this->flashMessage("Installation complete!", "success");
+			$this->redirect("Sign:in");
+
 		}
 		catch(PDOException $e)
 		{
@@ -183,5 +214,44 @@ class InstallPresenter extends BasePresenter
 		}
 		$save = array("tables" => $tables, "columns" => $columns, "indexes" => $indexes);
 		return $save;
+	}
+	protected function createComponentServerSetupForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->addUpload("xml", "serverData.xml")
+				->addRule(Form::FILLED, "You have to upload %label");
+
+		$form->addSubmit("upload", "Upload");
+		$form->onSuccess[] = $this->serverSetupFormSubmitted;
+		return $form;
+	}
+	public function serverSetupFormSubmitted($form)
+	{
+		if($this->context->server->getTable()->limit(1)->fetch()->last_update)
+		{
+			$this->flashMessage("Server data already initialized!", "error");
+			$this->redirect("Sign:in");
+		}
+		$values = $form->getValues();
+		$cache = new Nette\Caching\Cache($this->context->cacheStorage, 'OgameAPI');
+		$cache->save("serverData.xml", $values["xml"]->contents);
+		$this->context->server->updateFromApi();
+		// some errore handling come here
+
+		if($this->users->getAdminCount() == 0)
+		{
+			$this->flashMessage("No admin account found, you should now create one!", "info");
+			$this->redirect("createAdmin");
+		}
+
+		else
+		{
+			$this->flashMessage("Installation complete!", "success");
+			$this->redirect("Sign:in");
+		}
+	}
+	public function actionServerSetup()
+	{
+		$this->template->xmlHref = $this->context->server->ogameApiGetFileNeeded();
 	}
 }

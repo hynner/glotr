@@ -67,48 +67,69 @@ class UpdatePresenter extends BasePresenter
 	}
 	public function actionUpdateAll()
 	{
-
-
-		if($this->context->players->needApiUpdate())
+		if(!$this->context->parameters["enableOgameApi"])
 		{
-			$this->context->players->updateFromApi();
-			if($this->context->players->needApiUpdate())
-				$response = array("status" => "continue", "what" => $this->context->translator->translate("players"));
-			else
-				$response = array("status" => "continue");
+			$response = array("status" => "disabled");
 			goto send;
 		}
-		if($this->context->alliances->needApiUpdate())
-		{
-			$this->context->alliances->updateFromApi();
-			if($this->context->alliances->needApiUpdate())
-				$response = array("status" => "continue", "what" => $this->context->translator->translate("alliances"));
-			else
-				$response = array("status" => "continue");
-			goto send;
-		}
-
-		if($this->context->universe->needApiUpdate())
-		{
-			$this->context->universe->updateFromApi();
-			if($this->context->universe->needApiUpdate())
-				$response = array("status" => "continue", "what" => $this->context->translator->translate("universe"));
-			else
-				$response = array("status" => "continue");
-			goto send;
-		}
-		foreach($this->context->highscore->getCategories() as $cat)
-			foreach($this->context->highscore->getTypes() as $type)
-				if($this->context->highscore->needApiUpdate($cat, $type))
-				{
-					$this->context->highscore->updateFromApi($cat, $type);
-					if($this->context->highscore->needApiUpdate($cat, $type))
-						$response = array("status" => "continue", "what" => $this->context->translator->translate("highscores"));
-					else
-						$response = array("status" => "continue");
-					goto send;
-				}
 		$response = array("status" => "ok");
+		try
+		{
+			if($this->context->players->needApiUpdate())
+			{
+				$this->context->players->updateFromApi();
+				if($this->context->players->needApiUpdate())
+					$response = array("status" => "continue", "what" => $this->context->translator->translate("players"));
+				else
+					$response = array("status" => "continue");
+				goto send;
+			}
+			if($this->context->alliances->needApiUpdate())
+			{
+				$this->context->alliances->updateFromApi();
+				if($this->context->alliances->needApiUpdate())
+					$response = array("status" => "continue", "what" => $this->context->translator->translate("alliances"));
+				else
+					$response = array("status" => "continue");
+				goto send;
+			}
+
+			if($this->context->universe->needApiUpdate())
+			{
+				$this->context->universe->updateFromApi();
+				if($this->context->universe->needApiUpdate())
+					$response = array("status" => "continue", "what" => $this->context->translator->translate("universe"));
+				else
+					$response = array("status" => "continue");
+				goto send;
+			}
+			foreach($this->context->highscore->getCategories() as $cat)
+				foreach($this->context->highscore->getTypes() as $type)
+					if($this->context->highscore->needApiUpdate($cat, $type))
+					{
+						$this->context->highscore->updateFromApi($cat, $type);
+						if($this->context->highscore->needApiUpdate($cat, $type))
+							$response = array("status" => "continue", "what" => $this->context->translator->translate("highscores"));
+						else
+							$response = array("status" => "continue");
+						goto send;
+					}
+		}
+		catch(Nette\Application\ApplicationException $e)
+		{
+			// allow_url_fopen disable, we need client to upload xml files himself
+			$response = array(
+				"status" => "failed",
+				"what" => array(
+					$this->context->universe->ogameApiGetFileNeeded(),
+					$this->context->alliances->ogameApiGetFileNeeded(),
+					$this->context->players->ogameApiGetFileNeeded()
+					)
+
+				);
+			$response["what"] = array_merge($response["what"], $this->context->highscore->ogameApiGetFileNeeded());
+		}
+
 		send:
 			$this->sendResponse(new Nette\Application\Responses\JsonResponse($response));
 	}
@@ -172,4 +193,5 @@ class UpdatePresenter extends BasePresenter
 		$this->sendResponse(new Nette\Application\Responses\TextResponse($xml->asXML()));
 
 	}
+
 }
