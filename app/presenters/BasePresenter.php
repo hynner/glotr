@@ -13,11 +13,6 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		parent::startup();
 
-		if(!isset($this->lang) || !in_array($this->lang, $this->context->parameters["langs"]))
-		{
-			$this->lang = $this->context->parameters["lang"];
-
-		}
 		$this->context->translator->setLang($this->lang);
 		// setup permissions
 		if($this->getUser()->isLoggedIn())
@@ -31,8 +26,19 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			$acl->addResource("administration");
 			//$acl->allow($user->getIdentity()->username, "administration");
 			$user->setAuthorizator($acl);
+			if(!isset($this->lang) && in_array($user->identity->lang, $this->context->parameters["langs"]))
+			{
+				$this->lang = $user->identity->lang;
+			}
 
 		}
+
+		if(!isset($this->lang) || !in_array($this->lang, $this->context->parameters["langs"]))
+		{
+			$this->lang = $this->context->parameters["lang"];
+
+		}
+
 		$nav = new Navigation\Navigation($this, "nav_info");
 		$homepage = $nav->setupHomepage("Overview", $this->link("Homepage:"));
 		$homepage->add("Search in database", $this->link("Information:search"));
@@ -67,6 +73,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			}
 
 		}
+		
 
 
 	}
@@ -92,6 +99,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	}
 	protected function checkPermissions($perm_needed)
 	{
+		$user = $this->getUser()->getIdentity();
+		// admin acc always have all permissions
+		if($user->is_admin == 1)
+			return true;
 		if(!is_array($perm_needed))
 			$perm_needed = array($perm_needed);
 		$cond = true;
@@ -107,7 +118,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 				$property = $key;
 				$value = $val;
 			}
-			$cond = $cond && isset($this->getUser()->getIdentity()->$property) && ((is_array($value)) ? in_array($this->getUser()->getIdentity()->$property, $value) : $this->getUser()->getIdentity()->$property == $value);
+			$cond = $cond && isset($user->$property) && ((is_array($value)) ? in_array($user->$property, $value) : $user->$property == $value);
 
 		}
 		return $cond;
@@ -135,5 +146,9 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$user = $this->getUser()->getIdentity();
 		foreach($params as $key => $value)
 				$user->$key = $value;
+	}
+	protected function createComponentLangSelectionForm()
+	{
+		return new GLOTR\LangSelectionForm($this->context->parameters["langs"], $this->lang);
 	}
 }

@@ -8,15 +8,28 @@ jQuery.ajaxSetup({
         if (payload.snippets) {
             for (var i in payload.snippets) {
                 $('#' + i).html(payload.snippets[i]);
-				/*if(i == "snippet--flashMessages")
+				if(i == "snippet--flashMessages")
 				{
 					$(".flash").fadeOut(10000);
-				}*/
+					createHighlight($(".flash.success"));
+					createError($(".flash.error"));
+				}
             }
         }
 		$("#ajax-spinner").hide();
     }
 });
+function createHighlight(obj){
+    obj.addClass('ui-state-highlight ui-corner-all');
+	obj.css({"margin-top": "20px", "padding" : "0 .7em"});
+    obj.html('<p><span class="ui-icon ui-icon-check" style="float: left; margin-right:.3em; margin-top: .22em;"></span>'+obj.html()+'</p>');
+}
+
+function createError(obj){
+    obj.addClass('ui-state-error ui-corner-all');
+	obj.css({"margin-top": "20px", "padding" : "0 .7em"});
+    obj.html('<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right:.3em; margin-top: .22em;"></span>'+obj.html()+'</p>');
+}
 
 function showSpinner(event)
 {
@@ -105,6 +118,10 @@ $(document).ready(function () {
 
 		});
 		$(".tabs-container").tabs();
+});
+$( function() {
+
+	$("#sidebar").height($(document).height() - $("#panel-top").outerHeight());
 });
 
 

@@ -10,10 +10,12 @@ class PlanetInfo extends Control
 	{
 		$this->context = $context;
 	}
-	public function render($result)
+	public function render($result, $moon = false)
 	{
 
-		$this->link("");
+		$prefix = "planet_";
+		if($moon)
+			$prefix = "moon_";
 
 		$template = $this->createTemplate();
 		$template = $template->setFile(__DIR__ .'/PlanetInfo.latte');
@@ -21,11 +23,13 @@ class PlanetInfo extends Control
 		$template->result = $result;
 		$template->dateTimeFormat = "j. n. Y H:i:s";
 		$tmp = $this->context->espionages->allInfo;
-		$template->resources = $this->context->espionages->filterData($result, $tmp["planet_resources"], true);
-		$template->fleet = $this->context->espionages->filterData($result, $tmp["planet_fleet"], false);
-		$template->defence = $this->context->espionages->filterData($result, $tmp["planet_defence"], false);
-		$template->buildings = $this->context->espionages->filterData($result,$tmp["planet_buildings"], false);
+		$template->resources = $this->context->espionages->filterData($result, $tmp[$prefix."resources"], true);
+		$template->fleet = $this->context->espionages->filterData($result, $tmp[$prefix."fleet"], false);
+		$template->defence = $this->context->espionages->filterData($result, $tmp[$prefix."defence"], false);
+		$template->buildings = $this->context->espionages->filterData($result,$tmp[$prefix."buildings"], false);
 		$template->researches = $this->context->espionages->filterData($result, $tmp["researches"], true);
+		$template->prefix = $prefix;
+		$template->moon = $moon;
 		$template->render();
 	}
 	protected function createComponentPlanetInfoBlock()

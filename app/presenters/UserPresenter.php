@@ -40,6 +40,8 @@ class UserPresenter extends BasePresenter
 		$form->addSelect("timezone", "Your timezone", DateTimeZone::listIdentifiers())
 				->setPrompt("Use ogame server timezone")
 				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()));
+		$form->addSelect("lang", "Language", array_combine($this->context->parameters["langs"], $this->context->parameters["langs"]))
+				->setDefaultValue(($user->lang) ? $user->lang : $this->context->parameters["lang"]);
 
 		$form->addSubmit("save", "Save");
 		$form->onSuccess[] = $this->userSettingsFormSubmitted;
@@ -58,7 +60,7 @@ class UserPresenter extends BasePresenter
 		$params["id_player"] = $values["id_player"];
 		$timezones = DateTimeZone::listIdentifiers();
 		$params["timezone"] = (!is_null($values["timezone"])) ? $timezones[$values["timezone"]] : "";
-
+		$params["lang"] = $values["lang"];
 		$this->context->users->getTable()->where("id_user", $this->getUser()->getIdentity()->id)->update($params);
 		$this->flashMessage("Your settings was saved!", "success");
 		$this->setUserParams($params);
@@ -77,5 +79,10 @@ class UserPresenter extends BasePresenter
 		$tmp = $this->context->users->find($this->getUser()->getIdentity()->id_user);
 		if($tmp->password != GLOTR\Authenticator::calculateHash($values["oldPass"], $tmp->password))
 				$form->addError("Wrong old password!");
+		if($this->isAjax())
+		{
+			$this->invalidateControl("userSettingsForm");
+			$this->invalidateControl("flashMessages");
+		}
 	}
 }

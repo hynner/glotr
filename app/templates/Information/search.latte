@@ -6,45 +6,49 @@
 {/snippet}
 {snippet planetList}
 <p>{_ "Last updated"}: {date("H:i:s")}</p>
+{if count($results) > 0}
+	{if $results}
+		{control vp}
+	{/if}
+	<table id="searchResults">
+		<thead>
+			<tr>
+				<th>{_ "Coordinates"}</th>
+				<th>{_ "Moon"}</th>
+				<th>{_ "DF"}</th>
+				<th>{_ "Alliance"}</th>
+				<th>{_ "Planet name"}</th>
+				<th>{_ "Player name"}</th>
+				<th>{_ "Status"}</th>
+				<th>{_ "Last updated"}</th>
+				<th>{_ "Planet info"}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach $results as $result}
+				{if $iterator->isOdd()}
+					<tr class="odd">
+				{else}
+					<tr>
+				{/if}
+						<td>{$result["galaxy"]}:{$result["system"]}:{$result["position"]}</td>
+						<td>{if $result["moon_size"] || $result["moon_res_updated"]}{control planetInfo, $result, true}{else}-{/if}</td>
+						<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
+						<td><a n:if="$result['_alliances_tag']" n:href="Information:allianceInfo $result['_alliances_id_alliance_ogame']">{$result["_alliances_tag"]}</a></td>
+						<td>{$result["name"]}</td>
+						<td><a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => $result['_computed_status_class']">{$result["playername"]}</a></td>
+						<td>{$result["status"]}</td>
+						<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
+						<td>
+							{control planetInfo, $result}
+						</td>
+					</tr>
+			{/foreach}
 
-{if $results}
-	{control vp}
+		</tbody>
+	</table>
+{else}
+<p>{_ "No results found!"}</p>
 {/if}
-<table id="searchResults">
-	<thead>
-		<tr>
-			<th>{_ "Coordinates"}</th>
-			<th>{_ "Moon"}</th>
-			<th>{_ "DF"}</th>
-			<th>{_ "Alliance"}</th>
-			<th>{_ "Planet name"}</th>
-			<th>{_ "Player name"}</th>
-			<th>{_ "Status"}</th>
-			<th>{_ "Last updated"}</th>
-			<th>{_ "Planet info"}</th>
-		</tr>
-	</thead>
-	<tbody>
-		{foreach $results as $result}
-			{if $iterator->isOdd()}
-				<tr class="odd">
-			{else}
-				<tr>
-			{/if}
-					<td>{$result["galaxy"]}:{$result["system"]}:{$result["position"]}:</td>
-					<td>{$result["moon_size"]}</td>
-					<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
-					<td><a n:if="$result['_alliances_tag']" n:href="Information:allianceInfo $result['_alliances_id_alliance_ogame']">{$result["_alliances_tag"]}</a></td>
-					<td>{$result["name"]}</td>
-					<td><a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => $result['_computed_status_class']">{$result["playername"]}</a></td>
-					<td>{$result["status"]}</td>
-					<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
-					<td>
-						{control planetInfo, $result}
-					</td>
-				</tr>
-		{/foreach}
-	</tbody>
-</table>
 {/snippet}
 {/block}

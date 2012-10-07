@@ -119,4 +119,12 @@ class Table extends Nette\Object
 		else
 			return false;
 	}
+	protected function getMoonsFromPlanets($planets)
+	{
+		$moons = array();
+			foreach($planets as $planet)
+				if($planet["moon_size"] || $planet["moon_res_updated"])
+					$moons[] = $planet;
+		return $moons;
+	}
 }

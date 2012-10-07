@@ -98,7 +98,7 @@ class Alliances extends Table
 		$res = $this->container->universe->getTable()->where("id_player", array_keys($ret["players"]))->order("galaxy ASC, system ASC, position ASC");
 		while($r = $res->fetch())
 			$ret["planets"][] = $r->toArray();
-
+		$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
 		return $ret;
 	}
 }

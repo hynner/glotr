@@ -1,19 +1,19 @@
-{if $result["planet_res_updated"]}
-	<img n:attr="src => $basePath.'/images/icons/report-view.png', alt => '', class => 'report-open', id => 'open-'.$result['id_planet'] "/>
-	<div class="planet-info" id="info-{$result["id_planet"]}">
-	<p class="planet-info-title" id="info-title-{$result["id_planet"]}">{_ "Planet info"} - {$result["galaxy"].":".$result["system"].":".$result["position"]}</p>
-	{control planetInfoBlock, ($resources) /*? $resources : array()*/, "resources", ($result["planet_res_updated"]) ? $result["planet_res_updated"] : NULL}
+{if $result[$prefix."res_updated"]}
+	<img n:attr="src => $basePath.'/images/icons/report-view.png', alt => '', class => 'report-open', id => 'open-'.$result['id_planet'].$moon "/>
+	<div class="planet-info" id="info-{$result["id_planet"].$moon}">
+	<p class="planet-info-title" id="info-title-{$result["id_planet"].$moon}">{_ "Planet info"} - {$result["galaxy"].":".$result["system"].":".$result["position"]} {($moon) ? _("moon") : ""}</p>
+	{control planetInfoBlock, ($resources) /*? $resources : array()*/, "resources", ($result[$prefix."res_updated"]) ? $result[$prefix."res_updated"] : NULL}
 
-	{control planetInfoBlock, ($fleet) /*? $fleet : array()*/, "fleet", ($result["planet_fleet_updated"]) ? $result["planet_fleet_updated"] : NULL}
+	{control planetInfoBlock, ($fleet) /*? $fleet : array()*/, "fleet", ($result[$prefix."fleet_updated"]) ? $result[$prefix."fleet_updated"] : NULL}
 
-	{control planetInfoBlock, ($defence)/* ? $defence : array()*/, "defence", ($result["planet_defence_updated"]) ? $result["planet_defence_updated"] : NULL}
+	{control planetInfoBlock, ($defence)/* ? $defence : array()*/, "defence", ($result[$prefix."defence_updated"]) ? $result[$prefix."defence_updated"] : NULL}
 
-	{control planetInfoBlock, ($buildings) /*? $buildings : array()*/, "buildings", ($result["planet_build_updated"]) ? $result["planet_build_updated"] : NULL}
+	{control planetInfoBlock, ($buildings) /*? $buildings : array()*/, "buildings", ($result[$prefix."build_updated"]) ? $result[$prefix."build_updated"] : NULL}
 
 
 	{control planetInfoBlock, ($researches) /*? $researches : array()*/, "researches", ($result["research_updated"]) ? $result["research_updated"] : NULL}
 
-	{control simulatorLinks, $result, $resources, $fleet, $defence, $buildings,  $researches}
+	{control simulatorLinks, $result, $resources, $fleet, $defence, $buildings,  $researches, (($moon) ? $prefix : "")}
 	</div>
 
 {else}

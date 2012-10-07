@@ -6,3 +6,6 @@ nbproject/*
 temp/cache/*
 temp/sessions/*
 app/config/testServerAuth.txt
+composer.json
+php.tags
+readme.txt

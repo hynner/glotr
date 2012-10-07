@@ -245,6 +245,7 @@ class Galaxyplugin extends Nette\Object
 						$dbData["scan_depth"] = $this->container->espionages->getScanDepthByData($dbData);
 						$dbData["timestamp"] = time();
 						$dbData["moon"] = (((string) $planetinfo["moon"]) == "false") ? false : true ;
+
 						$dbData["id_planet"] = $id_planet;
 						if($dbData["scan_depth"] == "research")
 						{
@@ -256,6 +257,7 @@ class Galaxyplugin extends Nette\Object
 						{
 							$dbData = $this->container->espionages->addPrefixToKeys("moon_", $dbData, array("timestamp", "scan_depth", "id_planet", "moon"));
 						}
+						
 						$dbData["planetinfo"] = 1;
 						$this->container->espionages->setPlanetInfo($dbData, false);
 

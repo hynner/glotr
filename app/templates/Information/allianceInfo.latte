@@ -38,7 +38,22 @@
 							{$planet["galaxy"].":".$planet["system"].":".$planet["position"]}
 					</a>
 					{if $planet["planet_res_updated"]}
-						{control planetInfo, array_merge( $results["player"], $planet)}
+						{control planetInfo, array_merge( $results["players"][$planet["id_player"]], $planet)}
+
+					{/if},
+					{/foreach}
+				</td>
+			</tr>
+			<tr>
+				<td>{_ "Known moons"}:</td>
+				<td>
+					{count($results["moons"])} -
+					{foreach $results["moons"] as $moon}
+					<a href="">
+							{$moon["galaxy"].":".$moon["system"].":".$moon["position"]}
+					</a>
+					{if $moon["moon_res_updated"]}
+						{control planetInfo, array_merge( $results["players"][$moon["id_player"]], $moon), true}
 
 					{/if},
 					{/foreach}

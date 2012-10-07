@@ -10,7 +10,7 @@ class SimulatorLinks extends Control
 	{
 		$this->context = $context;
 	}
-	public function render($result, $resources, $fleet, $defence, $buildings, $researches)
+	public function render($result, $resources, $fleet, $defence, $buildings, $researches, $prefix)
 	{
 
 
@@ -25,28 +25,28 @@ class SimulatorLinks extends Control
 		 * changing the defender/attacker number doesn´t work
 		 */
 		$def = array(
-				"ship_d0_0_b" => "small_cargo",
-				"ship_d0_1_b" => "large_cargo",
-				"ship_d0_2_b" => "light_fighter",
-				"ship_d0_3_b" => "heavy_fighter",
-				"ship_d0_4_b" => "cruiser",
-				"ship_d0_5_b" => "battle_ship",
-				"ship_d0_6_b" => "colony_ship",
-				"ship_d0_7_b" => "recyclator",
-				"ship_d0_8_b" => "espionage_probe",
-				"ship_d0_9_b" => "bomber",
-				"ship_d0_10_b" => "solar_satellite",
-				"ship_d0_11_b" => "destroyer",
-				"ship_d0_12_b" => "death_star",
-				"ship_d0_13_b" => "battle_cruiser",
-				"ship_d0_14_b" => "rocket_launcher",
-				"ship_d0_15_b" => "light_laser",
-				"ship_d0_16_b" => "heavy_laser",
-				"ship_d0_17_b" => "gauss_cannon",
-				"ship_d0_18_b" => "ion_cannon",
-				"ship_d0_19_b" => "plasma_turret",
-				"ship_d0_20_b" => "small_shield_dome",
-				"ship_d0_21_b" => "large_shield_dome"
+				"ship_d0_0_b" => $prefix."small_cargo",
+				"ship_d0_1_b" => $prefix."large_cargo",
+				"ship_d0_2_b" => $prefix."light_fighter",
+				"ship_d0_3_b" => $prefix."heavy_fighter",
+				"ship_d0_4_b" => $prefix."cruiser",
+				"ship_d0_5_b" => $prefix."battle_ship",
+				"ship_d0_6_b" => $prefix."colony_ship",
+				"ship_d0_7_b" => $prefix."recyclator",
+				"ship_d0_8_b" => $prefix."espionage_probe",
+				"ship_d0_9_b" => $prefix."bomber",
+				"ship_d0_10_b" => $prefix."solar_satellite",
+				"ship_d0_11_b" => $prefix."destroyer",
+				"ship_d0_12_b" => $prefix."death_star",
+				"ship_d0_13_b" => $prefix."battle_cruiser",
+				"ship_d0_14_b" => $prefix."rocket_launcher",
+				"ship_d0_15_b" => $prefix."light_laser",
+				"ship_d0_16_b" => $prefix."heavy_laser",
+				"ship_d0_17_b" => $prefix."gauss_cannon",
+				"ship_d0_18_b" => $prefix."ion_cannon",
+				"ship_d0_19_b" => $prefix."plasma_turret",
+				"ship_d0_20_b" => $prefix."small_shield_dome",
+				"ship_d0_21_b" => $prefix."large_shield_dome"
 			);
 		if($user->id_player)
 			$player = $this->context->players->search($user->id_player);
@@ -60,7 +60,7 @@ class SimulatorLinks extends Control
 			$template->osimulate .= "&engine0_0=".((int) $player["player"]["combustion_drive"])."&engine0_1=".((int) $player["player"]["impulse_drive"])."&engine0_2=".((int) $player["player"]["hyperspace_drive"]);
 
 		}
-		$template->osimulate .= "&enemy_name=".$result["name"]."&enemy_metal=".$resources["metal"]."&enemy_crystal=".$resources["crystal"]."&enemy_deut=".$resources["deuterium"];
+		$template->osimulate .= "&enemy_name=".$result[$prefix."name"]."&enemy_metal=".$resources[$prefix."metal"]."&enemy_crystal=".$resources[$prefix."crystal"]."&enemy_deut=".$resources[$prefix."deuterium"];
 		$f_empty = !empty($fleet);
 		$d_empty = !empty($defence);
 		foreach($def as $os_key => $gl_key)

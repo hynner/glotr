@@ -399,6 +399,7 @@ class InformationPresenter extends BasePresenter
 				$this->invalidateControl ("planetList");
 				$this->invalidateControl ("searchForm");
 				$this->invalidateControl ("paginator");
+				$this->invalidateControl ("planetInfo");
 			}
 	}
 	protected function getRelativeStatusForResults(&$results)

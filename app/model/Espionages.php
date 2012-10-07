@@ -87,8 +87,8 @@ class Espionages extends Table
 			"deathstar"   ,
 			"light_fighter"
 		);
-		$this->moon_fleet = $this->addPrefixToKeys("moon_", $this->planet_fleet);
-		$this->moon_resources =  $this->addPrefixToKeys("moon_",$this->planet_resources);
+		$this->moon_fleet = array_flip($this->addPrefixToKeys("moon_", array_flip($this->planet_fleet)));
+		$this->moon_resources =  array_flip($this->addPrefixToKeys("moon_",array_flip($this->planet_resources)));
 		$this->moon_defence = array(
 			"moon_large_shield_dome"  ,
 			"moon_small_shield_dome"  ,
@@ -174,9 +174,10 @@ class Espionages extends Table
 		{
 			if($dbData["moon"])
 			{
-				$k = "moon_".$key;
-				if(in_array($k, $this->moon))
-						$tmp[$k] = $value;
+
+
+				if(in_array($key, $this->moon))
+						$tmp[$key] = $value;
 
 				// this way, multiple of them will be set
 
@@ -189,7 +190,7 @@ class Espionages extends Table
 		$prefix = "planet";
 		if($dbData["moon"])
 			$prefix = "moon";
-
+		
 		switch($dbData["scan_depth"]):
 				case "research":
 				case "building":
@@ -295,6 +296,8 @@ class Espionages extends Table
 		{
 			if(!in_array($key, $exceptions))
 				$tmp[$prefix.$key] = $value;
+			else
+				$tmp[$key] = $value;
 		}
 		return $tmp;
 	}

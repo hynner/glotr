@@ -113,6 +113,8 @@ class Players extends Table
 		$res = $this->container->universe->findBy(array("id_player" => $id_player));
 		while($r = $res->fetch())
 			$ret["planets"][] = $r->toArray();
+		$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
+
 
 		return $ret;
 	}

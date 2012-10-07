@@ -73,7 +73,8 @@ class AdminPresenter extends BasePresenter
 			$cont = $form->addContainer("user".$user["id_user"]);
 			foreach($this->permissions as $name => $label)
 				$cont->addCheckbox($name, $label)
-						->setDefaultValue($user[$name])
+						->setDefaultValue(($user["is_admin"] == 1) ? true : $user[$name])
+						->setDisabled($user["is_admin"] == 1)
 						->setTranslator(NULL); // permission labels are already translated
 
 		}
@@ -93,6 +94,7 @@ class AdminPresenter extends BasePresenter
 			$this->context->users->setPermissions($id, $perms);
 		}
 		$this->flashMessage("Users permissions has been changed!", "success");
+		
 		if($this->isAjax())
 		{
 			$this->invalidateControl("permissionsForm");

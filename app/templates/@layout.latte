@@ -18,13 +18,13 @@
 
 	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css" type="text/css">
 	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/common.css" type="text/css">
-	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/jquery-ui-1.8.23.custom.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/jquery-ui-1.8.24.custom.css" type="text/css">
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
 	<!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-	<script type="text/javascript" src="{$basePath}/js/jquery-1.8.0.min.js"></script>
-	<script type="text/javascript" src="{$basePath}/js/jquery-ui-1.8.23.custom.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery-ui-1.8.24.custom.min.js"></script>
 	<script type="text/javascript" src="{$basePath}/js/netteForms.js"></script>
 	<script type="text/javascript" src="{$basePath}/js/jquery.nette.js"></script>
 	<script type="text/javascript" src="{$basePath}/js/jquery.ajaxform.js"></script>
@@ -42,7 +42,7 @@
 		</div>
 		<div id="user-panel">
 			{if $user->isLoggedIn()}
-				{_ "Logged as: "}{$user->getIdentity()->username}
+				{_ "Logged as: "} {$user->getIdentity()->username}
 			<a n:href="Sign:out" n:attr="title => _('Logout')">{_ "Logout"}</a>
 			{/if}
 		</div>
@@ -102,6 +102,7 @@
 
 					</div>
 					{/if}
+			{control langSelectionForm}
 			{/if}
 		</div>
 		<div id="content">
