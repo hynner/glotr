@@ -16,6 +16,8 @@ class Galaxyplugin extends Nette\Object
 	}
 	public function update($data)
 	{
+		//GTP sends times in server timezone
+		date_default_timezone_set($this->container->server->timezone);
 		//DBG::log($data);
 		$xml = simplexml_load_string($data);
 		$type = $xml->header["content_type"];

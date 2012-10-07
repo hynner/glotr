@@ -16,7 +16,7 @@ common:
 		ogameApiRecordsAtOnce: 1000 #number of api records processed during one call of the script, decrease it if you runs to the end of the execution time, otherwise you can slightly increase it
 		scoreHistoryPeriod: 7 # time in days, there will be one record in score_history table per this period per player and alliance
 		adminEmail: example@example.com # this is the e-mail address all emails will be send from
-		enableOgameApi: false #set to false if you don´t want to use Ogame API or if your server has allow_url_fopen disabled
+		enableOgameApi: true #set to false if you don´t want to use Ogame API or if your server has allow_url_fopen disabled
 
 	php:
 		# zlib.output_compression: yes
@@ -27,7 +27,7 @@ common:
 
 		database:
 			default:
-				dsn: 'mysql:host=localhost;dbname=glotr_install'
+				dsn: 'mysql:host=localhost;dbname=glotr_devel'
 				user: 'root'
 				password: ''
 

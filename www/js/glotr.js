@@ -8,10 +8,10 @@ jQuery.ajaxSetup({
         if (payload.snippets) {
             for (var i in payload.snippets) {
                 $('#' + i).html(payload.snippets[i]);
-				if(i == "snippet--flashMessages")
+				/*if(i == "snippet--flashMessages")
 				{
 					$(".flash").fadeOut(10000);
-				}
+				}*/
             }
         }
 		$("#ajax-spinner").hide();

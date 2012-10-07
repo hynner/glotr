@@ -9,8 +9,7 @@ common:
 	parameters:
 		version: "1.0.0" # DON´T change this!
 		dbSetupFile: "../app/config/dbSetup.gl"
-		testServerUsrname: "stars"
-		testServerPass: "earlybird"
+		testServerAuthFile: "../app/config/testServerAuth.txt" #if you want to use GLOTR on test server, create this file and place there the username:password for the http authorization
 		testServer: true # true for development on 680 origin server, false otherwise
 	php:
 

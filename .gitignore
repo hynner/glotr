@@ -5,3 +5,4 @@ nbproject/
 nbproject/*
 temp/cache/*
 temp/sessions/*
+app/config/testServerAuth.txt
