@@ -1,0 +1,342 @@
+# Gettext keys exported by GettextTranslator and Translation Panel
+# Created: 2012-10-07 11:24:25
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2012-10-07 11:24+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4 ? 1 : 2));
+\n"
+
+
+msgid "Logged as: "
+msgstr "Přihlášený uživatel:"
+
+msgid "Logout"
+msgstr "Odhlásit"
+
+msgid "Overview"
+msgstr "Přehled"
+
+msgid "Search in database"
+msgstr "Vyhledat v databázi"
+
+msgid "metal_mine"
+msgstr "důl na kov"
+
+msgid "Manage users"
+msgstr ""
+
+msgid "Manage permissions"
+msgstr ""
+
+msgid "GLOTR tool"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Your settings"
+msgstr ""
+
+msgid "User management"
+msgstr ""
+
+msgid "Permissions"
+msgstr ""
+
+msgid "Everything is up to date!"
+msgstr ""
+
+msgid "Updating"
+msgstr ""
+
+msgid "from Ogame API!"
+msgstr ""
+
+msgid "Updating from Ogame API failed!"
+msgstr ""
+
+msgid "Your server is NOT properly configured!"
+msgstr ""
+
+msgid "Ogame API was disabled by server administrator!"
+msgstr ""
+
+msgid "Galaxyplugin update URL"
+msgstr ""
+
+msgid "Logon key"
+msgstr ""
+
+msgid "Get new key"
+msgstr ""
+
+msgid "Detail"
+msgstr ""
+
+msgid "Members"
+msgstr ""
+
+msgid "Graphs"
+msgstr ""
+
+msgid "Information about alliance"
+msgstr ""
+
+msgid "Alliance name"
+msgstr ""
+
+msgid "Total members"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Economy"
+msgstr ""
+
+msgid "Research"
+msgstr ""
+
+msgid "Military"
+msgstr ""
+
+msgid "Military Built"
+msgstr ""
+
+msgid "Military Destroyed"
+msgstr ""
+
+msgid "Military Lost"
+msgstr ""
+
+msgid "Honor"
+msgstr ""
+
+msgid "Known planets"
+msgstr ""
+
+msgid "Planet info"
+msgstr ""
+
+msgid "resources"
+msgstr ""
+
+msgid "Last updated:"
+msgstr ""
+
+msgid "metal"
+msgstr ""
+
+msgid "crystal"
+msgstr ""
+
+msgid "deuterium"
+msgstr ""
+
+msgid "energy"
+msgstr ""
+
+msgid "fleet"
+msgstr ""
+
+msgid "large_cargo"
+msgstr ""
+
+msgid "recycler"
+msgstr ""
+
+msgid "colony_ship"
+msgstr ""
+
+msgid "cruiser"
+msgstr ""
+
+msgid "light_fighter"
+msgstr ""
+
+msgid "defence"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "buildings"
+msgstr ""
+
+msgid "crystal_mine"
+msgstr ""
+
+msgid "deuterium_synthesizer"
+msgstr ""
+
+msgid "solar_plant"
+msgstr ""
+
+msgid "metal_storage"
+msgstr ""
+
+msgid "crystal_storage"
+msgstr ""
+
+msgid "deuterium_tank"
+msgstr ""
+
+msgid "researches"
+msgstr ""
+
+msgid "Simulate with osimulate"
+msgstr ""
+
+msgid "Members of alliance"
+msgstr ""
+
+msgid "Playername"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Score"
+msgstr ""
+
+msgid "Total score"
+msgstr ""
+
+msgid "Alliance tag:"
+msgstr ""
+
+msgid "Player name:"
+msgstr ""
+
+msgid "Galaxy:"
+msgstr ""
+
+msgid "Galaxy must be a number!"
+msgstr ""
+
+msgid "Galaxy must be a number from %d to %d"
+msgstr ""
+
+msgid "Start system:"
+msgstr ""
+
+msgid "System must be a number!"
+msgstr ""
+
+msgid "System must be a number from %d to %d"
+msgstr ""
+
+msgid "End system:"
+msgstr ""
+
+msgid "Position(total) from:"
+msgstr ""
+
+msgid "Position must be a number!"
+msgstr ""
+
+msgid "Position(total) to:"
+msgstr ""
+
+msgid "Position(military) from:"
+msgstr ""
+
+msgid "Position(military) to:"
+msgstr ""
+
+msgid "Position(military destroyed) from:"
+msgstr ""
+
+msgid "Position(military destroyed) to:"
+msgstr ""
+
+msgid "Position(honor) from:"
+msgstr ""
+
+msgid "Position(honor) to:"
+msgstr ""
+
+msgid "Only planets with moons:"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "Results per page:"
+msgstr ""
+
+msgid "Results per page must be a number!"
+msgstr ""
+
+msgid "Order by:"
+msgstr ""
+
+msgid "Coordinates"
+msgstr ""
+
+msgid "Alliance tag"
+msgstr ""
+
+msgid "Ascendant"
+msgstr ""
+
+msgid "Descendant"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Reset filter"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "Moon"
+msgstr ""
+
+msgid "DF"
+msgstr ""
+
+msgid "Alliance"
+msgstr ""
+
+msgid "Planet name"
+msgstr ""
+
+msgid "Player name"
+msgstr ""
+
+msgid "Username:"
+msgstr ""
+
+msgid "Please provide a username."
+msgstr ""
+
+msgid "Password:"
+msgstr ""
+
+msgid "Please provide a password."
+msgstr ""
+
+msgid "Remember me on this computer"
+msgstr ""
+
+msgid "Sign in"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Forgot password"
+msgstr ""
+
