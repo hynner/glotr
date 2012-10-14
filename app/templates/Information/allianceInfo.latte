@@ -34,7 +34,7 @@
 				<td>
 					{count($results["planets"])} -
 					{foreach $results["planets"] as $planet}
-					<a href="">
+					<a n:href="Information:systems $planet['galaxy'], $planet['system']">
 							{$planet["galaxy"].":".$planet["system"].":".$planet["position"]}
 					</a>
 					{if $planet["planet_res_updated"]}
@@ -49,7 +49,7 @@
 				<td>
 					{count($results["moons"])} -
 					{foreach $results["moons"] as $moon}
-					<a href="">
+					<a n:href="Information:systems $moon['galaxy'], $moon['system']">
 							{$moon["galaxy"].":".$moon["system"].":".$moon["position"]}
 					</a>
 					{if $moon["moon_res_updated"]}

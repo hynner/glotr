@@ -97,6 +97,7 @@ $(function () {
 			return false;
 	});
 	$(document).on("keydown", "body", function(event) {
+		
 		switch(event.keyCode)
 		{
 			case 39:
@@ -111,6 +112,12 @@ $(function () {
 					else
 						$(".paginator .page-link:first").click();
 					break;
+			case 38:
+				$(".paginator .up").click();
+					break;
+			case 40:
+				$(".paginator .down").click();
+				break;
 
 		}
 	});
@@ -137,8 +144,8 @@ $(document).ready(function () {
 			dateFormat: "yy-mm-dd"
 		}
 		$(".date").datepicker(datepickerOpt);
-		$(document).on("click",".date",  function() {$(this).datepicker(datepickerOpt);
-
+		$(document).on("click",".date",  function() {
+			$(this).datepicker(datepickerOpt);
 		});
 		$(".tabs-container").tabs();
 
@@ -152,6 +159,20 @@ $(document).ready(function () {
 			$("#" + id).dialog("option", "title", $("#" + id).attr("dialog-title"));
 			$("#" + id).dialog("open");
 
+		});
+		$(document).on("click",".change-galaxy",  function() {
+			if($(this).hasClass("up"))
+				$(this).parent("form").children("input[name=galaxy]").val(parseInt($(this).parent("form").children("input[name=galaxy]").val(), 10)+1);
+			else if($(this).hasClass("down"))
+				$(this).parent("form").children("input[name=galaxy]").val(parseInt($(this).parent("form").children("input[name=galaxy]").val(), 10)-1);
+			$(this).parent("form").ajaxSubmit();
+		});
+	$(document).on("click",".change-system",  function() {
+			if($(this).hasClass("next"))
+				$(this).parent("form").children("input[name=system]").val(parseInt($(this).parent("form").children("input[name=system]").val(), 10)+1);
+			else if($(this).hasClass("previous"))
+				$(this).parent("form").children("input[name=system]").val(parseInt($(this).parent("form").children("input[name=system]").val(), 10)-1);
+			$(this).parent("form").ajaxSubmit();
 		});
 
 });

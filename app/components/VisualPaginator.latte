@@ -9,14 +9,14 @@
 	{if $paginator->isFirst()}
 	<span class="button">« Previous</span>
 	{else}
-	<a href="{link this, 'page' => $paginator->page - 1}" class="ajax previous">« Previous</a>
+	<a href="{link this, 'page' => $paginator->page - 1}" class="ajax previous button">« Previous</a>
 	{/if}
 
 	{foreach $steps as $step}
 	{if $step == $paginator->page}
-		<span class="current">{$step}</span>
+		<span class="current button">{$step}</span>
 	{else}
-		<a href="{link this, 'page' => $step}" class="ajax page-link">{$step}</a>
+		<a href="{link this, 'page' => $step}" class="ajax page-link button">{$step}</a>
 	{/if}
 	{if $iterator->nextValue > $step + 1}<span>…</span>{/if}
 	{/foreach}
@@ -24,7 +24,7 @@
 	{if $paginator->isLast()}
 	<span class="button">Next »</span>
 	{else}
-	<a href="{link this , 'page' => $paginator->page + 1}" class="ajax next">Next »</a>
+	<a href="{link this , 'page' => $paginator->page + 1}" class="ajax button next">Next »</a>
 	{/if}
 </div>
 {/if}

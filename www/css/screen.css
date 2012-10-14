@@ -91,7 +91,7 @@ a[href^="error:"] {
 {
 	width: 77%;
 	float: right;
-	padding: 0 1% 5% 1%;
+	padding: 1em 1% 5% 1%;
 
 
 }
@@ -129,26 +129,9 @@ a[href^="error:"] {
 	font-size: 90%;
 }
 
-.paginator a, .paginator span {
-	margin-right: 0.1em;
-	padding: 0.2em 0.5em;
-	color: #999999;
-}
 
-.paginator a {
-	border: 1px solid #fff;
-	text-decoration: none;
-	color: orange;
-}
-
-.paginator span.button {
-	border: 1px solid orange;
-}
 
 .paginator .current {
-	background: #2E6AB1;
-	border: 1px solid orange;
-	color: white;
 	font-weight: bold;
 }
 

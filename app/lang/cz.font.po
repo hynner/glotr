@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2012-10-07 11:24:25
+# Created: 2012-10-14 15:39:33
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-10-07 11:24+0200\n"
+"PO-Revision-Date: 2012-10-14 15:39+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,6 +12,9 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4 ? 1 : 2));
 \n"
 
+
+msgid "Galaxy must be a number from %d to %d"
+msgstr "Číslo galaxie musí být od %d do %d"
 
 msgid "Logged as: "
 msgstr "Přihlášený uživatel:"
@@ -27,6 +30,9 @@ msgstr "Vyhledat v databázi"
 
 msgid "metal_mine"
 msgstr "důl na kov"
+
+msgid "System must be a number from %d to %d"
+msgstr "Číslo systému musí být od %d do %d"
 
 msgid "Manage users"
 msgstr ""
@@ -67,58 +73,112 @@ msgstr ""
 msgid "Ogame API was disabled by server administrator!"
 msgstr ""
 
-msgid "Galaxyplugin update URL"
+msgid "Alliance tag:"
 msgstr ""
 
-msgid "Logon key"
+msgid "Player name:"
 msgstr ""
 
-msgid "Get new key"
+msgid "Galaxy:"
 msgstr ""
 
-msgid "Detail"
+msgid "Galaxy must be a number!"
 msgstr ""
 
-msgid "Members"
+msgid "Start system:"
 msgstr ""
 
-msgid "Graphs"
+msgid "System must be a number!"
 msgstr ""
 
-msgid "Information about alliance"
+msgid "End system:"
 msgstr ""
 
-msgid "Alliance name"
+msgid "Position(total) from:"
 msgstr ""
 
-msgid "Total members"
+msgid "Position must be a number!"
 msgstr ""
 
-msgid "Total"
+msgid "Position(total) to:"
 msgstr ""
 
-msgid "Economy"
+msgid "Position(military) from:"
 msgstr ""
 
-msgid "Research"
+msgid "Position(military) to:"
 msgstr ""
 
-msgid "Military"
+msgid "Position(military destroyed) from:"
 msgstr ""
 
-msgid "Military Built"
+msgid "Position(military destroyed) to:"
 msgstr ""
 
-msgid "Military Destroyed"
+msgid "Position(honor) from:"
 msgstr ""
 
-msgid "Military Lost"
+msgid "Position(honor) to:"
 msgstr ""
 
-msgid "Honor"
+msgid "Only planets with moons:"
 msgstr ""
 
-msgid "Known planets"
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "Results per page:"
+msgstr ""
+
+msgid "Results per page must be a number!"
+msgstr ""
+
+msgid "Order by:"
+msgstr ""
+
+msgid "Coordinates"
+msgstr ""
+
+msgid "Playername"
+msgstr ""
+
+msgid "Alliance tag"
+msgstr ""
+
+msgid "Ascendant"
+msgstr ""
+
+msgid "Descendant"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Reset filter"
+msgstr ""
+
+msgid "Last updated"
+msgstr ""
+
+msgid "Moon"
+msgstr ""
+
+msgid "DF"
+msgstr ""
+
+msgid "Alliance"
+msgstr ""
+
+msgid "Planet name"
+msgstr ""
+
+msgid "Player name"
+msgstr ""
+
+msgid "Status"
 msgstr ""
 
 msgid "Planet info"
@@ -193,127 +253,67 @@ msgstr ""
 msgid "Simulate with osimulate"
 msgstr ""
 
+msgid "Galaxyplugin update URL"
+msgstr ""
+
+msgid "Logon key"
+msgstr ""
+
+msgid "Get new key"
+msgstr ""
+
+msgid "Detail"
+msgstr ""
+
+msgid "Members"
+msgstr ""
+
+msgid "Graphs"
+msgstr ""
+
+msgid "Information about alliance"
+msgstr ""
+
+msgid "Alliance name"
+msgstr ""
+
+msgid "Total members"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Economy"
+msgstr ""
+
+msgid "Research"
+msgstr ""
+
+msgid "Military"
+msgstr ""
+
+msgid "Military Built"
+msgstr ""
+
+msgid "Military Destroyed"
+msgstr ""
+
+msgid "Military Lost"
+msgstr ""
+
+msgid "Honor"
+msgstr ""
+
+msgid "Known planets"
+msgstr ""
+
 msgid "Members of alliance"
-msgstr ""
-
-msgid "Playername"
-msgstr ""
-
-msgid "Status"
 msgstr ""
 
 msgid "Score"
 msgstr ""
 
 msgid "Total score"
-msgstr ""
-
-msgid "Alliance tag:"
-msgstr ""
-
-msgid "Player name:"
-msgstr ""
-
-msgid "Galaxy:"
-msgstr ""
-
-msgid "Galaxy must be a number!"
-msgstr ""
-
-msgid "Galaxy must be a number from %d to %d"
-msgstr ""
-
-msgid "Start system:"
-msgstr ""
-
-msgid "System must be a number!"
-msgstr ""
-
-msgid "System must be a number from %d to %d"
-msgstr ""
-
-msgid "End system:"
-msgstr ""
-
-msgid "Position(total) from:"
-msgstr ""
-
-msgid "Position must be a number!"
-msgstr ""
-
-msgid "Position(total) to:"
-msgstr ""
-
-msgid "Position(military) from:"
-msgstr ""
-
-msgid "Position(military) to:"
-msgstr ""
-
-msgid "Position(military destroyed) from:"
-msgstr ""
-
-msgid "Position(military destroyed) to:"
-msgstr ""
-
-msgid "Position(honor) from:"
-msgstr ""
-
-msgid "Position(honor) to:"
-msgstr ""
-
-msgid "Only planets with moons:"
-msgstr ""
-
-msgid "yes"
-msgstr ""
-
-msgid "no"
-msgstr ""
-
-msgid "Results per page:"
-msgstr ""
-
-msgid "Results per page must be a number!"
-msgstr ""
-
-msgid "Order by:"
-msgstr ""
-
-msgid "Coordinates"
-msgstr ""
-
-msgid "Alliance tag"
-msgstr ""
-
-msgid "Ascendant"
-msgstr ""
-
-msgid "Descendant"
-msgstr ""
-
-msgid "Search"
-msgstr ""
-
-msgid "Reset filter"
-msgstr ""
-
-msgid "Last updated"
-msgstr ""
-
-msgid "Moon"
-msgstr ""
-
-msgid "DF"
-msgstr ""
-
-msgid "Alliance"
-msgstr ""
-
-msgid "Planet name"
-msgstr ""
-
-msgid "Player name"
 msgstr ""
 
 msgid "Username:"
@@ -338,5 +338,362 @@ msgid "Register"
 msgstr ""
 
 msgid "Forgot password"
+msgstr ""
+
+msgid "solar_satellite"
+msgstr ""
+
+msgid "robotics_factory"
+msgstr ""
+
+msgid "shipyard"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Do you really want to delete this user? This step IS NOT reversible!"
+msgstr ""
+
+msgid "Please note, that all permision changes will be used after next login of that user!"
+msgstr ""
+
+msgid "Users permissions has been changed!"
+msgstr ""
+
+msgid "No results found!"
+msgstr ""
+
+msgid "nanite_factory"
+msgstr ""
+
+msgid "highscores"
+msgstr ""
+
+msgid "intergalactic_research_network"
+msgstr ""
+
+msgid "impulse_drive"
+msgstr ""
+
+msgid "combustion_drive"
+msgstr ""
+
+msgid "hyperspace_drive"
+msgstr ""
+
+msgid "armour_technology"
+msgstr ""
+
+msgid "shielding_technology"
+msgstr ""
+
+msgid "weapons_technology"
+msgstr ""
+
+msgid "graviton_technology"
+msgstr ""
+
+msgid "astrophysics"
+msgstr ""
+
+msgid "computer_technology"
+msgstr ""
+
+msgid "espionage_technology"
+msgstr ""
+
+msgid "plasma_technology"
+msgstr ""
+
+msgid "hyperspace_technology"
+msgstr ""
+
+msgid "ion_technology"
+msgstr ""
+
+msgid "laser_technology"
+msgstr ""
+
+msgid "energy_technology"
+msgstr ""
+
+msgid "Notes"
+msgstr ""
+
+msgid "Fleetsave"
+msgstr ""
+
+msgid "Activity"
+msgstr ""
+
+msgid "Information about player"
+msgstr ""
+
+msgid "Notes:"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Start must be filled!"
+msgstr ""
+
+msgid "Hour"
+msgstr ""
+
+msgid "Hour must be from %d to %d"
+msgstr ""
+
+msgid "Minute"
+msgstr ""
+
+msgid "Minute must be from %d to %d"
+msgstr ""
+
+msgid "End"
+msgstr ""
+
+msgid "End must be filled!"
+msgstr ""
+
+msgid "Optional"
+msgstr ""
+
+msgid "Precision (in minutes)"
+msgstr ""
+
+msgid "Note:"
+msgstr ""
+
+msgid "Fleetsave records"
+msgstr ""
+
+msgid "Start:"
+msgstr ""
+
+msgid "End:"
+msgstr ""
+
+msgid "Precision:"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "galaxyview"
+msgstr ""
+
+msgid "inactivity"
+msgstr ""
+
+msgid "manual"
+msgstr ""
+
+msgid "manual_inactivity"
+msgstr ""
+
+msgid "alliance_page"
+msgstr ""
+
+msgid "message"
+msgstr ""
+
+msgid "scan"
+msgstr ""
+
+msgid "apg_inactivity"
+msgstr ""
+
+msgid "Activity chart for player"
+msgstr ""
+
+msgid "Activity date"
+msgstr ""
+
+msgid "Activity date must be filled!"
+msgstr ""
+
+msgid "Hour must be filled!"
+msgstr ""
+
+msgid "Hour must be in range from %d to %d"
+msgstr ""
+
+msgid "Minute must be filled!"
+msgstr ""
+
+msgid "Minute must be in range from %d to %d"
+msgstr ""
+
+msgid "Activity type"
+msgstr ""
+
+msgid "Please choose activity type"
+msgstr ""
+
+msgid "Inactivity"
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "Sun"
+msgstr ""
+
+msgid "Mon"
+msgstr ""
+
+msgid "Tue"
+msgstr ""
+
+msgid "Wed"
+msgstr ""
+
+msgid "Thu"
+msgstr ""
+
+msgid "Fri"
+msgstr ""
+
+msgid "Sat"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Activity text view:"
+msgstr ""
+
+msgid "Day of week"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Planets"
+msgstr ""
+
+msgid "Sunday"
+msgstr ""
+
+msgid "moon_metal"
+msgstr ""
+
+msgid "moon_crystal"
+msgstr ""
+
+msgid "moon_deuterium"
+msgstr ""
+
+msgid "moon_energy"
+msgstr ""
+
+msgid "moon_robotics_factory"
+msgstr ""
+
+msgid "moon_lunar_base"
+msgstr ""
+
+msgid "moon_sensor_phalanx"
+msgstr ""
+
+msgid "Known moons"
+msgstr ""
+
+msgid "Player score"
+msgstr ""
+
+msgid "moon_large_cargo"
+msgstr ""
+
+msgid "Your settings was saved!"
+msgstr ""
+
+msgid "Diplomacy"
+msgstr ""
+
+msgid "war"
+msgstr ""
+
+msgid "farm"
+msgstr ""
+
+msgid "target"
+msgstr ""
+
+msgid "observe"
+msgstr ""
+
+msgid "friends"
+msgstr ""
+
+msgid "trader"
+msgstr ""
+
+msgid "confederation"
+msgstr ""
+
+msgid "wing"
+msgstr ""
+
+msgid "Set global status"
+msgstr ""
+
+msgid "Wednesday"
+msgstr ""
+
+msgid "research_lab"
+msgstr ""
+
+msgid "Thursday"
+msgstr ""
+
+msgid "espionage_probe"
+msgstr ""
+
+msgid "Friday"
+msgstr ""
+
+msgid "neutral"
+msgstr ""
+
+msgid "Set personal status"
+msgstr ""
+
+msgid "terraformer"
+msgstr ""
+
+msgid "Global"
+msgstr ""
+
+msgid "Personal"
+msgstr ""
+
+msgid "View systems"
 msgstr ""
 

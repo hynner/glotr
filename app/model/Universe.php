@@ -95,7 +95,7 @@ class Universe extends Table
 		{
 			$count = $this->sendQuery("count($uniT.id_planet) as count", $values);
 			$paginator->setItemCount($count[0]["count"]); // celkový počet položek (např. článků)
-			$paginator->setItemsPerPage($values["results_per_page"]); // počet položek na stránce
+			$paginator->setItemsPerPage(((isset($values["results_per_page"]) && $values["results_per_page"] !== "")) ? $values["results_per_page"] : 20); // počet položek na stránce
 		}
 
 		$results = $this->sendQuery($columns, $values, $paginator);
@@ -155,88 +155,88 @@ class Universe extends Table
 		$params = array();
 
 		// if both values are set search with OR
-		if($values["playername"] && $values["alli_tag"])
+		if((isset($values["playername"]) && $values["playername"] !== "") && (isset($values["alli_tag"]) && $values["alli_tag"] !== ""))
 		{
+
 			$select .= "and ($playersT.playername like ? OR $allianceT.tag like ?)";
 			$params[] = $values["playername"];
 			$params[] = $values["alli_tag"];
 		}
 		else
 		{
-			if($values["playername"])
+
+			if((isset($values["playername"]) && $values["playername"] !== ""))
 			{
+
 					$select .= " and $playersT.playername like ? ";
 					$params[] = $values["playername"];
 			}
-			if($values["alli_tag"])
+			if((isset($values["alli_tag"]) && $values["alli_tag"] !== ""))
 			{
 				$select .= " and $allianceT.tag like ?";
 					$params[] = $values["alli_tag"];
 			}
 		}
-		if($values["galaxy"])
+		if((isset($values["galaxy"]) && $values["galaxy"] !== ""))
 		{
 			$select .= " and $uniT.galaxy = ?";
 			$params[] = $values["galaxy"];
 		}
-		if($values["system_start"])
+		if((isset($values["system_start"]) && $values["system_start"] !== ""))
 		{
-			$select .= " and $uniT.system > ?";
+			$select .= " and $uniT.system >= ?";
 			$params[] = $values["system_start"];
 		}
-		if($values["system_end"])
+		if((isset($values["system_end"]) && $values["system_end"] !== ""))
 		{
-			$select .= " and $uniT.system < ?";
+			$select .= " and $uniT.system <= ?";
 			$params[] = $values["system_end"];
 		}
-		if($values["score_0_position_s"])
+		if((isset($values["score_0_position_s"]) && $values["score_0_position_s"] !== ""))
 		{
 			$select .= " and $playersT.score_0_position > ?";
 			$params[] = $values["score_0_position_s"];
 		}
-		if($values["score_0_position_e"])
+		if((isset($values["score_0_position_e"]) && $values["score_0_position_e"] !== ""))
 		{
 			$select .= " and $playersT.score_0_position < ?";
 			$params[] = $values["score_0_position_e"];
 		}
-		if($values["score_3_position_s"])
+		if((isset($values["score_3_position_s"]) && $values["score_3_position_s"] !== ""))
 		{
 			$select .= " and $playersT.score_3_position > ?";
 			$params[] = $values["score_3_position_s"];
 		}
-		if($values["score_3_position_e"])
+		if((isset($values["score_3_position_e"]) && $values["score_3_position_e"] !== ""))
 		{
 			$select .= " and $playersT.score_0_position < ?";
 			$params[] = $values["score_3_position_e"];
 		}
-		if($values["score_6_position_s"])
+		if((isset($values["score_6_position_s"]) && $values["score_6_position_s"] !== ""))
 		{
 			$select .= " and $playersT.score_6_position > ?";
 			$params[] = $values["score_6_position_s"];
 		}
-		if($values["score_6_position_e"])
+		if((isset($values["score_6_position_e"]) && $values["score_6_position_e"] !== ""))
 		{
 			$select .= " and $playersT.score_6_position < ?";
 			$params[] = $values["score_6_position_e"];
 		}
-		if($values["score_7_position_s"])
+		if((isset($values["score_7_position_s"]) && $values["score_7_position_s"] !== ""))
 		{
 			$select .= " and $playersT.score_7_position > ?";
 			$params[] = $values["score_7_position_s"];
 		}
-		if($values["score_7_position_e"])
+		if((isset($values["score_7_position_e"]) && $values["score_7_position_e"] !== ""))
 		{
 			$select .= " and $playersT.score_7_position < ?";
 			$params[] = $values["score_7_position_e"];
 		}
-		if($values["with_moons"])
+		if((isset($values["with_moons"]) && $values["with_moons"] ))
 		{
 			$select .= " and  $uniT.id_moon_ogame  is not null";
 		}
-		$dir = "asc";
-			if($values["order_direction"] == "desc")
-				$dir = "desc";
-		if($values["order_direction"] && $values["order_by"])
+		if((isset($values["order_direction"]) && $values["order_direction"] !== "") && (isset($values["order_by"]) && $values["order_by"] !== ""))
 		{
 			$dir = "asc";
 			if($values["order_direction"] == "desc")

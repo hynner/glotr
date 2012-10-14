@@ -44,6 +44,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$nav = new Navigation\Navigation($this, "nav_info");
 		$homepage = $nav->setupHomepage("Overview", $this->link("Homepage:"));
 		$homepage->add("Search in database", $this->link("Information:search"));
+		$homepage->add("View systems", $this->link("Information:systems"));
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 
@@ -107,11 +108,12 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		return $template;
 
 	}
-	public function flashMessage($message, $type = "info")
+	public function flashMessage($message, $type = "info", $noTranslate = false)
 	{
 		if($this->isAjax())
 			$this->invalidateControl("flashMessages");
-		if($this->context->hasService("translator"))
+
+		if($this->context->hasService("translator") && $noTranslate === FALSE)
 		{
 			$message = $this->context->translator->translate($message);
 		}

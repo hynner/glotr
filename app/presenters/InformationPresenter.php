@@ -72,6 +72,28 @@ class InformationPresenter extends BasePresenter
 		);
 		$this->id_alliance = $id;
 	}
+	public function actionSystems($galaxy, $system)
+	{
+		$galaxy = (int) $galaxy;
+		$system = (int) $system;
+		$maxGal = $this->context->server->galaxies;
+		$maxSys = $this->context->server->systems;
+		if($galaxy < 1 || $galaxy > $maxGal)
+		{
+			$this->flashMessage(sprintf($this->context->translator->translate("Galaxy must be a number from %d to %d"), 1, $maxGal), "error", true);
+			$galaxy = 1;
+		}
+		if($system < 1 || $system > $maxSys)
+		{
+			$this->flashMessage(sprintf($this->context->translator->translate("System must be a number from %d to %d"), 1, $maxSys), "error", true);
+			$system = 1;
+		}
+		$this->loadSearchResults(array("galaxy" => $galaxy, "system_start" => $system, "system_end" => $system));
+		$this->template->dateTimeFormat = "j. n. Y H:i:s";
+		$this->template->current = 0;
+		$this->template->galaxy = $galaxy;
+		$this->template->system = $system;
+	}
 	protected function createComponentSearchForm()
 	{
 		$form = new GLOTR\MyForm;
@@ -253,6 +275,58 @@ class InformationPresenter extends BasePresenter
 			$this->redirect("this");
 		}
 	}
+	protected function createComponentSystemsControlsForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		$form->addText("galaxy", "Galaxy", 3)
+				->addRule(Form::INTEGER, "Galaxy must be a number!");
+		$form->addText("system", "System", 3)
+				->addRule(Form::INTEGER, "System must be a number!");
+		$form->addSubmit("show", "Show");
+
+		$form->setTranslator($this->context->translator);
+		$form->setDefaults(array("galaxy" => 1, "system" => 1));
+
+		$form->onValidate[] = $this->validateSystemsControlsForm;
+		$form->onSuccess[] = $this->systemsControlsFormSubmitted;
+		return $form;
+	}
+	public function validateSystemsControlsForm($form)
+	{
+		$values = $form->values;
+		$maxGal = $this->context->server->galaxies;
+		$maxSys = $this->context->server->systems;
+		if(!isset($values["galaxy"]) || $values["galaxy"] >= $maxGal)
+			$values["galaxy"] = 1;
+		elseif($values["galaxy"] < 1)
+			$values["galaxy"] = $maxGal;
+
+		if(!isset($values["system"]) || $values["system"] >= $maxSys)
+			$values["system"] = 1;
+		elseif($values["system"] < 1)
+			$values["system"] = $maxSys;
+		$form->setValues($values);
+	}
+	public function systemsControlsFormSubmitted($form)
+	{
+		$values = $form->values;
+		if($this->isAjax())
+		{
+			$this->invalidateControl("systemsControlsForm");
+			$this->invalidateControl("systemsResults");
+
+			$this->loadSearchResults(array("galaxy" => $values["galaxy"], "system_start" => $values["system"], "system_end" => $values["system"]));
+			$this->template->current = 0;
+			$this->template->galaxy = $values["galaxy"];
+			$this->template->system = $values["system"];
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+
+	}
 	protected function createComponentActivityChart()
 	{
 		$control = new GLOTR\ActivityChart;
@@ -411,6 +485,7 @@ class InformationPresenter extends BasePresenter
 			$vp = $this->getComponent("vp");
 			$paginator = $vp->getPaginator();
 			$this->template->results = $this->context->universe->search($search, $paginator);
+			
 			$this->getRelativeStatusForResults($this->template->results);
 			if($this->isAjax())
 			{
