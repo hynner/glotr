@@ -36,7 +36,31 @@
 						<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
 						<td><a n:if="$result['_alliances_tag']" n:href="Information:allianceInfo $result['_alliances_id_alliance_ogame']">{$result["_alliances_tag"]}</a></td>
 						<td>{$result["name"]}</td>
-						<td><a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => $result['_computed_status_class']">{$result["playername"]}</a></td>
+						<td class="tooltip">
+							<div class="tooltip_content">
+								<table>
+									<caption>{_ "Player score"}:</caption>
+									<tr>
+										<td>{_ "Total"}:</td>
+										<td>{$result["score_0"]} #{$result["score_0_position"]}</td>
+									</tr>
+									<tr>
+										<td>{_ "Economy"}:</td>
+										<td>{$result["score_1"]} #{$result["score_1_position"]}</td>
+									</tr>
+									<tr>
+										<td>{_ "Research"}:</td>
+										<td>{$result["score_2"]} #{$result["score_2_position"]}</td>
+									</tr>
+									<tr>
+										<td>{_ "Military"}:</td>
+										<td>{$result["score_3"]} #{$result["score_3_position"]}</td>
+									</tr>
+								</table>
+
+							</div>
+							<a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => ''/* $result['_computed_status_class']*/">{$result["playername"]}</a>
+						</td>
 						<td>{$result["status"]}</td>
 						<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
 						<td>

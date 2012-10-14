@@ -6,9 +6,14 @@ class PlanetInfo extends Control
 {
 
 	protected $context;
+	protected $userPlayer;
 	public function setContext($context)
 	{
 		$this->context = $context;
+	}
+	public function setUserPlayer($player)
+	{
+		$this->userPlayer = $player;
 	}
 	public function render($result, $moon = false)
 	{
@@ -42,6 +47,7 @@ class PlanetInfo extends Control
 	{
 		$control = new SimulatorLinks;
 		$control->setContext($this->context);
+		$control->setUserPlayer($this->userPlayer);
 		return $control;
 	}
 }

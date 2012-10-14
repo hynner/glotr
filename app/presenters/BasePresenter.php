@@ -9,6 +9,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	/** @persistent */
 	public $lang;
 	protected $permissions;
+	protected $player_statuses;
+	protected $alliance_statuses;
 	protected function startup()
 	{
 		parent::startup();
@@ -26,14 +28,14 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			$acl->addResource("administration");
 			//$acl->allow($user->getIdentity()->username, "administration");
 			$user->setAuthorizator($acl);
-			if(!isset($this->lang) && in_array($user->identity->lang, $this->context->parameters["langs"]))
+			if(!isset($this->lang) && array_key_exists($user->identity->lang, $this->context->parameters["langs"]))
 			{
 				$this->lang = $user->identity->lang;
 			}
 
 		}
 
-		if(!isset($this->lang) || !in_array($this->lang, $this->context->parameters["langs"]))
+		if(!isset($this->lang) || !array_key_exists($this->lang, $this->context->parameters["langs"]))
 		{
 			$this->lang = $this->context->parameters["lang"];
 
@@ -56,7 +58,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		// setup permissions
 		$this->addPermission("perm_user_mng", "Manage users");
 		$this->addPermission("perm_perm_mng", "Manage permissions");
-
+		$this->addPermission("perm_diplomacy", "Diplomacy");
 		// setup timezone
 		if($this->getUser()->isLoggedIn())
 			$timezone = $this->getUser()->getIdentity()->timezone;
@@ -73,7 +75,25 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			}
 
 		}
-		
+		$translator = $this->context->translator;
+		// I write it in this way, so that translations could be statically analyzed
+		$this->player_statuses = array(
+			"war" => $translator->translate("war"),
+			"farm" => $translator->translate("farm"),
+			"target" => $translator->translate("target"),
+			"observe" => $translator->translate("observe"),
+			"friends" => $translator->translate("friends"),
+			"trader" => $translator->translate("trader"),
+			"confederation" => $translator->translate("confederation"),
+			"wing" => $translator->translate("wing")
+		);
+		$this->alliance_statuses = array(
+			"war" => $translator->translate("war"),
+			"friends" => $translator->translate("friends"),
+			"trader" => $translator->translate("trader"),
+			"confederation" => $translator->translate("confederation"),
+			"wing" => $translator->translate("wing")
+		);
 
 
 	}
@@ -97,36 +117,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		}
 		parent::flashMessage($message, $type);
 	}
-	protected function checkPermissions($perm_needed)
-	{
-		$user = $this->getUser()->getIdentity();
-		// admin acc always have all permissions
-		if($user->is_admin == 1)
-			return true;
-		if(!is_array($perm_needed))
-			$perm_needed = array($perm_needed);
-		$cond = true;
-		foreach($perm_needed as $key => $val)
-		{
-			if(is_integer($key))
-			{
-				$property = $val;
-				$value = 1; // default value
-			}
-			else
-			{
-				$property = $key;
-				$value = $val;
-			}
-			$cond = $cond && isset($user->$property) && ((is_array($value)) ? in_array($user->$property, $value) : $user->$property == $value);
 
-		}
-		return $cond;
-
-	}
 	protected function handlePermissions($perm_needed)
 	{
-		if(!$this->checkPermissions($perm_needed))
+		if(!$this->context->authenticator->checkPermissions($perm_needed))
 		{
 			$this->flashMessage("You don´t have permission for this action!", "error");
 			$this->redirect("Homepage:");

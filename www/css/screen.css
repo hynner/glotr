@@ -161,3 +161,15 @@ a[href^="error:"] {
 	left: 50%;
 	top: 50%;
 }
+.tooltip_content
+{
+	display: none;
+}
+.hidden
+{
+	display: none;
+}
+.no-margin
+{
+	margin: 0;
+}

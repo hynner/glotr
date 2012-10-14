@@ -13,6 +13,34 @@
 		<table>
 			<caption>{_ "Information about player"} {$results["player"]["playername"]}</caption>
 			<tr>
+				<td>{_ "Status"}</td>
+				<td>
+					{snippet playerStatus}
+					{_ "Global"}: {_ $results["player"]["player_status_global"]}
+					{if $perm_diplomacy}
+					<span class="button-icon player-status-change" icon="ui-icon-person" dialog-id="pscd-global"></span>
+					<div class="hidden player-status-change-dialog" id="pscd-global"  dialog-title="{_ "Set global status"}">
+						<p class="no-margin"><a n:href="playerStatusChange! '', 'global'" class="neutral ajax">{_ "neutral"}</a></p>
+						{foreach $statuses as $key => $status}
+							<p class="no-margin"><a n:href="playerStatusChange! $key, 'global'" class="{$key} ajax">{$status}</a></p>
+						{/foreach}
+					</div>
+					<br>
+					{/if}
+					{_ "Personal"}:{if isset($results["player"]["player_status_local"])}
+						{_ $results["player"]["player_status_local"]}
+					{/if}
+					<span class="button-icon player-status-change" icon="ui-icon-person" dialog-id="pscd-local"></span>
+					<div class="hidden player-status-change-dialog" id="pscd-local"  dialog-title="{_ "Set personal status"}">
+						<p class="no-margin"><a n:href="playerStatusChange! '', 'local'" class="neutral ajax">{_ "neutral"}</a></p>
+						{foreach $statuses as $key => $status}
+							<p class="no-margin"><a n:href="playerStatusChange! $key, 'local'" class="{$key} ajax">{$status}</a></p>
+						{/foreach}
+					</div>
+					{/snippet}
+				</td>
+			</tr>
+			<tr>
 				<td>{_ "Alliance"}:</td>
 				<td>
 					<a n:if="$results['alliance']" n:href="Information:allianceInfo $results['alliance']['id_alliance_ogame']">

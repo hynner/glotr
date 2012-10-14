@@ -8,6 +8,7 @@ class InformationPresenter extends BasePresenter
 {
 	protected $id_player;
 	protected $id_alliance;
+	protected $userPlayerData;
 	protected function startup()
 	{
 		parent::startup();
@@ -37,7 +38,8 @@ class InformationPresenter extends BasePresenter
 	{
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
-		$this->template->results = $this->context->players->search($id);
+		$this->id_player = $id;
+		$this->template->results = $this->context->players->search($id, $this->getUser()->getIdentity()->id_user);
 		$this->template->scores = array(
 			0 => "Total",
 			1 => "Economy",
@@ -48,7 +50,9 @@ class InformationPresenter extends BasePresenter
 			4 => "Military Lost",
 			7 => "Honor"
 		);
-		$this->id_player = $id;
+
+		$this->template->statuses = $this->player_statuses;
+		$this->template->perm_diplomacy =  $this->context->authenticator->checkPermissions("perm_diplomacy");
 	}
 	public function actionAllianceInfo($id)
 	{
@@ -174,10 +178,24 @@ class InformationPresenter extends BasePresenter
 		else
 			$this->redirect("this");
 	}
+	public function handlePlayerStatusChange($status, $mode = "local")
+	{
+		$this->context->players->setPlayerStatus($this->id_player, $status, $mode, $this->getUser()->getIdentity()->id_user);
+		if($this->isAjax())
+		{
+			$this->invalidateControl("playerStatus");
+			$this->template->results = $this->context->players->search($this->id_player, $this->getUser()->getIdentity()->id_user);
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+	}
 	protected function createComponentPlanetInfo()
 	{
 			$control = new GLOTR\PlanetInfo;
 			$control->setContext($this->context);
+			$control->setUserPlayer($this->getUserPlayer());
 			return $control;
 
 	}
@@ -404,7 +422,7 @@ class InformationPresenter extends BasePresenter
 	}
 	protected function getRelativeStatusForResults(&$results)
 	{
-		$player2 = $this->context->players->search($this->getUser()->getIdentity()->id_player);
+		$player2 = $this->getUserPlayer();
 		if(!empty($player2))
 			$player2 = $player2["player"];
 
@@ -423,5 +441,11 @@ class InformationPresenter extends BasePresenter
 						$r["_computed_status_class"] .= " "."$key-$value";
 				}
 			}
+	}
+	protected function getUserPlayer()
+	{
+		if(!isset($this->userPlayerData))
+			$this->userPlayerData = $this->context->players->search($this->getUser()->getIdentity()->id_player);
+		return $this->userPlayerData;
 	}
 }

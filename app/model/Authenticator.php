@@ -10,12 +10,13 @@ class Authenticator extends Nette\Object implements NS\IAuthenticator
 {
 	/** @var \GLOTR\Users */
 	private $database;
+	protected $user;
 
 
-
-	public function __construct(Users $database)
+	public function __construct(Users $database, NS\User $user)
 	{
 		$this->database = $database;
+		$this->user = $user;
 	}
 
 
@@ -74,6 +75,32 @@ class Authenticator extends Nette\Object implements NS\IAuthenticator
 		if($salt === NULL)
 			$salt = "$2a$07$".Nette\Utils\Strings::random (32)."$";
 		return crypt($password, $salt);
+	}
+	public function checkPermissions($perm_needed)
+	{
+		$user = $this->user->getIdentity();
+		// admin acc always have all permissions
+		if($user->is_admin == 1)
+			return true;
+		if(!is_array($perm_needed))
+			$perm_needed = array($perm_needed);
+		$cond = true;
+		foreach($perm_needed as $key => $val)
+		{
+			if(is_integer($key))
+			{
+				$property = $val;
+				$value = 1; // default value
+			}
+			else
+			{
+				$property = $key;
+				$value = $val;
+			}
+			$cond = $cond && isset($user->$property) && ((is_array($value)) ? in_array($user->$property, $value) : $user->$property == $value);
+
+		}
+		return $cond;
 	}
 
 }

@@ -1,5 +1,6 @@
 {if $result[$prefix."res_updated"]}
-	<img n:attr="src => $basePath.'/images/icons/report-view.png', alt => '', class => 'report-open', id => 'open-'.$result['id_planet'].$moon "/>
+	<span  icon="ui-icon-script" n:attr="class => 'report-open button-icon', id => 'open-'.$result['id_planet'].$moon"></span>
+
 	<div class="planet-info" id="info-{$result["id_planet"].$moon}">
 	<p class="planet-info-title" id="info-title-{$result["id_planet"].$moon}">{_ "Planet info"} - {$result["galaxy"].":".$result["system"].":".$result["position"]} {($moon) ? _("moon") : ""}</p>
 	{control planetInfoBlock, ($resources) /*? $resources : array()*/, "resources", ($result[$prefix."res_updated"]) ? $result[$prefix."res_updated"] : NULL}

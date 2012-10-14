@@ -49,7 +49,13 @@ class AdminPresenter extends BasePresenter
 		$this->template->users = array();
 		$res =  $this->context->users->findAll();
 		while($r = $res->fetch())
+		{
 			$this->template->users[$r->id_user] = $r->toArray();
+			if($r->id_player)
+				$this->template->users[$r->id_user]["player"] = $this->context->players->findOneBy(array("id_player_ogame" => $r->id_player));
+
+		}
+		
 	}
 	public function handledelete($id)
 	{
@@ -94,7 +100,7 @@ class AdminPresenter extends BasePresenter
 			$this->context->users->setPermissions($id, $perms);
 		}
 		$this->flashMessage("Users permissions has been changed!", "success");
-		
+
 		if($this->isAjax())
 		{
 			$this->invalidateControl("permissionsForm");

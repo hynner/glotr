@@ -9,3 +9,4 @@ app/config/testServerAuth.txt
 composer.json
 php.tags
 readme.txt
+www/js/gtp/

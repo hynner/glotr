@@ -40,7 +40,7 @@ class UserPresenter extends BasePresenter
 		$form->addSelect("timezone", "Your timezone", DateTimeZone::listIdentifiers())
 				->setPrompt("Use ogame server timezone")
 				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()));
-		$form->addSelect("lang", "Language", array_combine($this->context->parameters["langs"], $this->context->parameters["langs"]))
+		$form->addSelect("lang", "Language", $this->context->parameters["langs"])
 				->setDefaultValue(($user->lang) ? $user->lang : $this->context->parameters["lang"]);
 
 		$form->addSubmit("save", "Save");

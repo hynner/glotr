@@ -94,7 +94,7 @@ class Players extends Table
 
 		return $this->container->universe->getTable()->where($coords)->limit(1)->fetch()->id_player;
 	}
-	public function search($id_player)
+	public function search($id_player, $id_user = NULL)
 	{
 		if(!$id_player)
 			return array();
@@ -112,10 +112,23 @@ class Players extends Table
 		}
 		$res = $this->container->universe->findBy(array("id_player" => $id_player));
 		while($r = $res->fetch())
+		{
 			$ret["planets"][] = $r->toArray();
+		}
 		$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
+		// find user´s personal status for this player
+		if($id_user)
+		{
+			$tblName = $this->container->parameters["tablePrefix"]."users_players_statuses";
+			$r = $this->connection->table($tblName)->where(array("id_user" => $id_user, "id_player_ogame" => $id_player))->fetch();
 
-
+			if($r !== FALSE)
+				$ret["player"]["player_status_local"] = $r->player_status_local;
+		}
+		if($ret["player"]["player_status_global"] == "")
+			$ret["player"]["player_status_global"] = "neutral";
+		if(!isset($ret["player"]["player_status_local"]) || $ret["player"]["player_status_local"] == "")
+			$ret["player"]["player_status_local"] = "neutral";
 		return $ret;
 	}
 	/**
@@ -230,5 +243,27 @@ class Players extends Table
 				$ret = true;
 		}
 		return $ret;
+	}
+	public function setPlayerStatus($id_player, $status, $mode, $id_user)
+	{
+		if($mode == "global" && $this->container->authenticator->checkPermissions("perm_diplomacy"))
+			$this->getTable()->where(array("id_player_ogame" => $id_player))->update(array("player_status_global" => $status));
+		elseif($mode == "local")
+		{
+			$tblName = $this->container->parameters["tablePrefix"]."users_players_statuses";
+			$dbData = array(
+				"id_user" => $id_user,
+				"id_player_ogame" => $id_player,
+				"player_status_local" => $status
+			);
+			try{
+				$this->connection->table($tblName)->insert($dbData);
+			}
+			catch(\PDOException $e)
+			{
+				// settings for this user/player combination already exists, update it
+				$this->connection->table($tblName)->where(array("id_user" => $id_user, "id_player_ogame" => $id_player))->update($dbData);
+			}
+		}
 	}
 }

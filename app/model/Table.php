@@ -1,6 +1,7 @@
 <?php
 namespace GLOTR;
 use Nette;
+use Nette\Security as NS;
 class Table extends Nette\Object
 {
 	/** @var \Nette\Database\Connection */
@@ -9,12 +10,13 @@ class Table extends Nette\Object
 	protected $tableName;
 	protected $container;
 	protected $apiFile;
+
 	/** @var string $columnListPrefix prefix used by \GLOTR\Table::getPrefixedColumnList method */
 	protected $columnListPrefix;
-	public function __construct(Nette\Database\Connection $database, Nette\DI\Container $container)
+	public function __construct(Nette\Database\Connection $database,  Nette\DI\Container $container)
 	{
 		$this->connection = $database;
-
+		
 		if($this->tableName === NULL)
 		{
 			$class =  get_class($this);

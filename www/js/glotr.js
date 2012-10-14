@@ -8,17 +8,40 @@ jQuery.ajaxSetup({
         if (payload.snippets) {
             for (var i in payload.snippets) {
                 $('#' + i).html(payload.snippets[i]);
-				if(i == "snippet--flashMessages")
-				{
-					$(".flash").fadeOut(10000);
-					createHighlight($(".flash.success"));
-					createError($(".flash.error"));
-				}
             }
         }
-		$("#ajax-spinner").hide();
+
+		ajaxCallback();
     }
 });
+
+function ajaxCallback()
+{
+		$("#ajax-spinner").hide();
+		$(".tooltip").each(function() {
+			$(this).tipTip({
+				defaultPosition: "left",
+				content: $(this).find(".tooltip_content").html(),
+				keepAlive: true
+			});
+		});
+
+
+	$("#sidebar").height($(document).height() - $("#panel-top").outerHeight());
+	$( "input:submit,  button, .button" ).button();
+	$(".button-icon").each(function() {
+		$(this).button({
+			icons: {primary: $(this).attr("icon")},
+			text: false
+		});
+	});
+
+
+	$(".flash").fadeOut(10000);
+	createHighlight($(".flash.success"));
+	createError($(".flash.error"));
+
+}
 function createHighlight(obj){
     obj.addClass('ui-state-highlight ui-corner-all');
 	obj.css({"margin-top": "20px", "padding" : "0 .7em"});
@@ -118,10 +141,22 @@ $(document).ready(function () {
 
 		});
 		$(".tabs-container").tabs();
+
+		$(document).on("click",".player-status-change", function () {
+			var id = $(this).attr("dialog-id");
+
+			$(".player-status-change-dialog").dialog({
+
+				autoOpen: false
+			});
+			$("#" + id).dialog("option", "title", $("#" + id).attr("dialog-title"));
+			$("#" + id).dialog("open");
+
+		});
+
 });
 $( function() {
-
-	$("#sidebar").height($(document).height() - $("#panel-top").outerHeight());
+	ajaxCallback();
 });
 
 
