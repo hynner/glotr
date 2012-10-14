@@ -69,9 +69,9 @@ class Highscore extends Table
 									return true;
 								}
 							$id = (int) $player["id"];
-							$score = (int) $player["score"];
+							$score = (string) $player["score"]; // as seen on uni680, int is not big enough :)
 							$position = (int) $player["position"];
-							$ships = (int) $player["ships"];
+							$ships = (string) $player["ships"];
 							$dbData = array(
 											"score_$type" => $score,
 											"score_$type"."_position" =>  $position

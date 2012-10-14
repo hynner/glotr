@@ -43,8 +43,8 @@ class Galaxyplugin extends Nette\Object
 							);
 							if($position->debris)
 							{
-								$dbData["debris_metal"] = (int) $position->debris["metal"];
-								$dbData["debris_crystal"] = (int) $position->debris["crystal"];
+								$dbData["debris_metal"] = (string) $position->debris["metal"]; // int may not be big enough
+								$dbData["debris_crystal"] = (string) $position->debris["crystal"];
 							}
 							if($position->moon)
 							{
@@ -238,7 +238,7 @@ class Galaxyplugin extends Nette\Object
 						foreach($planetinfo->entry as $entry)
 						{
 							$name = (string) $entry["name"];
-							$amount = (int) $entry["amount"];
+							$amount = (string) $entry["amount"];
 							$dbData[$this->getColumnName($name)] = $amount;
 						}
 
@@ -257,7 +257,7 @@ class Galaxyplugin extends Nette\Object
 						{
 							$dbData = $this->container->espionages->addPrefixToKeys("moon_", $dbData, array("timestamp", "scan_depth", "id_planet", "moon"));
 						}
-						
+
 						$dbData["planetinfo"] = 1;
 						$this->container->espionages->setPlanetInfo($dbData, false);
 
