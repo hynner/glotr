@@ -145,6 +145,12 @@ class Espionages extends Table
 		{
 			$this->setResearchesFromData($id_player, $dbData);
 		}
+		//now if it is moon, it is neccessary to add moon_ prefix
+		if($dbData["moon"])
+		{
+			$dbData = $this->container->espionages->addPrefixToKeys("moon_", $dbData, array_merge(array("timestamp", "scan_depth", "id_planet", "moon", "id_message_ogame"), $this->researches));
+		}
+		
 		$this->setPlanetInfo($dbData);
 		return true;
 	}
@@ -190,7 +196,7 @@ class Espionages extends Table
 		$prefix = "planet";
 		if($dbData["moon"])
 			$prefix = "moon";
-		
+
 		switch($dbData["scan_depth"]):
 				case "research":
 				case "building":
@@ -226,6 +232,7 @@ class Espionages extends Table
 					$key = $prefix."_fleet_updated";
 					$tmp[$key] = $dbData["timestamp"];
 					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_fleet"}, $empty), array($key => $tmp[$key])));
+
 				resources:
 				default:
 					$key = $prefix."_res_updated";
