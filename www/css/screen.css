@@ -156,3 +156,7 @@ a[href^="error:"] {
 {
 	margin: 0;
 }
+.multi-accordion h3 .ui-icon
+{
+	float: left;
+}

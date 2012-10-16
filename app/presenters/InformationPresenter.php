@@ -22,10 +22,12 @@ class InformationPresenter extends BasePresenter
 	public function actionSearch()
 	{
 		$sess = $this->getSession("searchForm");
+
 		if(isset($sess->searchFormValues))
 		{
-			$this->loadSearchResults($sess->searchFormValues);
 
+			$this->loadSearchResults($sess->searchFormValues);
+			
 		}
 		else
 		{
@@ -143,6 +145,14 @@ class InformationPresenter extends BasePresenter
 					->addRule(Form::INTEGER, "Position must be a number!");
 		$form->addRadioList("with_moons", "Only planets with moons:", array(1 => "yes", 0 => "no"))
 				->getSeparatorPrototype()->setName(NULL);
+		$cont = $form->addContainer("statuses");
+
+		$cont->addCheckbox("all", "All");
+		$cont->addCheckbox("inactives", "Inactives");
+		$cont->addCheckbox("vmode", "V-mode");
+		$cont->addCheckbox("banned", "Banned");
+		$cont->setDefaults(array("all" => true));
+
 		$form->addText("results_per_page", "Results per page:", 5)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "Results per page must be a number!");
@@ -182,13 +192,15 @@ class InformationPresenter extends BasePresenter
 			$values["results_per_page"] = 20;
 		// store values for search form in session
 		$sess = $this->getSession("searchForm");
-		$sess->searchFormValues = $values;
+
+
+
 		if(!$form->offsetExists("reset"))
 			$form->addButton("reset", "Reset filter")
 						->setAttribute("onclick", "$(this).ajax(".$this->link("resetSearchForm!").");");
+
 		$this->loadSearchResults($values);
-
-
+		$sess->searchFormValues = $form->getValues();
 	}
 	public function handleResetSearchForm()
 	{
@@ -484,8 +496,9 @@ class InformationPresenter extends BasePresenter
 	{
 			$vp = $this->getComponent("vp");
 			$paginator = $vp->getPaginator();
+
 			$this->template->results = $this->context->universe->search($search, $paginator);
-			
+
 			$this->getRelativeStatusForResults($this->template->results);
 			if($this->isAjax())
 			{

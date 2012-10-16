@@ -87,8 +87,22 @@ class Universe extends Table
 	{
 		$uniT = $this->tableName;
 		$playersT = $this->container->players->getTableName();
+		$tmp = array();
+		$escaped = array("playername", "alli_tag");
+		foreach($escaped as $key)
+			if(isset($values["$key"]) && $values["$key"])
+			{
+				$tmp["$key"] =$values["$key"];
 
+				// escape MySQL wildcards
+				$values["$key"] = str_replace("_", "\\_", $values["$key"]);
+				$values["$key"] = str_replace("%", "\\%", $values["$key"]);
 
+				// convert wildcards to MySQL wildcards
+				$values["$key"] = str_replace("*", "%", $values["$key"]);
+				$values["$key"] = str_replace("?", "_", $values["$key"]);
+			}
+			
 		$alliances_columns = $this->container->alliances->getPrefixedColumnList("_");
 		$columns = "$uniT.*, $alliances_columns $playersT.*";
 		if(!is_null($paginator))
@@ -99,7 +113,11 @@ class Universe extends Table
 		}
 
 		$results = $this->sendQuery($columns, $values, $paginator);
-
+		foreach($escaped as $key)
+		if(isset($values["$key"]) && $values["$key"])
+		{
+			$values["$key"] =$tmp["$key"];
+		}
 		return $results;
 
 	}
@@ -236,6 +254,46 @@ class Universe extends Table
 		{
 			$select .= " and  $uniT.id_moon_ogame  is not null";
 		}
+		if((isset($values["statuses"]) && $values["statuses"] ))
+		{
+
+			if(!$values["statuses"]["all"])
+			{
+				$select .= " and ( 0 "; // 0 so I don´t have to care about OR statement
+				$not = " and ( 1  ";
+				if($values["statuses"]["inactives"])
+				{
+					$select .= " or $playersT.status  like \"%i%\" ";
+				}
+				else // if it is false it means, players can´t be inactives!
+				{
+					$not .= " and $playersT.status not like \"%i%\" ";
+				}
+
+				if($values["statuses"]["vmode"])
+				{
+					$select .= " or $playersT.status  like \"%v%\" ";
+				}
+				else
+				{
+					$not .= " and $playersT.status not  like \"%v%\"  ";
+				}
+
+				if($values["statuses"]["banned"])
+				{
+					$select .= " or $playersT.status  like \"%b%\" ";
+				}
+				else
+				{
+					$not .= " and $playersT.status not  like \"%b%\"  ";
+				}
+				$not .= " ) ";
+				$select .=  ") $not" ;
+
+			}
+
+		}
+
 		if((isset($values["order_direction"]) && $values["order_direction"] !== "") && (isset($values["order_by"]) && $values["order_by"] !== ""))
 		{
 			$dir = "asc";

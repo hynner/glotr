@@ -46,6 +46,12 @@ class Galaxyplugin extends Nette\Object
 								$dbData["debris_metal"] = (string) $position->debris["metal"]; // int may not be big enough
 								$dbData["debris_crystal"] = (string) $position->debris["crystal"];
 							}
+							else // to overwrite old values
+							{
+								$dbData["debris_metal"] = 0;
+								$dbData["debris_crystal"] = 0;
+							}
+
 							if($position->moon)
 							{
 								$dbData["moon_size"] = (int) $position->moon["size"];

@@ -15,18 +15,18 @@ $configurator = new Nette\Config\Configurator;
 
 // Enable Nette Debugger for error visualisation & logging
 //$configurator->setDebugMode($configurator::AUTO);
-$configurator->enableDebugger(__DIR__ . '/../log');
+$configurator->enableDebugger( '../log');
 
 // Enable RobotLoader - this will load all classes automatically
-$configurator->setTempDirectory(__DIR__ . '/../temp');
+$configurator->setTempDirectory('../temp');
 $configurator->createRobotLoader()
 	->addDirectory(APP_DIR)
 	->addDirectory(LIBS_DIR)
 	->register();
 
 // Create Dependency Injection container from config.neon file
-$configurator->addConfig(__DIR__ . '/config/AppConf.neon');
-$configurator->addConfig(__DIR__ . '/config/ServerConf.neon');
+$configurator->addConfig(APP_DIR . '/'.CONF_DIRNAME.'/AppConf.neon');
+$configurator->addConfig(APP_DIR . '/'.CONF_DIRNAME.'/ServerConf.neon');
 $container = $configurator->createContainer();
 
 // Setup router

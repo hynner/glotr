@@ -7,10 +7,11 @@
 define('WWW_DIR', __DIR__);
 
 // absolute filesystem path to the application root
-define('APP_DIR', WWW_DIR . '/../app');
+define('APP_DIR',  '../app');
 
 // absolute filesystem path to the libraries
-define('LIBS_DIR', WWW_DIR . '/../libs');
-
+define('LIBS_DIR',  '../libs');
+// you can use this value to have multiple configurations
+define('CONF_DIRNAME', 'config');
 // load bootstrap file
 require APP_DIR . '/bootstrap.php';

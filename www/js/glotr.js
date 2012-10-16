@@ -36,6 +36,9 @@ function ajaxCallback()
 		});
 	});
 
+	$(".current").addClass("ui-state-active");
+	$(".button.current").button("disable");
+	$(".button.current.ui-state-disabled").css({"opacity": 1});
 
 	$(".flash").fadeOut(10000);
 	createHighlight($(".flash.success"));
@@ -97,7 +100,7 @@ $(function () {
 			return false;
 	});
 	$(document).on("keydown", "body", function(event) {
-		
+
 		switch(event.keyCode)
 		{
 			case 39:
@@ -126,6 +129,8 @@ $(function () {
 //planet info box
 $(document).ready(function () {
 
+	$(".ma-content").css({"display": "none"});
+	$(".multi-accordion").multiAccordion({active: 0});
 	$(document).on("mouseover",".report-open", function () {
 		$(".planet-info").dialog({
 		"autoOpen": false
