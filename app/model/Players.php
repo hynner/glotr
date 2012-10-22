@@ -181,6 +181,8 @@ class Players extends Table
 				$status[] = "v_mode";
 			if(strpos($player["status"],"b") !== false)
 				$status[] = "banned";
+			if(strpos($player["status"],"a") !== false)
+				$status[] = "admin";
 		}
 
 		// now check relative status

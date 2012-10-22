@@ -301,7 +301,6 @@ var translationPanel = {
 				}
 			};
 		}
-
 		var selectBox = document.getElementById('TranslationPanel-fileSelectBox');
 		selectBox.onchange = function() {
 			translationPanel.changeFile(this.options[this.selectedIndex].value);
@@ -502,6 +501,8 @@ var translationPanel = {
 			'X-NetteTranslator-File': this.currentFile
 		};
 		for (var i in this.updatedStrings) {
+			
+			if(typeof(this.updatedStrings[i]) != "function") // some weird behaviout, caused by multi-accordion
 			data[this.updatedStrings[i]] = this.strings[this.currentFile][this.updatedStrings[i]];
 		}
 

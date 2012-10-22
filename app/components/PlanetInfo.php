@@ -25,6 +25,8 @@ class PlanetInfo extends Control
 		$template = $this->createTemplate();
 		$template = $template->setFile(__DIR__ .'/PlanetInfo.latte');
 		$template->setTranslator($this->context->translator);
+		$template->perm = $this->context->authenticator->checkPermissions("perm_planet_info");
+
 		$template->result = $result;
 		$template->dateTimeFormat = "j. n. Y H:i:s";
 		$tmp = $this->context->espionages->allInfo;

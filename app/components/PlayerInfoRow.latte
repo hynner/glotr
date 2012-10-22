@@ -1,0 +1,40 @@
+<tr n:attr="class => ($odd) ? 'odd' : ''">
+						<td class="coords">{$result["galaxy"]}:{$result["system"]}:{$result["position"]}</td>
+						<td>{if $result["moon_size"] || $result["moon_res_updated"]}{control planetInfo, $result, true}{/if}</td>
+						<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
+						<td><a n:if="$result['_alliances_tag']" href="{plink Information:allianceInfo $result['_alliances_id_alliance_ogame']}">{$result["_alliances_tag"]}</a></td>
+						<td>{$result["name"]}</td>
+						<td n:attr="class => ($result['status'] == 'a') ? '' : 'tooltip'">
+							<div n:if="$result['status'] != 'a'" class="tooltip_content">
+								<table>
+									<caption>{_ "Player score"}:</caption>
+									<tr>
+										<td>{_ "Total"}:</td>
+										<td>{$result["score_0"]} #{$result["score_0_position"]}</td>
+									</tr>
+									<tr>
+										<td>{_ "Economy"}:</td>
+										<td>{$result["score_1"]} #{$result["score_1_position"]}</td>
+									</tr>
+									<tr>
+										<td>{_ "Research"}:</td>
+										<td>{$result["score_2"]} #{$result["score_2_position"]}</td>
+									</tr>
+									<tr>
+										<td>{_ "Military"}:</td>
+										<td>{$result["score_3"]} #{$result["score_3_position"]}</td>
+									</tr>
+								</table>
+
+							</div>
+							<a href="{plink Information:playerInfo $result['id_player_ogame']}" n:attr="class => 'playername '. $result['_computed_status_class']">{$result["playername"]}</a>
+							{if $result["status"]}({$result["status"]}) {/if}
+							{if $result["status"] != "a"}<span class="text_right">#{$result["score_0_position"]}</span>{/if}
+						</td>
+
+
+						<td>
+							{control planetInfo, $result}
+						</td>
+						<td class="last_update">{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
+					</tr>

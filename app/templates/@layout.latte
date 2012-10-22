@@ -16,8 +16,9 @@
 
 	<title>{block title|striptags|upper}GLOTR{/block}</title>
 
-	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css" type="text/css">
+
 	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/common.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/screen.css" type="text/css">
 	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/jquery-ui-1.9.0.custom.min.css" type="text/css">
 	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/tipTip.css" type="text/css">
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
@@ -41,7 +42,7 @@
 
 	<div id="panel-top">
 		<div id="header">
-			{_ "GLOTR tool"}
+			GLOTR tool
 		</div>
 		<div id="user-panel">
 			{if $user->isLoggedIn()}

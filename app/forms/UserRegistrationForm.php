@@ -18,7 +18,7 @@ class UserRegistrationForm extends MyForm
 				->addRule(Form::MIN_LENGTH, "Password must have at least %d characters!", 4);
 		$this->addPassword("confirm_pass", "Password again:", 30)
 				->addRule(Form::EQUAL, "Passwords must be the same!", $this["password"]);
-		$this->addText("email", "E-mail:", 30)
+		$this->addText("email", "Email:", 30)
 				->addRule(Form::EMAIL, "Please provide valid e-mail address!");
 		$this->addSubmit("register", "Register");
 	}

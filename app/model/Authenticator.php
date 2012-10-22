@@ -33,7 +33,7 @@ class Authenticator extends Nette\Object implements NS\IAuthenticator
 		$row = $this->database->findOneBy(array("username" => $username));
 
 		if (!$row) {
-			throw new NS\AuthenticationException("User '$username' not found.", self::IDENTITY_NOT_FOUND);
+			throw new NS\AuthenticationException("User not found.", self::IDENTITY_NOT_FOUND);
 		}
 
 		if ($row->password !== $this->calculateHash($password, $row->password)) {
@@ -79,6 +79,8 @@ class Authenticator extends Nette\Object implements NS\IAuthenticator
 	public function checkPermissions($perm_needed)
 	{
 		$user = $this->user->getIdentity();
+		if(!$user)
+			return false;
 		// admin acc always have all permissions
 		if($user->is_admin == 1)
 			return true;

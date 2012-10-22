@@ -1,4 +1,4 @@
-{if $result[$prefix."res_updated"]}
+{if $result[$prefix."res_updated"] && $perm}
 	<span  icon="ui-icon-script" n:attr="class => 'report-open button-icon', id => 'open-'.$result['id_planet'].$moon"></span>
 
 	<div class="planet-info" id="info-{$result["id_planet"].$moon}">
@@ -18,5 +18,5 @@
 	</div>
 
 {else}
-	<img n:attr="src => $basePath.'/images/icons/report-empty.png', alt => '' "/>
+	<img n:attr="src => $basePath.'/css/glotr-default/images/icons/report-empty.png', alt => '' "/>
 {/if}

@@ -156,7 +156,7 @@ class InstallPresenter extends BasePresenter
 	protected function createComponentUserRegistrationForm()
 	{
 		$form = new GLOTR\UserRegistrationForm();
-
+		$form->setTranslator($this->context->translator);
 		$form->onSuccess[] = $this->UserRegistrationFormSubmitted;
 		return $form;
 	}
@@ -170,6 +170,7 @@ class InstallPresenter extends BasePresenter
 			$this->users->getTable()->insert(array(
 				"username" => $values["username"],
 				"password" => $this->context->authenticator->calculateHash($values["password"]),
+				"email" => $values["email"],
 				"is_admin" => 1,
 				"active" => 1
 			));

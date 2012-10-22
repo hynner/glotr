@@ -76,6 +76,7 @@ class Navigation extends Control
 	 */
 	public function add($label, $url)
 	{
+
 		return $this->getComponent('homepage')->add($label, $url);
 	}
 

@@ -20,6 +20,7 @@ class NavigationNode extends Container
 	/** @var string */
 	public $url;
 
+
 	/** @var bool */
 	public $isCurrent = false;
 
@@ -30,7 +31,9 @@ class NavigationNode extends Container
 	 * @param string $url
 	 * @return NavigationNode
 	 */
-	public function add($label, $url) {
+	public function add($label, $url, $perm = NULL) {
+		if(!is_null($perm) && !$this->getParent()->getPresenter()->getContext()->authenticator->checkPermissions($perm))
+			return;
 		$navigationNode = new self;
 		$navigationNode->label = $label;
 		$navigationNode->url = $url;

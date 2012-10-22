@@ -9,8 +9,9 @@ class LangSelectionForm extends MyForm
         parent::__construct($parent, $name);
 
 		$this->setMethod("GET");
-		$this->addSelect("lang", "Language", $langs)
+		$this->addSelect("lang", __("Language"), $langs)
 				->setDefaultValue($lang);
+
 		$this->addSubmit("set_lang", "OK");
 
 	}

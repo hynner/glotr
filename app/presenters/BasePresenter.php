@@ -42,24 +42,30 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		}
 
 		$nav = new Navigation\Navigation($this, "nav_info");
-		$homepage = $nav->setupHomepage("Overview", $this->link("Homepage:"));
-		$homepage->add("Search in database", $this->link("Information:search"));
-		$homepage->add("View systems", $this->link("Information:systems"));
+		$homepage = $nav->setupHomepage(__("Overview"), $this->link("Homepage:"));
+		$homepage->add(__("Search in database"), $this->link("Information:search"), "perm_search");
+		$homepage->add(__("View systems"), $this->link("Information:systems"), "perm_galaxyview");
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 
 		$nav = new Navigation\Navigation($this, "nav_admin");
-		$homepage = $nav->setupHomepage("Settings", $this->link("User:"));
-		$homepage->add("Your settings", $this->link("User:userSettings"));
-		$homepage->add("User management", $this->link("Admin:users"));
-		$homepage->add("Permissions", $this->link("Admin:permissions"));
+		$homepage = $nav->setupHomepage(__("Settings"), $this->link("User:"));
+		$homepage->add(__("Your settings"), $this->link("User:userSettings"));
+		$homepage->add(__("User management"), $this->link("Admin:users"), "perm_user_mng");
+		$homepage->add(__("Permissions"), $this->link("Admin:permissions"), "perm_perm_mng");
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 
 		// setup permissions
-		$this->addPermission("perm_user_mng", "Manage users");
-		$this->addPermission("perm_perm_mng", "Manage permissions");
-		$this->addPermission("perm_diplomacy", "Diplomacy");
+		$this->addPermission("perm_user_mng", __("Manage users"));
+		$this->addPermission("perm_perm_mng", __("Manage permissions"));
+		$this->addPermission("perm_diplomacy", __("Diplomacy"));
+		$this->addPermission("perm_update", __("Update"));
+		$this->addPermission("perm_search", __("Search"));
+		$this->addPermission("perm_galaxyview", __("System browsing"));
+		$this->addPermission("perm_detail", __("Player/alli detail"));
+		$this->addPermission("perm_activity", __("Player activity"));
+		$this->addPermission("perm_planet_info", __("Espionages"));
 		// setup timezone
 		if($this->getUser()->isLoggedIn())
 			$timezone = $this->getUser()->getIdentity()->timezone;
@@ -76,6 +82,27 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			}
 
 		}
+		//now try to setup mysql timezone
+		try
+		{
+			$offset = date("Z");
+			$zone = ($offset < 0) ? "-" : "+";
+			$h = floor($offset / 3600);
+			$offset -= $h*3600;
+			$zone .= $h;
+			$zone .= ":";
+			$m = floor($offset / 60);
+			if($m < 10)
+				$m = "0".$m;
+			$zone .= $m;
+
+			$this->context->server->getConnection()->query("SET time_zone = ?;", $zone);
+		}
+		catch(\PDOException $e)
+		{
+			echo $e->getMessage();
+		}
+
 		$translator = $this->context->translator;
 		// I write it in this way, so that translations could be statically analyzed
 		$this->player_statuses = array(
@@ -130,9 +157,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	}
 	protected function addPermission($name, $label = NULL)
 	{
-		if(!is_null($label))
-			$label = $this->context->translator->translate($label);
-		else
+		if(is_null($label))
 			$label = $name;
 
 		$this->permissions[$name] = $label;

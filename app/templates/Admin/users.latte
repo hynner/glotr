@@ -18,10 +18,10 @@
 				<tr n:class="$iterator->isOdd() ? odd">
 					<td>{$user["username"]}</td>
 					<td>{$user["email"]}</td>
-					<td><a n:href="toggleActive! $user['id_user']" class="ajax">{$user["active"] ? _("YES") : _("NO")}</a></td>
+					<td><a n:href="toggleActive! $user['id_user']" class="ajax">{$user["active"] ? __("YES") : __("NO")}</a></td>
 					<td>{$user["player"] ? $user["player"]->playername : "-" }</td>
 					<td>{*$user["id_alliance"] ? $user["id_alliance"] : "-"*}</td>
-					<td>{$user["is_admin"] ? _("YES") : _("NO")}</td>
+					<td>{$user["is_admin"] ? __("YES") : __("NO")}</td>
 					<td><a n:href="delete! $user['id_user']" class="ajax request_confirmation" conf_msg="{_ "Do you really want to delete this user? This step IS NOT reversible!"}"><img n:attr="src => $baseUrl.'/images/icons/delete.png', alt => ''" /></a></td>
 				</tr>
 				{/foreach}

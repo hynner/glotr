@@ -124,10 +124,12 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel
 		}
 
 		$request = $this->container->httpRequest;
+
 		if ($request->isPost() && $request->isAjax() && $request->getHeader(self::XHR_HEADER)) {
+
 			$data = json_decode(file_get_contents('php://input'));
 			$translator = $this->translator;
-
+			
 			if ($data) {
 				if ($session) {
 					$stack = isset($session['stack']) ? $session['stack'] : array();

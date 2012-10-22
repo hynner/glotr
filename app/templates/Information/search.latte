@@ -10,7 +10,7 @@
 	{if $results}
 		{control vp}
 	{/if}
-	<table id="searchResults">
+	<table id="searchResults" class="resultsTable">
 		<thead>
 			<tr>
 				<th>{_ "Coordinates"}</th>
@@ -19,54 +19,14 @@
 				<th>{_ "Alliance"}</th>
 				<th>{_ "Planet name"}</th>
 				<th>{_ "Player name"}</th>
-				<th>{_ "Status"}</th>
-				<th>{_ "Last updated"}</th>
+
 				<th>{_ "Planet info"}</th>
+				<th>{_ "Last updated"}</th>
 			</tr>
 		</thead>
 		<tbody>
 			{foreach $results as $result}
-				{if $iterator->isOdd()}
-					<tr class="odd">
-				{else}
-					<tr>
-				{/if}
-						<td>{$result["galaxy"]}:{$result["system"]}:{$result["position"]}</td>
-						<td>{if $result["moon_size"] || $result["moon_res_updated"]}{control planetInfo, $result, true}{else}-{/if}</td>
-						<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
-						<td><a n:if="$result['_alliances_tag']" n:href="Information:allianceInfo $result['_alliances_id_alliance_ogame']">{$result["_alliances_tag"]}</a></td>
-						<td>{$result["name"]}</td>
-						<td class="tooltip">
-							<div class="tooltip_content">
-								<table>
-									<caption>{_ "Player score"}:</caption>
-									<tr>
-										<td>{_ "Total"}:</td>
-										<td>{$result["score_0"]} #{$result["score_0_position"]}</td>
-									</tr>
-									<tr>
-										<td>{_ "Economy"}:</td>
-										<td>{$result["score_1"]} #{$result["score_1_position"]}</td>
-									</tr>
-									<tr>
-										<td>{_ "Research"}:</td>
-										<td>{$result["score_2"]} #{$result["score_2_position"]}</td>
-									</tr>
-									<tr>
-										<td>{_ "Military"}:</td>
-										<td>{$result["score_3"]} #{$result["score_3_position"]}</td>
-									</tr>
-								</table>
-
-							</div>
-							<a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => ''/* $result['_computed_status_class']*/">{$result["playername"]}</a>
-						</td>
-						<td>{$result["status"]}</td>
-						<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
-						<td>
-							{control planetInfo, $result}
-						</td>
-					</tr>
+				{control playerInfoRow, $result, $iterator->isOdd()}
 			{/foreach}
 
 		</tbody>

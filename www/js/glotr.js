@@ -22,7 +22,7 @@ function ajaxCallback()
 			$(this).tipTip({
 				defaultPosition: "left",
 				content: $(this).find(".tooltip_content").html(),
-				keepAlive: true
+				keepAlive: false
 			});
 		});
 

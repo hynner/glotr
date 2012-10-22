@@ -160,3 +160,79 @@ a[href^="error:"] {
 {
 	float: left;
 }
+/* playername highlighting */
+.playername
+{
+	color: #fff;
+	text-decoration: none;
+}
+
+.plunder-75
+{
+	color: #ffff66;
+
+}
+.inactive
+{
+	color: #6E6E6E;
+}
+.long_inactive
+{
+	color: #4F4F4F;
+}
+.v_mode
+{
+	color: aqua;
+}
+.newbie
+{
+	color: lime;
+}
+.stronger
+{
+	color: #FF0000;
+}
+.outlaw
+{
+	color: #FF33FF;
+}
+.banned
+{
+	text-decoration: line-through;
+	color: #fff;
+}
+
+.admin
+{
+	color: #F48406;
+}
+
+/* styles for results table */
+.resultsTable
+{
+	background: #000;
+	border-radius: 5px;
+	border-collapse: collapse;
+
+}
+.resultsTable tr
+{
+	width: 100%;
+}
+.resultsTable .odd
+{
+	background: #111;
+}
+.resultsTable td, .resultsTable th
+{
+	text-align: center;
+	padding: 3px 5px;
+}
+.resultsTable .coords
+{
+	text-align: left;
+}
+.resultsTable .last_update
+{
+	font-size: 0.8em;
+}

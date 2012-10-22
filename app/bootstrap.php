@@ -9,7 +9,6 @@ use Nette\Application\Routers\Route;
 // Load Nette Framework
 require LIBS_DIR . '/Nette/loader.php';
 
-
 // Configure application
 $configurator = new Nette\Config\Configurator;
 

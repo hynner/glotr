@@ -10,6 +10,7 @@ use Nette\Application\UI\Form,
  */
 class UpdatePresenter extends BasePresenter
 {
+	protected $userIdentity;
 	protected function beforeRender()
 	{
 
@@ -38,7 +39,8 @@ class UpdatePresenter extends BasePresenter
 				if($token)
 				{
 					try{
-						$this->context->authenticator->authenticateByLogonKey($token);
+						$this->userIdentity = $this->context->authenticator->authenticateByLogonKey($token);
+
 						$check = false;
 						//$this->getUser()->getStorage()->setAuthenticated(true);
 						//$this->getUser()->setExpiration("+30 minutes");
@@ -155,7 +157,8 @@ class UpdatePresenter extends BasePresenter
 				$permission = $xml->addChild("permission");
 				$permission->addAttribute("name", "caninsert");
 				// for some reason adding value directly from addChild doesn´t work, this is a workaround
-				$permission->{0} = "true";
+				if($this->userIdentity)
+					$permission->{0} = ($this->userIdentity->perm_update == 1 || $this->userIdentity->is_admin == 1) ? "true" : "false";
 			}
 			else
 			{

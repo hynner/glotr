@@ -6,7 +6,8 @@
 		<li><a href="#detail">{_ "Detail"}</a></li>
 		<li><a href="#notes">{_ "Notes"}</a>
 		<li><a href="#fleetsave">{_ "Fleetsave"}</a>
-		<li><a href="#activity">{_ "Activity"}</a></li>
+
+		<li n:if="$show_activity"><a href="#activity">{_ "Activity"}</a></li>
 
 	</ul>
 	<div id="detail">
@@ -120,7 +121,7 @@
 		</table>
 		{/snippet}
 	</div>
-	<div id="activity">
+	<div id="activity" n:if="$show_activity">
 		<div class="multi-accordion">
 			<h3>{_ "Activity chart"}</h3>
 			<div class="ma-content">

@@ -9,81 +9,51 @@
 
 {/snippet}
 {snippet systemsResults}
-<table id="systemsResults">
+<table id="systemsResults" class="resultsTable">
 		<thead>
 			<tr>
-				<th>{_ "Coordinates"}</th>
+				<th class="coords">{_ "Coordinates"}</th>
 				<th>{_ "Moon"}</th>
 				<th>{_ "DF"}</th>
 				<th>{_ "Alliance"}</th>
 				<th>{_ "Planet name"}</th>
 				<th>{_ "Player name"}</th>
-				<th>{_ "Status"}</th>
-				<th>{_ "Last updated"}</th>
+
 				<th>{_ "Planet info"}</th>
+				<th>{_ "Last updated"}</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php if(!empty($results))
 						$result = $results[$current]; ?>
 			{for $i = 1; $i < 16; $i++}
+
 				{if isset($result) && $result["position"] == $i}
+						<?php
+						$current++; ?>
+
+					{control playerInfoRow, $result, ($i%2) == 1}
 					<?php
-						$current++;
+
 						if($current < count($results))
 							$result =  $results[$current];
+						else
+							$result = NULL;
 					?>
-
-					<tr>
-						<td>{$result["galaxy"]}:{$result["system"]}:{$result["position"]}</td>
-						<td>{if $result["moon_size"] || $result["moon_res_updated"]}{control planetInfo, $result, true}{else}-{/if}</td>
-						<td>{(int)$result["debris_metal"]}/{(int)$result["debris_crystal"]}</td>
-						<td><a n:if="$result['_alliances_tag']" n:href="Information:allianceInfo $result['_alliances_id_alliance_ogame']">{$result["_alliances_tag"]}</a></td>
-						<td>{$result["name"]}</td>
-						<td class="tooltip">
-							<div class="tooltip_content">
-								<table>
-									<caption>{_ "Player score"}:</caption>
-									<tr>
-										<td>{_ "Total"}:</td>
-										<td>{$result["score_0"]} #{$result["score_0_position"]}</td>
-									</tr>
-									<tr>
-										<td>{_ "Economy"}:</td>
-										<td>{$result["score_1"]} #{$result["score_1_position"]}</td>
-									</tr>
-									<tr>
-										<td>{_ "Research"}:</td>
-										<td>{$result["score_2"]} #{$result["score_2_position"]}</td>
-									</tr>
-									<tr>
-										<td>{_ "Military"}:</td>
-										<td>{$result["score_3"]} #{$result["score_3_position"]}</td>
-									</tr>
-								</table>
-
-							</div>
-							<a n:href="Information:playerInfo $result['id_player_ogame']" n:attr="class => ''/* $result['_computed_status_class']*/">{$result["playername"]}</a>
-						</td>
-						<td>{$result["status"]}</td>
-						<td>{$result["last_update"]|date:'j. n. Y H:i:s'}</td>
-						<td>
-							{control planetInfo, $result}
-						</td>
-					</tr>
 					{else}
-					<tr class="empty">
-						<td>{$galaxy}:{$system}:{$i}</td>
-						<td>-</td>
-						<td>-</td>
-						<td>-</td>
-						<td>-</td>
-						<td>-</td>
-						<td>-</td>
-						<td>-</td>
-						<td>-</td>
+					<tr n:attr="class => 'empty '.((($i%2) == 1) ? 'odd' : '')">
+						<td class="coords">{$galaxy}:{$system}:{$i}</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						
 					</tr>
 					{/if}
+
 			{/for}
 		</tbody>
 	</table>

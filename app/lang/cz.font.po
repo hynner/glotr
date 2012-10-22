@@ -1,699 +1,822 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2012-10-14 15:39:33
+# Created: 2012-10-22 19:31:05
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-10-14 15:39+0200\n"
+"PO-Revision-Date: 2012-10-22 19:39+0100\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4 ? 1 : 2));
-\n"
+"Plural-Forms: plural=((n==1) ? 0 : (n>=2 && n<=4 ? 1 : 2));\n"
+"Last-Translator: \n"
+"X-Generator: Poedit 1.5.4\n"
 
+msgid "Action"
+msgstr "Akce"
+
+msgid "Active"
+msgstr "Aktivní"
+
+msgid "Activity"
+msgstr "Aktivita"
+
+msgid "Activity - text view"
+msgstr "Textové zobrazení aktivity"
+
+msgid "Activity chart"
+msgstr "Graf aktivit"
+
+msgid "Activity chart for player"
+msgstr "Graf aktivit pro hráče"
+
+msgid "Activity date"
+msgstr "Datum aktivity"
+
+msgid "Activity date must be filled!"
+msgstr "Datum aktivity musí být vyplňeno!"
+
+msgid "Activity filter form"
+msgstr "Formulář pro filtrování aktivity"
+
+msgid "Activity text view:"
+msgstr "Textové zobrazení aktivity:"
+
+msgid "Activity type"
+msgstr "Typ aktivity"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "All"
+msgstr "Všichni"
+
+msgid "All tables are OK!"
+msgstr "Všechny tabulky jsou v pořádku!"
+
+msgid "Alliance"
+msgstr "Aliance"
+
+msgid "Alliance name"
+msgstr "Jméno aliance"
+
+msgid "Alliance tag"
+msgstr "Alianční zkratka"
+
+msgid "Alliance tag:"
+msgstr "Alianční zkratka:"
+
+msgid "Ascendant"
+msgstr "Vzestupně"
+
+msgid "Banned"
+msgstr "Zabanovaní"
+
+msgid "Click on the link to proceed with installation"
+msgstr "Klikněte na odkaz pro pokračování v instalaci"
+
+msgid "Confirm new password"
+msgstr "Potvrďte nové heslo"
+
+msgid "Coordinates"
+msgstr "Koordináty"
+
+msgid "DF"
+msgstr "DF"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Day of week"
+msgstr "Den v týdnu"
+
+msgid "Descendant"
+msgstr "Sestupně"
+
+msgid "Detail"
+msgstr "Detail"
+
+msgid "Diplomacy"
+msgstr "Diplomacie"
+
+msgid "Do you really want to delete this user? This step IS NOT reversible!"
+msgstr "Chcete opravdu smazat tohoto uživatele? Tento krok se nedá vrátit!"
+
+msgid "Economy"
+msgstr "Ekonomika"
+
+msgid "End"
+msgstr "Konec"
+
+msgid "End must be filled!"
+msgstr "Konec musí být vyplňen!"
+
+msgid "End system:"
+msgstr "Koncový systém"
+
+msgid "End:"
+msgstr "Konec:"
+
+msgid "Espionages"
+msgstr "Špionáže"
+
+msgid "Everything is up to date!"
+msgstr "Všechno je aktuální!"
+
+msgid "Filter"
+msgstr "Filtr"
+
+msgid "Fleetsave"
+msgstr "Fleetsave"
+
+msgid "Fleetsave records"
+msgstr "Záznamy o FS"
+
+msgid "Forgot password"
+msgstr "Zapomenuté heslo"
+
+msgid "Fri"
+msgstr "Pá"
+
+msgid "Friday"
+msgstr "Pátek"
+
+msgid "From"
+msgstr "Od"
+
+msgid "GLOTR Installation"
+msgstr "Instalace GLOTRu"
+
+msgid "Galaxy"
+msgstr "Galaxie"
 
 msgid "Galaxy must be a number from %d to %d"
 msgstr "Číslo galaxie musí být od %d do %d"
 
+msgid "Galaxy must be a number!"
+msgstr "Galaxie musí býýt číslo!"
+
+msgid "Galaxy:"
+msgstr "Galaxie:"
+
+msgid "Galaxyplugin update URL"
+msgstr "URL pro update z Galaxypluginu"
+
+msgid "Get new key"
+msgstr "Vygenerovat nový klíč"
+
+msgid "Global"
+msgstr "Globální"
+
+msgid "Graphs"
+msgstr "Grafy"
+
+msgid "Honor"
+msgstr "Čestné body"
+
+msgid "Hour"
+msgstr "Hodina"
+
+msgid "Hour must be filled!"
+msgstr "Hodina musí být vyplňena!"
+
+msgid "Hour must be from %d to %d"
+msgstr "Hodina musí být od %d do %d"
+
+msgid "Hour must be in range from %d to %d"
+msgstr "Hodina musí být od %d do %d"
+
+msgid "Inactives"
+msgstr "Neaktivní"
+
+msgid "Inactivity"
+msgstr "Neaktivita"
+
+msgid "Information about alliance"
+msgstr "Informace o alianci"
+
+msgid "Information about player"
+msgstr "Informace o hráči"
+
+msgid "Ingame nickname"
+msgstr "Herní přezdívka"
+
+msgid "Installation complete!"
+msgstr "Instalace dokončena!"
+
+msgid "Invalid password."
+msgstr "Špatné heslo"
+
+msgid "Known moons"
+msgstr "Známé měsíce"
+
+msgid "Known planets"
+msgstr "Známé planety"
+
+msgid "Language"
+msgstr "Jazyk"
+
+msgid "Last updated"
+msgstr "Naposledy aktualizováno"
+
+msgid "Last updated:"
+msgstr "Naposledy aktualizováno:"
+
 msgid "Logged as: "
-msgstr "Přihlášený uživatel:"
+msgstr "Přihlášen jako:"
+
+msgid "Logon key"
+msgstr "Přihlašovací klíč"
 
 msgid "Logout"
 msgstr "Odhlásit"
 
+msgid "Manage permissions"
+msgstr "Spravovat oprávnění"
+
+msgid "Manage users"
+msgstr "Spravovat uživatele"
+
+msgid "Manual activity form"
+msgstr "Formulář pro manuální zadání aktivity"
+
+msgid "Members"
+msgstr "Členové"
+
+msgid "Members of alliance"
+msgstr "Členové aliance"
+
+msgid "Military"
+msgstr "Armáda"
+
+msgid "Military Built"
+msgstr "Vojenských postaveno"
+
+msgid "Military Destroyed"
+msgstr "Vojenských zničeno"
+
+msgid "Military Lost"
+msgstr "Vojenských ztraceno"
+
+msgid "Minute"
+msgstr "Minuta"
+
+msgid "Minute must be filled!"
+msgstr "Minuta musí být vyplňena!"
+
+msgid "Minute must be from %d to %d"
+msgstr "Minuta musí být od %d do %d"
+
+msgid "Minute must be in range from %d to %d"
+msgstr "Minuta musí být od %d do %d"
+
+msgid "Mon"
+msgstr "Po"
+
+msgid "Monday"
+msgstr "Pondělí"
+
+msgid "Moon"
+msgstr "Měsíc"
+
+msgid "NO"
+msgstr "NE"
+
+msgid "New password"
+msgstr "Nové heslo"
+
+msgid "No admin account found, you should now create one!"
+msgstr "Nebyl nalezen žádný administrátorský účet. Vytvořte ho!"
+
+msgid "No results found!"
+msgstr "Nebyly nalezeny žádné výsledky!"
+
+msgid "Note:"
+msgstr "Poznámka:"
+
+msgid "Notes"
+msgstr "Poznámky"
+
+msgid "Notes:"
+msgstr "Poznámky:"
+
+msgid "Ogame API was disabled by server administrator!"
+msgstr "OGAME API bylo zakázano administrátorem!"
+
+msgid "Old password"
+msgstr "Staré heslo"
+
+msgid "Only planets with moons:"
+msgstr "Pouze planety s měsíci:"
+
+msgid "Optional"
+msgstr "Volitelné"
+
+msgid "Order by:"
+msgstr "Řadit podle:"
+
 msgid "Overview"
 msgstr "Přehled"
+
+msgid "Password"
+msgstr "Heslo"
+
+msgid "Password again:"
+msgstr "Heslo znovu:"
+
+msgid "Password must be filled!"
+msgstr "Heslo musí být vyplňeno!"
+
+msgid "Password must have at least %d characters!"
+msgstr "Heslo musí mít alespoň %d znaků!"
+
+msgid "Password:"
+msgstr "Heslo:"
+
+msgid "Passwords don´t match!"
+msgstr "Hesla se neshodují"
+
+msgid "Passwords must be the same!"
+msgstr "Hesla se musí shodovat!"
+
+msgid "Permissions"
+msgstr "Oprávnění"
+
+msgid "Personal"
+msgstr "Osobní"
+
+msgid "Planet info"
+msgstr "Info o planetě"
+
+msgid "Planet name"
+msgstr "Jméno planety"
+
+msgid "Planets"
+msgstr "Planety"
+
+msgid "Player activity"
+msgstr "Aktivity hráče"
+
+msgid "Player name"
+msgstr "Jméno hráče"
+
+msgid "Player name:"
+msgstr "Jméno hráče:"
+
+msgid "Player score"
+msgstr "Skóre hráče"
+
+msgid "Player/alli detail"
+msgstr "Detail hráče/ali"
+
+msgid "Playername"
+msgstr "Jméno hráče"
+
+msgid "Please choose activity type"
+msgstr "Prosím vyberte typ aktivity"
+
+msgid ""
+"Please note, that all permision changes will be used after next login of "
+"that user!"
+msgstr ""
+"Všechny změny v nastavení oprávnění se projeví až po dalším přihlášení "
+"uživatele!"
+
+msgid "Please provide a password."
+msgstr "Prosím zadejte heslo"
+
+msgid "Please provide a username."
+msgstr "Prosím zadejte uživatelské jméno"
+
+msgid "Please provide valid e-mail address!"
+msgstr "Prosím uveďte správnou emailovou adresu!"
+
+msgid "Position must be a number!"
+msgstr "Pořadí musí být číslo!"
+
+msgid "Position(honor) from:"
+msgstr "Pořadí(čestné body) od:"
+
+msgid "Position(honor) to:"
+msgstr "Pořadí(vojenské zničené) do:"
+
+msgid "Position(military destroyed) from:"
+msgstr "Pořadí(vojenské zničené) od:"
+
+msgid "Position(military destroyed) to:"
+msgstr "Pořadí(vojenské zničené) do:"
+
+msgid "Position(military) from:"
+msgstr "Pořadí(vojenské) od:"
+
+msgid "Position(military) to:"
+msgstr "Pořadí(vojenské) do:"
+
+msgid "Position(total) from:"
+msgstr "Pořadí(celkové) od:"
+
+msgid "Position(total) to:"
+msgstr "Pořadí(celkové) do:"
+
+msgid "Precision (in minutes)"
+msgstr "Přesnost (v minutách)"
+
+msgid "Precision:"
+msgstr "Přesnost:"
+
+msgid "Register"
+msgstr "Zaregistrovat se"
+
+msgid "Remember me on this computer"
+msgstr "Zapomatovat si mě na tomto počítači"
+
+msgid "Research"
+msgstr "Výzkum"
+
+msgid "Reset filter"
+msgstr "Resetovat"
+
+msgid "Results per page must be a number!"
+msgstr "Počet výsledků na stránku musí být číslo!"
+
+msgid "Results per page:"
+msgstr "Výsledků na stránku:"
+
+msgid "Sat"
+msgstr "So"
+
+msgid "Saturday"
+msgstr "Sobota"
+
+msgid "Save"
+msgstr "Uložit"
+
+msgid "Score"
+msgstr "Score"
+
+msgid "Search"
+msgstr "Hledat"
 
 msgid "Search in database"
 msgstr "Vyhledat v databázi"
 
-msgid "metal_mine"
-msgstr "důl na kov"
+msgid "Send"
+msgstr "Odeslat"
+
+msgid "Set global status"
+msgstr "Nastavit globální status"
+
+msgid "Set personal status"
+msgstr "Nastavit osobní status"
+
+msgid "Settings"
+msgstr "Nastavení"
+
+msgid "Show"
+msgstr "Zobrazit"
+
+msgid "Sign in"
+msgstr "Přihlásit se"
+
+msgid "Simulate with osimulate"
+msgstr "Simulovat s Osimulate"
+
+msgid "Start"
+msgstr "Začátek"
+
+msgid "Start must be filled!"
+msgstr "Začátek musí být vyplňen!"
+
+msgid "Start system:"
+msgstr "Počáteční systém:"
+
+msgid "Start:"
+msgstr "Začátek:"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Sun"
+msgstr "Ne"
+
+msgid "Sunday"
+msgstr "Neděle"
+
+msgid "System"
+msgstr "Systém"
+
+msgid "System browsing"
+msgstr "Procházení systémů"
 
 msgid "System must be a number from %d to %d"
 msgstr "Číslo systému musí být od %d do %d"
 
-msgid "Manage users"
-msgstr ""
-
-msgid "Manage permissions"
-msgstr ""
-
-msgid "GLOTR tool"
-msgstr ""
-
-msgid "Settings"
-msgstr ""
-
-msgid "Your settings"
-msgstr ""
-
-msgid "User management"
-msgstr ""
-
-msgid "Permissions"
-msgstr ""
-
-msgid "Everything is up to date!"
-msgstr ""
-
-msgid "Updating"
-msgstr ""
-
-msgid "from Ogame API!"
-msgstr ""
-
-msgid "Updating from Ogame API failed!"
-msgstr ""
-
-msgid "Your server is NOT properly configured!"
-msgstr ""
-
-msgid "Ogame API was disabled by server administrator!"
-msgstr ""
-
-msgid "Alliance tag:"
-msgstr ""
-
-msgid "Player name:"
-msgstr ""
-
-msgid "Galaxy:"
-msgstr ""
-
-msgid "Galaxy must be a number!"
-msgstr ""
-
-msgid "Start system:"
-msgstr ""
-
 msgid "System must be a number!"
-msgstr ""
+msgstr "Systém musí být číslo!"
 
-msgid "End system:"
-msgstr ""
+msgid "Thu"
+msgstr "Čt"
 
-msgid "Position(total) from:"
-msgstr ""
+msgid "Thursday"
+msgstr "Čtvrtek"
 
-msgid "Position must be a number!"
-msgstr ""
+msgid "Time"
+msgstr "Čas"
 
-msgid "Position(total) to:"
-msgstr ""
-
-msgid "Position(military) from:"
-msgstr ""
-
-msgid "Position(military) to:"
-msgstr ""
-
-msgid "Position(military destroyed) from:"
-msgstr ""
-
-msgid "Position(military destroyed) to:"
-msgstr ""
-
-msgid "Position(honor) from:"
-msgstr ""
-
-msgid "Position(honor) to:"
-msgstr ""
-
-msgid "Only planets with moons:"
-msgstr ""
-
-msgid "yes"
-msgstr ""
-
-msgid "no"
-msgstr ""
-
-msgid "Results per page:"
-msgstr ""
-
-msgid "Results per page must be a number!"
-msgstr ""
-
-msgid "Order by:"
-msgstr ""
-
-msgid "Coordinates"
-msgstr ""
-
-msgid "Playername"
-msgstr ""
-
-msgid "Alliance tag"
-msgstr ""
-
-msgid "Ascendant"
-msgstr ""
-
-msgid "Descendant"
-msgstr ""
-
-msgid "Search"
-msgstr ""
-
-msgid "Reset filter"
-msgstr ""
-
-msgid "Last updated"
-msgstr ""
-
-msgid "Moon"
-msgstr ""
-
-msgid "DF"
-msgstr ""
-
-msgid "Alliance"
-msgstr ""
-
-msgid "Planet name"
-msgstr ""
-
-msgid "Player name"
-msgstr ""
-
-msgid "Status"
-msgstr ""
-
-msgid "Planet info"
-msgstr ""
-
-msgid "resources"
-msgstr ""
-
-msgid "Last updated:"
-msgstr ""
-
-msgid "metal"
-msgstr ""
-
-msgid "crystal"
-msgstr ""
-
-msgid "deuterium"
-msgstr ""
-
-msgid "energy"
-msgstr ""
-
-msgid "fleet"
-msgstr ""
-
-msgid "large_cargo"
-msgstr ""
-
-msgid "recycler"
-msgstr ""
-
-msgid "colony_ship"
-msgstr ""
-
-msgid "cruiser"
-msgstr ""
-
-msgid "light_fighter"
-msgstr ""
-
-msgid "defence"
-msgstr ""
-
-msgid "Unknown"
-msgstr ""
-
-msgid "buildings"
-msgstr ""
-
-msgid "crystal_mine"
-msgstr ""
-
-msgid "deuterium_synthesizer"
-msgstr ""
-
-msgid "solar_plant"
-msgstr ""
-
-msgid "metal_storage"
-msgstr ""
-
-msgid "crystal_storage"
-msgstr ""
-
-msgid "deuterium_tank"
-msgstr ""
-
-msgid "researches"
-msgstr ""
-
-msgid "Simulate with osimulate"
-msgstr ""
-
-msgid "Galaxyplugin update URL"
-msgstr ""
-
-msgid "Logon key"
-msgstr ""
-
-msgid "Get new key"
-msgstr ""
-
-msgid "Detail"
-msgstr ""
-
-msgid "Members"
-msgstr ""
-
-msgid "Graphs"
-msgstr ""
-
-msgid "Information about alliance"
-msgstr ""
-
-msgid "Alliance name"
-msgstr ""
-
-msgid "Total members"
-msgstr ""
+msgid "To"
+msgstr "Do"
 
 msgid "Total"
-msgstr ""
+msgstr "Celkem"
 
-msgid "Economy"
-msgstr ""
-
-msgid "Research"
-msgstr ""
-
-msgid "Military"
-msgstr ""
-
-msgid "Military Built"
-msgstr ""
-
-msgid "Military Destroyed"
-msgstr ""
-
-msgid "Military Lost"
-msgstr ""
-
-msgid "Honor"
-msgstr ""
-
-msgid "Known planets"
-msgstr ""
-
-msgid "Members of alliance"
-msgstr ""
-
-msgid "Score"
-msgstr ""
+msgid "Total members"
+msgstr "Počet členů"
 
 msgid "Total score"
-msgstr ""
+msgstr "Celkové score"
 
-msgid "Username:"
-msgstr ""
+msgid "Tue"
+msgstr "Út"
 
-msgid "Please provide a username."
-msgstr ""
+msgid "Type"
+msgstr "Typ"
 
-msgid "Password:"
-msgstr ""
+msgid "Unknown"
+msgstr "Neznámé"
 
-msgid "Please provide a password."
-msgstr ""
+msgid "Update"
+msgstr "Aktualizace"
 
-msgid "Remember me on this computer"
-msgstr ""
+msgid "Updating"
+msgstr "Aktualizuji"
 
-msgid "Sign in"
-msgstr ""
+msgid "Updating from Ogame API failed!"
+msgstr "Aktualizace z Ogame API selhala!"
 
-msgid "Register"
-msgstr ""
+msgid "User management"
+msgstr "Správa uživatelů"
 
-msgid "Forgot password"
-msgstr ""
-
-msgid "solar_satellite"
-msgstr ""
-
-msgid "robotics_factory"
-msgstr ""
-
-msgid "shipyard"
-msgstr ""
+msgid "User not found."
+msgstr "Uživatel nebyl nalezen"
 
 msgid "Username"
-msgstr ""
+msgstr "Jméno uživatele"
+
+msgid "Username must be filled!"
+msgstr "Uživatelské jméno musí být vyplňeno!"
+
+msgid "Username must have at least %d characters!"
+msgstr "Uživatelské jméno musí mít alespoň %d znaků!"
+
+msgid "Username must have max %d characters!"
+msgstr "Uživatelské jméno musí mít maximálně %d znaků!"
+
+msgid "Username:"
+msgstr "Uživatelské jméno:"
+
+msgid "Usernames"
+msgstr "Uživatelská jména"
+
+msgid "Users permissions has been changed!"
+msgstr "Nastavení oprávnění bylo změněno!"
+
+msgid "V-mode"
+msgstr "Zmražení"
+
+msgid "Verify the setting change with your password please."
+msgstr "Prosím potvrďte změny vaším starým heslem!"
+
+msgid "View systems"
+msgstr "Prohlédnout systémy"
+
+msgid "Wed"
+msgstr "St"
+
+msgid "Wednesday"
+msgstr "Středa"
+
+msgid "Welcome."
+msgstr "Vítejte."
+
+msgid "YES"
+msgstr "ANO"
+
+msgid "You have been signed out."
+msgstr "Byl/a jste odhlášen/a"
+
+msgid "You must enter valid email address!"
+msgstr "Prosím zadejte validní emailovou adresu!"
+
+msgid "Your server is NOT properly configured!"
+msgstr "Váš server NENí správně nakonfigurován!"
+
+msgid "Your settings"
+msgstr "Vaše nastavení"
+
+msgid "alliance page"
+msgstr "alianční stránka"
+
+msgid "apg inactivity"
+msgstr "ali stránka neaktivita"
+
+msgid "armour technology"
+msgstr "pancéřování"
+
+msgid "astrophysics"
+msgstr "astrofyzika"
+
+msgid "buildings"
+msgstr "budovy"
+
+msgid "combustion drive"
+msgstr "spalovací pohon"
+
+msgid "computer technology"
+msgstr "počítačová technologie"
+
+msgid "confederation"
+msgstr "spojenectví"
+
+msgid "crystal mine"
+msgstr "Důl na krystal"
+
+msgid "crystal storage"
+msgstr "sklad krystalu"
+
+msgid "defence"
+msgstr "obrana"
+
+msgid "deuterium synthesizer"
+msgstr "syntetizér deuteria"
+
+msgid "deuterium tank"
+msgstr "nádrž na deuterium"
+
+msgid "energy technology"
+msgstr "energetická technologie"
+
+msgid "espionage technology"
+msgstr "špionážní technologie"
+
+msgid "farm"
+msgstr "farma"
+
+msgid "fleet"
+msgstr "letka"
+
+msgid "friends"
+msgstr "přátelé"
+
+msgid "from Ogame API!"
+msgstr "z Ogame API!"
+
+msgid "galaxyview"
+msgstr "galaxie"
+
+msgid "graviton technology"
+msgstr "gravitonová technologie"
+
+msgid "hyperspace drive"
+msgstr "hyperprostorový pohon"
+
+msgid "hyperspace technology"
+msgstr "hyperprostorová technologie"
+
+msgid "impulse drive"
+msgstr "impulzní pohon"
+
+msgid "inactivity"
+msgstr "neaktivita"
+
+msgid "intergalactic research network"
+msgstr "intergalaktická výzkumná síť"
+
+msgid "ion technology"
+msgstr "iontová technologie"
+
+msgid "laser technology"
+msgstr "laserová technologie"
+
+msgid "manual"
+msgstr "manuální"
+
+msgid "manual inactivity"
+msgstr "manuální neaktivita"
+
+msgid "message"
+msgstr "zpráva"
+
+msgid "metal mine"
+msgstr "důl na kov"
+
+msgid "metal storage"
+msgstr "sklad kovu"
+
+msgid "colony ship"
+msgstr "kolonizační loď"
+
+msgid "cruiser"
+msgstr "křižník"
+
+msgid "crystal"
+msgstr "krystal"
+
+msgid "deuterium"
+msgstr "deuterium"
+
+msgid "energy"
+msgstr "energie"
+
+msgid "light fighter"
+msgstr "lehký stíhač"
+
+msgid "lunar base"
+msgstr "základna na měsíci"
+
+msgid "metal"
+msgstr "kov"
+
+msgid "recycler"
+msgstr "recyklátor"
+
+msgid "sensor phalanx"
+msgstr "sensor falangy"
+
+msgid "nanite factory"
+msgstr "továrna na nanoboty"
+
+msgid "neutral"
+msgstr "neutrální"
+
+msgid "no"
+msgstr "ne"
+
+msgid "observe"
+msgstr "pozorování"
+
+msgid "plasma technology"
+msgstr "plasmová technologie"
+
+msgid "research lab"
+msgstr "výzkumná laboratoř"
+
+msgid "researches"
+msgstr "výzkumy"
+
+msgid "resources"
+msgstr "zdroje"
+
+msgid "robotics factory"
+msgstr "továrna na roboty"
+
+msgid "scan"
+msgstr "špionáž"
+
+msgid "setup database"
+msgstr "nastavení databáze"
+
+msgid "shielding technology"
+msgstr "technologie štítů"
+
+msgid "shipyard"
+msgstr "hangár"
+
+msgid "solar plant"
+msgstr "solární elektrárna"
+
+msgid "solar satellite"
+msgstr "solární satelit"
+
+msgid "target"
+msgstr "cíl"
+
+msgid "terraformer"
+msgstr "terraformer"
+
+msgid "trader"
+msgstr "obchodník"
+
+msgid "war"
+msgstr "válka"
+
+msgid "weapons technology"
+msgstr "zbraňová technologie"
+
+msgid "wing"
+msgstr "wing"
+
+msgid "yes"
+msgstr "ano"
+
+msgid "Your settings was saved!"
+msgstr "Vaše nastavení bylo uloženo!"
+
+msgid "espionage probe"
+msgstr "špionážní sonda"
+
+msgid "large cargo"
+msgstr "velký transportér"
 
 msgid "Email"
 msgstr ""
-
-msgid "Active"
-msgstr ""
-
-msgid "Admin"
-msgstr ""
-
-msgid "Action"
-msgstr ""
-
-msgid "Do you really want to delete this user? This step IS NOT reversible!"
-msgstr ""
-
-msgid "Please note, that all permision changes will be used after next login of that user!"
-msgstr ""
-
-msgid "Users permissions has been changed!"
-msgstr ""
-
-msgid "No results found!"
-msgstr ""
-
-msgid "nanite_factory"
-msgstr ""
-
-msgid "highscores"
-msgstr ""
-
-msgid "intergalactic_research_network"
-msgstr ""
-
-msgid "impulse_drive"
-msgstr ""
-
-msgid "combustion_drive"
-msgstr ""
-
-msgid "hyperspace_drive"
-msgstr ""
-
-msgid "armour_technology"
-msgstr ""
-
-msgid "shielding_technology"
-msgstr ""
-
-msgid "weapons_technology"
-msgstr ""
-
-msgid "graviton_technology"
-msgstr ""
-
-msgid "astrophysics"
-msgstr ""
-
-msgid "computer_technology"
-msgstr ""
-
-msgid "espionage_technology"
-msgstr ""
-
-msgid "plasma_technology"
-msgstr ""
-
-msgid "hyperspace_technology"
-msgstr ""
-
-msgid "ion_technology"
-msgstr ""
-
-msgid "laser_technology"
-msgstr ""
-
-msgid "energy_technology"
-msgstr ""
-
-msgid "Notes"
-msgstr ""
-
-msgid "Fleetsave"
-msgstr ""
-
-msgid "Activity"
-msgstr ""
-
-msgid "Information about player"
-msgstr ""
-
-msgid "Notes:"
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Start"
-msgstr ""
-
-msgid "Date"
-msgstr ""
-
-msgid "Start must be filled!"
-msgstr ""
-
-msgid "Hour"
-msgstr ""
-
-msgid "Hour must be from %d to %d"
-msgstr ""
-
-msgid "Minute"
-msgstr ""
-
-msgid "Minute must be from %d to %d"
-msgstr ""
-
-msgid "End"
-msgstr ""
-
-msgid "End must be filled!"
-msgstr ""
-
-msgid "Optional"
-msgstr ""
-
-msgid "Precision (in minutes)"
-msgstr ""
-
-msgid "Note:"
-msgstr ""
-
-msgid "Fleetsave records"
-msgstr ""
-
-msgid "Start:"
-msgstr ""
-
-msgid "End:"
-msgstr ""
-
-msgid "Precision:"
-msgstr ""
-
-msgid "Time"
-msgstr ""
-
-msgid "galaxyview"
-msgstr ""
-
-msgid "inactivity"
-msgstr ""
-
-msgid "manual"
-msgstr ""
-
-msgid "manual_inactivity"
-msgstr ""
-
-msgid "alliance_page"
-msgstr ""
-
-msgid "message"
-msgstr ""
-
-msgid "scan"
-msgstr ""
-
-msgid "apg_inactivity"
-msgstr ""
-
-msgid "Activity chart for player"
-msgstr ""
-
-msgid "Activity date"
-msgstr ""
-
-msgid "Activity date must be filled!"
-msgstr ""
-
-msgid "Hour must be filled!"
-msgstr ""
-
-msgid "Hour must be in range from %d to %d"
-msgstr ""
-
-msgid "Minute must be filled!"
-msgstr ""
-
-msgid "Minute must be in range from %d to %d"
-msgstr ""
-
-msgid "Activity type"
-msgstr ""
-
-msgid "Please choose activity type"
-msgstr ""
-
-msgid "Inactivity"
-msgstr ""
-
-msgid "Send"
-msgstr ""
-
-msgid "From"
-msgstr ""
-
-msgid "To"
-msgstr ""
-
-msgid "Sun"
-msgstr ""
-
-msgid "Mon"
-msgstr ""
-
-msgid "Tue"
-msgstr ""
-
-msgid "Wed"
-msgstr ""
-
-msgid "Thu"
-msgstr ""
-
-msgid "Fri"
-msgstr ""
-
-msgid "Sat"
-msgstr ""
-
-msgid "Filter"
-msgstr ""
-
-msgid "Activity text view:"
-msgstr ""
-
-msgid "Day of week"
-msgstr ""
-
-msgid "Type"
-msgstr ""
-
-msgid "Planets"
-msgstr ""
-
-msgid "Sunday"
-msgstr ""
-
-msgid "moon_metal"
-msgstr ""
-
-msgid "moon_crystal"
-msgstr ""
-
-msgid "moon_deuterium"
-msgstr ""
-
-msgid "moon_energy"
-msgstr ""
-
-msgid "moon_robotics_factory"
-msgstr ""
-
-msgid "moon_lunar_base"
-msgstr ""
-
-msgid "moon_sensor_phalanx"
-msgstr ""
-
-msgid "Known moons"
-msgstr ""
-
-msgid "Player score"
-msgstr ""
-
-msgid "moon_large_cargo"
-msgstr ""
-
-msgid "Your settings was saved!"
-msgstr ""
-
-msgid "Diplomacy"
-msgstr ""
-
-msgid "war"
-msgstr ""
-
-msgid "farm"
-msgstr ""
-
-msgid "target"
-msgstr ""
-
-msgid "observe"
-msgstr ""
-
-msgid "friends"
-msgstr ""
-
-msgid "trader"
-msgstr ""
-
-msgid "confederation"
-msgstr ""
-
-msgid "wing"
-msgstr ""
-
-msgid "Set global status"
-msgstr ""
-
-msgid "Wednesday"
-msgstr ""
-
-msgid "research_lab"
-msgstr ""
-
-msgid "Thursday"
-msgstr ""
-
-msgid "espionage_probe"
-msgstr ""
-
-msgid "Friday"
-msgstr ""
-
-msgid "neutral"
-msgstr ""
-
-msgid "Set personal status"
-msgstr ""
-
-msgid "terraformer"
-msgstr ""
-
-msgid "Global"
-msgstr ""
-
-msgid "Personal"
-msgstr ""
-
-msgid "View systems"
-msgstr ""
-

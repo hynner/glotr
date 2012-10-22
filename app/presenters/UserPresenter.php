@@ -28,22 +28,25 @@ class UserPresenter extends BasePresenter
 				->addCondition(Form::FILLED)
 					->AddRule(Form::MIN_LENGTH, "Password must have at least %d characters!", 4);
 		$form->addPassword("newPassConfirm", "Confirm new password", 12)
-				->addRule(Form::EQUAL, "Confirmation password must be the same as new password!", $form["newPass"]);
-		$form->addText("email", "Email address", 30)
+				->addRule(Form::EQUAL, "Passwords don´t match!", $form["newPass"]);
+		$form->addText("email", "Email", 30)
 				->setDefaultValue($user->email)
 				->addCondition(Form::FILLED)
 					->AddRule(Form::EMAIL, "You must enter valid email address!");
-		$form->addSelect("id_player", "Ingame nickname:", $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
+		$form->addSelect("id_player", __("Ingame nickname"), $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
 				->setPrompt("Choose player")
 				->setTranslator(NULL)
 				->setDefaultValue($user->id_player);
 		$form->addSelect("timezone", "Your timezone", DateTimeZone::listIdentifiers())
 				->setPrompt("Use ogame server timezone")
-				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()));
-		$form->addSelect("lang", "Language", $this->context->parameters["langs"])
-				->setDefaultValue(($user->lang) ? $user->lang : $this->context->parameters["lang"]);
+				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()))
+				->setTranslator(NULL);
+		$form->addSelect("lang", __("Language"), $this->context->parameters["langs"])
+				->setDefaultValue(($user->lang) ? $user->lang : $this->context->parameters["lang"])
+				->setTranslator(NULL);
 
 		$form->addSubmit("save", "Save");
+		$form->setTranslator($this->context->translator);
 		$form->onSuccess[] = $this->userSettingsFormSubmitted;
 		$form->onValidate[] = $this->userSettingsFormValidate;
 		return $form;

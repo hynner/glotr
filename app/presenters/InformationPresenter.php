@@ -21,13 +21,14 @@ class InformationPresenter extends BasePresenter
 	}
 	public function actionSearch()
 	{
+		$this->handlePermissions("perm_search");
 		$sess = $this->getSession("searchForm");
 
 		if(isset($sess->searchFormValues))
 		{
 
 			$this->loadSearchResults($sess->searchFormValues);
-			
+
 		}
 		else
 		{
@@ -38,6 +39,7 @@ class InformationPresenter extends BasePresenter
 	}
 	public function actionPlayerInfo($id)
 	{
+		$this->handlePermissions("perm_detail");
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
 		$this->id_player = $id;
@@ -52,12 +54,20 @@ class InformationPresenter extends BasePresenter
 			4 => "Military Lost",
 			7 => "Honor"
 		);
-
+		if(!$this->context->authenticator->checkPermissions('perm_activity'))
+		{
+			unset($this->template->results["activity"]);
+			$this->template->show_activity = false;
+		}
+		else
+			$this->template->show_activity = true;
 		$this->template->statuses = $this->player_statuses;
 		$this->template->perm_diplomacy =  $this->context->authenticator->checkPermissions("perm_diplomacy");
 	}
 	public function actionAllianceInfo($id)
 	{
+
+		$this->handlePermissions("perm_detail");
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
 		$this->template->results = $this->context->alliances->search($id);
@@ -76,6 +86,7 @@ class InformationPresenter extends BasePresenter
 	}
 	public function actionSystems($galaxy, $system)
 	{
+		$this->handlePermissions("perm_galaxyview");
 		$galaxy = (int) $galaxy;
 		$system = (int) $system;
 		$maxGal = $this->context->server->galaxies;
@@ -224,6 +235,13 @@ class InformationPresenter extends BasePresenter
 		{
 			$this->redirect("this");
 		}
+	}
+	protected function createComponentPlayerInfoRow()
+	{
+		$control = new GLOTR\PlayerInfoRow;
+		$control->setContext($this->context);
+		$control->setUserPlayer($this->getUserPlayer());
+		return $control;
 	}
 	protected function createComponentPlanetInfo()
 	{

@@ -26,10 +26,10 @@ class SignPresenter extends BasePresenter
 	protected function createComponentSignInForm()
 	{
 		$form = new GLOTR\MyForm;
-		$form->addText('username', 'Username:')
+		$form->addText('username', 'Username')
 			->setRequired('Please provide a username.');
 
-		$form->addPassword('password', 'Password:')
+		$form->addPassword('password', 'Password')
 			->setRequired('Please provide a password.');
 
 		$form->addCheckbox('remember', 'Remember me on this computer');
@@ -129,7 +129,7 @@ class SignPresenter extends BasePresenter
 	public function actionOut()
 	{
 		$this->getUser()->logout();
-		$this->flashMessage('You have been signed out.');
+		$this->flashMessage('You have been signed out.', "success");
 		$this->redirect('in');
 	}
 	public function actionRegister()
