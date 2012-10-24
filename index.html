@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<link rel="stylesheet" href="stylesheets/custom.css">
     <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
@@ -35,25 +36,18 @@
 <p>GLOTR is an Ogame database tool. It can store different in-game information. So far it uses OgameAPI and Galaxytool plugin for updating.</p>
 
 <h2>Installation</h2>
+<ol>
+<li>Download the archive with GLOTR sources.</li>
 
-<p>Download the archive with GLOTR sources.</p>
+<li>Extract it.</li>
 
-<p>Extract it.</p>
+<li>Go to the <strong>/app/config</strong> directory.</li>
 
-<p>Go to the /app/config directory.</p>
+<li>Edit file <strong>ServerConf.neon</strong>, please use some other editor than windows notepad, config files are whitespace sensitive! That mean, just change the value of the option, don´t delete any whitespaces! Even things like no whitespace between the end of value and a comment will rise error and your configuration won´t work! All options in configuration files are commented, so I will only point out those you really need to set:</li>
+<ul class="list-style-disc">
+<li><strong>server</strong> - your ogame server URL without / at the end</li>
 
-<p>Edit file ServerConf.neon, please use some other editor than windows notepad, config files are whitespace sensitive! That mean, just change the value of the option, don´t delete any whitespaces! Even things like no whitespace between the end of value and a comment will rise error and your configuration won´t work! All options in configuration files are commented, so I will only point out those you really need to set:</p>
-
-<p>server - your ogame server URL without / at the end</p>
-
-<p>Another important options are database settings:</p>
-
-<p>replace localhost with the name of your mysql server</p>
-
-<p>replace glotr_devel with the name of your database</p>
-
-<p>replace root with your database username and fill in your password</p>
-
+<li>Another important options are <strong>database</strong> settings: <br>
 <pre><code>        database:
             default:
                 dsn: 'mysql:host=localhost;dbname=glotr_devel'
@@ -62,14 +56,36 @@
 
 
 </code></pre>
+</li>
 
-<p>Then upload it to the server, visit yourdomain.com/path_to_glotr/www/install and just follow instructions.</p>
+<li>replace localhost with the name of your mysql server</li>
+
+<li>replace glotr_devel with the name of your database</li>
+
+<li>replace root with your database username and fill in your password</li>
+
+
+</ul>
+<li>Upload it to your server</li>
+<li>Change permissions to folders temp, log, temp/cache, temp/sessions, app/model to 777, this step is not neccessary when you use windows localhost as your server.</li>
+<li>And finally visit yourdomain/path_to_glotr/www/install and just follow instructions.</li>
+</ol>
+<h2>Features:</h2>
+<ul>
+	<li>Automatic OgameAPI updates</li>
+	<li>System browsing</li>
+	<li>Database searching with lots of differenet parameters</li>
+	<li>Espionage reports stroring with simulator link (only Osimulate for now)</li>
+	<li>Player detail - notes, FS records (only manual for now), activity</li>
+	<li>Alliance detail - members overview, members graphs</li>
+</ul>
+
       </section>
       <footer>
         <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+
   </body>
 </html>
