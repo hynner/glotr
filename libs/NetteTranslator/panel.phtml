@@ -220,6 +220,7 @@ JSON.stringify = JSON.stringify || function (obj) {
         var n, v, json = [], arr = (obj && obj.constructor == Array);
 		for (n in obj) {
 			v = obj[n]; t = typeof(v);
+
 			if (t == "string") v = '"'+v.replace(/\"/g, '\\"')+'"';
 			else if (t == "object" && v !== null) v = JSON.stringify(v);
 			json.push((arr ? "" : '"' + n.replace(/\"/g, '\\"') + '":') + String(v));
@@ -501,7 +502,7 @@ var translationPanel = {
 			'X-NetteTranslator-File': this.currentFile
 		};
 		for (var i in this.updatedStrings) {
-			
+
 			if(typeof(this.updatedStrings[i]) != "function") // some weird behaviout, caused by multi-accordion
 			data[this.updatedStrings[i]] = this.strings[this.currentFile][this.updatedStrings[i]];
 		}
@@ -538,6 +539,8 @@ var translationPanel = {
 	},
 
 	escape: function (string) {
+		if(typeof(string) == "function")
+			return null;
 		return string
 			.replace('&', '&amp;')
 			.replace('"', '&quot;')

@@ -37,7 +37,7 @@ class UserPresenter extends BasePresenter
 				->setPrompt("Choose player")
 				->setTranslator(NULL)
 				->setDefaultValue($user->id_player);
-		$form->addSelect("timezone", "Your timezone", DateTimeZone::listIdentifiers())
+		$form->addSelect("timezone", __("Your timezone"), DateTimeZone::listIdentifiers())
 				->setPrompt("Use ogame server timezone")
 				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()))
 				->setTranslator(NULL);

@@ -1,25 +1,19 @@
-<ul class="control menu">
-	<li n:if="$useHomepage">
-		{if $homepage->isCurrent}
+<div class="ui-widget-header ui-corner-all text-center" n:if="$useHomepage">
+
 		<span class="active"><strong>{$homepage->label}</strong></span>
-		{else}
-		<a href="{$homepage->url}">{$homepage->label}</a>
-		{/if}
-	</li>
+
+</div>
+<ul class="control menu ui-widget ui-widget-content">
+
 
 	{block #menu}
-	<li n:foreach="$children as $item">
-		{if $item->isCurrent}
-		<span class="active"><strong>{$item->label}</strong></span>
-		{else}
-		<a href="{$item->url}">{$item->label}</a>
-		{/if}
+	<li  n:foreach="$children as $item">
 
-		{if $renderChildren && count($item->getComponents()) > 0}
-		<ul>
-			{include #menu, children => $item->getComponents()}
-		</ul>
-		{/if}
+
+		<a href="{$item->url}" n:attr="class => 'button '.(($item->isCurrent) ? 'current' : '')">{$item->label}</a>
+
+
+
 	</li>
 	{/block}
 </ul>

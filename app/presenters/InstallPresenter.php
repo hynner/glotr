@@ -108,21 +108,21 @@ class InstallPresenter extends BasePresenter
 
 			}
 		}
-		$this->flashMessage("All tables are OK!");
+		$this->flashMessage("All tables are OK!", "success");
 
 		if(ini_get("allow_url_fopen") != "1")
 		{
-			$this->flashMessage("allow_url_fopen directive disabled! You have to set server properties manually!", "warning");
+			$this->flashMessage("allow_url_fopen directive disabled! You have to set server properties manually!", "error");
 			$this->redirect("Install:serverSetup");
 		}
 		elseif(!$this->context->parameters["enableOgameApi"])
 		{
-			$this->flashMessage("Ogame API disabled by server administrator! You have to set server properties manually!", "warning");
+			$this->flashMessage("Ogame API disabled by server administrator! You have to set server properties manually!", "error");
 			$this->redirect("Install:serverSetup");
 		}
 		elseif($this->users->getAdminCount() == 0)
 		{
-			$this->flashMessage("No admin account found, you should now create one!", "info");
+			$this->flashMessage("No admin account found, you should now create one!", "error");
 			$this->redirect("createAdmin");
 		}
 		else
@@ -241,7 +241,7 @@ class InstallPresenter extends BasePresenter
 
 		if($this->users->getAdminCount() == 0)
 		{
-			$this->flashMessage("No admin account found, you should now create one!", "info");
+			$this->flashMessage("No admin account found, you should now create one!", "error");
 			$this->redirect("createAdmin");
 		}
 

@@ -177,6 +177,7 @@ $(document).ready(function () {
 				$(this).parent("form").children("input[name=system]").val(parseInt($(this).parent("form").children("input[name=system]").val(), 10)+1);
 			else if($(this).hasClass("previous"))
 				$(this).parent("form").children("input[name=system]").val(parseInt($(this).parent("form").children("input[name=system]").val(), 10)-1);
+			showSpinner();
 			$(this).parent("form").ajaxSubmit();
 		});
 

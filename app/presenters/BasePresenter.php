@@ -16,6 +16,12 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		parent::startup();
 
 		$this->context->translator->setLang($this->lang);
+		/* for case I need to get all strings to translate, that cannot be analyzed from code directly
+		$aI = $this->context->espionages->allInfo;
+		$keys = array("planet_buildings", "planet_resources", "planet_defence", "planet_fleet", "researches", "moon_buildings");
+		foreach($keys as $k)
+			foreach($aI[$k] as $v)
+				echo "<br>".__(str_replace("_", " ", str_replace("moon_", "",$v)))."<br>"; */
 		// setup permissions
 		if($this->getUser()->isLoggedIn())
 		{
@@ -42,7 +48,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		}
 
 		$nav = new Navigation\Navigation($this, "nav_info");
-		$homepage = $nav->setupHomepage(__("Overview"), $this->link("Homepage:"));
+		$homepage = $nav->setupHomepage(__("Information"), "");
+		$homepage->add(__("Overview"), $this->link("Homepage:"));
 		$homepage->add(__("Search in database"), $this->link("Information:search"), "perm_search");
 		$homepage->add(__("View systems"), $this->link("Information:systems"), "perm_galaxyview");
 		$nav->setTranslator($this->context->translator);

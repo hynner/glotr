@@ -1,17 +1,17 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2012-10-22 19:31:05
+# Created: 2012-10-23 16:57:12
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-10-22 19:39+0100\n"
+"PO-Revision-Date: 2012-10-23 16:57+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: plural=((n==1) ? 0 : (n>=2 && n<=4 ? 1 : 2));\n"
-"Last-Translator: \n"
-"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4 ? 1 : 2));
+\n"
+
 
 msgid "Action"
 msgstr "Akce"
@@ -106,6 +106,9 @@ msgstr "Chcete opravdu smazat tohoto uživatele? Tento krok se nedá vrátit!"
 msgid "Economy"
 msgstr "Ekonomika"
 
+msgid "Email"
+msgstr "Email"
+
 msgid "End"
 msgstr "Konec"
 
@@ -192,6 +195,9 @@ msgstr "Neaktivní"
 
 msgid "Inactivity"
 msgstr "Neaktivita"
+
+msgid "Information"
+msgstr "Informace"
 
 msgid "Information about alliance"
 msgstr "Informace o alianci"
@@ -376,12 +382,8 @@ msgstr "Jméno hráče"
 msgid "Please choose activity type"
 msgstr "Prosím vyberte typ aktivity"
 
-msgid ""
-"Please note, that all permision changes will be used after next login of "
-"that user!"
-msgstr ""
-"Všechny změny v nastavení oprávnění se projeví až po dalším přihlášení "
-"uživatele!"
+msgid "Please note, that all permision changes will be used after next login of that user!"
+msgstr "Všechny změny v nastavení oprávnění se projeví až po dalším přihlášení uživatele!"
 
 msgid "Please provide a password."
 msgstr "Prosím zadejte heslo"
@@ -614,8 +616,17 @@ msgstr "Váš server NENí správně nakonfigurován!"
 msgid "Your settings"
 msgstr "Vaše nastavení"
 
+msgid "Your settings was saved!"
+msgstr "Vaše nastavení bylo uloženo!"
+
+msgid "alliance depot"
+msgstr "alianční sklad"
+
 msgid "alliance page"
 msgstr "alianční stránka"
+
+msgid "antiballistic missiles"
+msgstr "antibalistické rakety"
 
 msgid "apg inactivity"
 msgstr "ali stránka neaktivita"
@@ -626,8 +637,20 @@ msgstr "pancéřování"
 msgid "astrophysics"
 msgstr "astrofyzika"
 
+msgid "battlecruiser"
+msgstr "bitevní křižník"
+
+msgid "battleship"
+msgstr "bitevní loď"
+
+msgid "bomber"
+msgstr "bombardér"
+
 msgid "buildings"
 msgstr "budovy"
+
+msgid "colony ship"
+msgstr "kolonizační loď"
 
 msgid "combustion drive"
 msgstr "spalovací pohon"
@@ -638,14 +661,29 @@ msgstr "počítačová technologie"
 msgid "confederation"
 msgstr "spojenectví"
 
+msgid "cruiser"
+msgstr "křižník"
+
+msgid "crystal"
+msgstr "krystal"
+
 msgid "crystal mine"
 msgstr "Důl na krystal"
 
 msgid "crystal storage"
 msgstr "sklad krystalu"
 
+msgid "deathstar"
+msgstr "hvězda smrti"
+
 msgid "defence"
 msgstr "obrana"
+
+msgid "destroyer"
+msgstr "ničitel"
+
+msgid "deuterium"
+msgstr "deuterium"
 
 msgid "deuterium synthesizer"
 msgstr "syntetizér deuteria"
@@ -653,8 +691,14 @@ msgstr "syntetizér deuteria"
 msgid "deuterium tank"
 msgstr "nádrž na deuterium"
 
+msgid "energy"
+msgstr "energie"
+
 msgid "energy technology"
 msgstr "energetická technologie"
+
+msgid "espionage probe"
+msgstr "špionážní sonda"
 
 msgid "espionage technology"
 msgstr "špionážní technologie"
@@ -671,11 +715,23 @@ msgstr "přátelé"
 msgid "from Ogame API!"
 msgstr "z Ogame API!"
 
+msgid "fusion reactor"
+msgstr "fúzní reaktor"
+
 msgid "galaxyview"
 msgstr "galaxie"
 
+msgid "gauss cannon"
+msgstr "gaussův kanón"
+
 msgid "graviton technology"
 msgstr "gravitonová technologie"
+
+msgid "heavy fighter"
+msgstr "těžký stíhač"
+
+msgid "heavy laser"
+msgstr "těžký laser"
 
 msgid "hyperspace drive"
 msgstr "hyperprostorový pohon"
@@ -692,11 +748,35 @@ msgstr "neaktivita"
 msgid "intergalactic research network"
 msgstr "intergalaktická výzkumná síť"
 
+msgid "interplanetary missiles"
+msgstr "meziplanetární rakety"
+
+msgid "ion cannon"
+msgstr "iontový kanón"
+
 msgid "ion technology"
 msgstr "iontová technologie"
 
+msgid "jumpgate"
+msgstr "hyperprostorová brána"
+
+msgid "large cargo"
+msgstr "velký transportér"
+
+msgid "large shield dome"
+msgstr "velký štít"
+
 msgid "laser technology"
 msgstr "laserová technologie"
+
+msgid "light fighter"
+msgstr "lehký stíhač"
+
+msgid "light laser"
+msgstr "lehký laser"
+
+msgid "lunar base"
+msgstr "základna na měsíci"
 
 msgid "manual"
 msgstr "manuální"
@@ -707,41 +787,17 @@ msgstr "manuální neaktivita"
 msgid "message"
 msgstr "zpráva"
 
+msgid "metal"
+msgstr "kov"
+
 msgid "metal mine"
 msgstr "důl na kov"
 
 msgid "metal storage"
 msgstr "sklad kovu"
 
-msgid "colony ship"
-msgstr "kolonizační loď"
-
-msgid "cruiser"
-msgstr "křižník"
-
-msgid "crystal"
-msgstr "krystal"
-
-msgid "deuterium"
-msgstr "deuterium"
-
-msgid "energy"
-msgstr "energie"
-
-msgid "light fighter"
-msgstr "lehký stíhač"
-
-msgid "lunar base"
-msgstr "základna na měsíci"
-
-msgid "metal"
-msgstr "kov"
-
-msgid "recycler"
-msgstr "recyklátor"
-
-msgid "sensor phalanx"
-msgstr "sensor falangy"
+msgid "missile silo"
+msgstr "raketové silo"
 
 msgid "nanite factory"
 msgstr "továrna na nanoboty"
@@ -758,6 +814,12 @@ msgstr "pozorování"
 msgid "plasma technology"
 msgstr "plasmová technologie"
 
+msgid "plasma turret"
+msgstr "plasmová věž"
+
+msgid "recycler"
+msgstr "recyklátor"
+
 msgid "research lab"
 msgstr "výzkumná laboratoř"
 
@@ -770,8 +832,14 @@ msgstr "zdroje"
 msgid "robotics factory"
 msgstr "továrna na roboty"
 
+msgid "rocket launcher"
+msgstr "raketomet"
+
 msgid "scan"
 msgstr "špionáž"
+
+msgid "sensor phalanx"
+msgstr "sensor falangy"
 
 msgid "setup database"
 msgstr "nastavení databáze"
@@ -781,6 +849,12 @@ msgstr "technologie štítů"
 
 msgid "shipyard"
 msgstr "hangár"
+
+msgid "small cargo"
+msgstr "malý transportér"
+
+msgid "small shield dome"
+msgstr "malý štít"
 
 msgid "solar plant"
 msgstr "solární elektrárna"
@@ -809,14 +883,6 @@ msgstr "wing"
 msgid "yes"
 msgstr "ano"
 
-msgid "Your settings was saved!"
-msgstr "Vaše nastavení bylo uloženo!"
+msgid "Your timezone"
+msgstr "Vaše časové pásmo"
 
-msgid "espionage probe"
-msgstr "špionážní sonda"
-
-msgid "large cargo"
-msgstr "velký transportér"
-
-msgid "Email"
-msgstr ""
