@@ -1,0 +1,44 @@
+
+{block content}
+{snippet scoreHistorySelected}
+{foreach $selected as $key => $val}
+<div class="float-left">
+	<ul class="list-style-none" n:if="isset($selected[$key])">
+	{foreach $selected[$key] as $id => $name}
+		<li>
+			{$name}
+			<a n:href="deleteSelectedItem! $id,$key" n:attr="class => 'ajax button-icon', icon => 'ui-icon-trash'"></a>
+		</li>
+	{/foreach}
+	</ul>
+
+</div>
+{/foreach}
+<div class="clear"></div>
+{if !empty($selected["alliances"]) || !empty($selected["players"])}
+<a n:href="clearSelected!" class="button ajax">{_ "Reset selection"}</a>
+{/if}
+{/snippet}
+{form scoreHistoryForm}
+	{control $form errors}
+<div class="float-left margin-right">
+	<p>{label alliances /}</p>
+	{input alliances}
+</div>
+<div class="float-left margin-right">
+	<p>{label players /}</p>
+	{input players}
+</div>
+<div class="clear"></div>
+{input add}
+{/form}
+{snippet scoreHistoryCharts}
+{if !empty($selected["alliances"]) || !empty($selected["players"])}
+{if !empty($scoreHistory)}
+ {control scoreHistoryCharts, $scoreHistory, $selected, $redraw}
+{else}
+<p>{_ "No score history found for this selection!"}</p>
+{/if}
+{/if}
+{/snippet}
+{/block}

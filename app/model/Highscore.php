@@ -79,7 +79,7 @@ class Highscore extends Table
 							if($ships)
 								$dbData["ships"] = $ships;
 							$this->container->$service->getTable()->where(array($idField => $id))->update($dbData);
-							$period = intval((intval(date("j"))*intval(date("n")))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
+							$period = ceil(intval(date("z"))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
 							$year = intval(date("Y"));
 
 							try // fill in the score history, only one record per period
@@ -140,5 +140,20 @@ class Highscore extends Table
 			}
 		return $ret;
 	}
-
+	public function scoreHistory($search)
+	{
+		$ret = array();
+		if(empty($search))
+			return $ret;
+		if(empty($search["alliances"]))
+			$search["alliances"] = array("");
+		if(empty($search["players"]))
+			$search["players"] = array("");
+		$res = $this->getTable()->where("( category = 1 AND id_item IN (?)) OR (category = 2 AND id_item IN (?))", array_keys($search["players"]), array_keys($search["alliances"]))->order("id_item ASC, period ASC");
+		while($r = $res->fetch())
+		{
+			$ret[$r->year][$r->period][$r->id_item] = $r->toArray();
+		}
+		return $ret;
+	}
 }

@@ -107,6 +107,93 @@ class InformationPresenter extends BasePresenter
 		$this->template->galaxy = $galaxy;
 		$this->template->system = $system;
 	}
+	public function actionScoreHistory()
+	{
+		$sess = $this->getSession("scoreHistory");
+		if(!$sess->selected)
+			$sess->selected = array();
+		$this->template->selected = $sess->selected;
+		$this->template->scoreHistory = $this->context->highscore->scoreHistory($sess->selected);
+		$this->template->alliances =  $this->context->alliances->getTable()->order("tag")->fetchPairs("id_alliance_ogame", "tag");
+		$this->template->players = $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername");
+		$this->template->periodDuration = $this->context->parameters["scoreHistoryPeriod"];
+		$this->template->redraw = false;
+	}
+	protected function createComponentScoreHistoryForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		$form->addMultiSelect("alliances", __("Alliances"),$this->template->alliances)
+				->setTranslator(NULL);
+		$form->addMultiSelect("players", __("Players"), $this->template->players)
+				->setTranslator(NULL);
+		$form->addSubmit("add", "Add");
+		$form->setTranslator($this->context->translator);
+		$form->onSuccess[] = $this->scoreHistoryFormSubmitted;
+		return $form;
+	}
+	public function scoreHistoryFormSubmitted($form)
+	{
+		$values = $form->getValues();
+
+		$sess = $this->getSession("scoreHistory");
+		foreach($values as $key => $val)
+		{
+			$items = $form->getComponent($key)->getItems();
+			if(!empty($val))
+			{
+				foreach($val as $id)
+				{
+					$sess->selected[$key][$id] = $items[$id];
+				}
+			}
+		}
+
+		if($this->isAjax())
+		{
+			$this->scoreHistoryRefreshData($sess->selected);
+		}
+		else
+			$this->redirect("this");
+	}
+	public function handleClearSelected()
+	{
+		$sess = $this->getSession("scoreHistory");
+		$sess->selected = array();
+
+		if($this->isAjax())
+		{
+			$this->scoreHistoryRefreshData($sess->selected);
+		}
+		else
+			$this->redirect("this");
+	}
+	public function handleDeleteSelectedItem($id, $type)
+	{
+		$sess = $this->getSession("scoreHistory");
+		if($type == "alliances")
+		{
+			unset($sess->selected["alliances"][$id]);
+		}
+		else
+		{
+			unset($sess->selected["players"][$id]);
+		}
+		if($this->isAjax())
+		{
+			$this->scoreHistoryRefreshData($sess->selected);
+		}
+		else
+			$this->redirect("this");
+	}
+	protected function scoreHistoryRefreshData($search)
+	{
+			$this->template->selected = $search;
+			$this->template->scoreHistory = $this->context->highscore->scoreHistory($search);
+			$this->template->redraw = true;
+			$this->invalidateControl("scoreHistoryCharts");
+			$this->invalidateControl("scoreHistorySelected");
+	}
 	protected function createComponentSearchForm()
 	{
 		$form = new GLOTR\MyForm;
@@ -369,7 +456,12 @@ class InformationPresenter extends BasePresenter
 		$control->setContext($this->context);
 		return $control;
 	}
-
+	protected function createComponentScoreHistoryCharts()
+	{
+		$control = new GLOTR\ScoreHistoryCharts;
+		$control->setContext($this->context);
+		return $control;
+	}
 	protected function createComponentActivityFilterForm()
 	{
 		$form = new GLOTR\MyForm;

@@ -1,0 +1,59 @@
+    <script type="text/javascript">
+
+     {if !$redraw}
+        google.load("visualization", "1", { packages:["corechart"]});
+		google.setOnLoadCallback(drawChart);
+	  {/if}
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+		{foreach $types as $type => $title}
+				 var {!$type} = google.visualization.arrayToDataTable([
+				['Date',
+					{foreach $selected as $key => $val}
+						{foreach $selected[$key] as $id => $name}
+							{$name},
+						{/foreach}
+					{/foreach}
+				],
+				{foreach $scoreHistory as $year => $results}
+						{foreach $results as $period => $res}
+							[{date("j. n. Y", (($year-1970)*3600*24*365) + ($period*$periodDuration*3600*24))},
+							{foreach $selected as $key => $val}
+								{foreach $selected[$key] as $id => $name}
+									{isset($res[$id]) ? ($res[$id][$type]) : 0},
+								{/foreach}
+							{/foreach}
+								],
+						{/foreach}
+				{/foreach}
+				]);
+
+		{/foreach}
+
+
+        // Set chart options
+		 {foreach $types as $key => $title}
+        var {!$key}_options = {
+						'title':{$title},
+						'hAxis': {'slantedTextAngle':90}
+					};
+
+        // Instantiate and draw our chart, passing in some options.
+        var total_score = new google.visualization.LineChart(document.getElementById('{!$key}_chart'));
+        total_score.draw({!$key}, {!$key}_options);
+		{/foreach}
+      }
+	  {if $redraw}
+		drawChart();
+	  {/if}
+    </script>
+
+
+{foreach $types as $key => $title}
+    <div id="{!$key}_chart" class="chart-margin"></div>
+	{/foreach}
