@@ -74,8 +74,17 @@ class Players extends Table
 
 			catch(\PDOException $e)
 			{
-				//if player already exists update it
-				$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))->update($dbData);
+					try { // if 2 players swap their names it will make PDOEception or one player gets deleted and anothe uses his name
+					//if player already exists update it
+					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))->update($dbData);
+				}
+				catch (\PDOException $e)
+				{
+					// ogame playername is max 20 chars long, so this will ensure there is no same playername
+					$this->getTable()->where(array("playername" => $dbData["playername"]))->update(array("playername" => Nette\Utils\Strings::random(21)));
+					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))->update($dbData);
+				}
+
 			}
 		return true;
 	}

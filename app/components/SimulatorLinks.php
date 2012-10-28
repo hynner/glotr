@@ -61,7 +61,7 @@ class SimulatorLinks extends Control
 		 */
 		$researchesUnknown = array_values(array_unique($researches));
 		$researchesUnknown = is_null($researchesUnknown[0]) && (count($researchesUnknown) === 1);
-		
+
 		if(!$researchesUnknown)
 			$template->osimulate .= "&tech_d0_0=".((int) $researches["weapons_technology"])."&tech_d0_1=".((int) $researches["shielding_technology"])."&tech_d0_2=".((int) $researches["armour_technology"]);
 
@@ -69,6 +69,7 @@ class SimulatorLinks extends Control
 		{
 			if(!$researchesUnknown) // don´t fill in techs if target´s techs are unknown
 				$template->osimulate .= "&tech_a0_0=".((int) $this->userPlayer["player"]["weapons_technology"])."&tech_a0_1=".((int) $this->userPlayer["player"]["shielding_technology"])."&tech_a0_2=".((int) $this->userPlayer["player"]["armour_technology"]);
+
 			$template->osimulate .= "&engine0_0=".((int) $this->userPlayer["player"]["combustion_drive"])."&engine0_1=".((int) $this->userPlayer["player"]["impulse_drive"])."&engine0_2=".((int) $this->userPlayer["player"]["hyperspace_drive"]);
 
 		}
