@@ -84,6 +84,17 @@ class InformationPresenter extends BasePresenter
 		);
 		$this->id_alliance = $id;
 	}
+	public function actionReportArchive($id_planet, $moon = 0)
+	{
+		$this->template->labels = $this->context->espionages->getAllInfo();
+		$this->template->reports = $this->context->espionages->getTable()->where(array("id_planet" => $id_planet, "moon" => $moon))->select("*")->fetchPairs("id_message_ogame");
+		$this->template->planet = $this->context->universe->getTable()->where(array("id_planet" => $id_planet))->fetch();
+		$this->template->player = $this->context->players->getTable()->where(array("id_player_ogame" => $this->template->planet->id_player))->fetch();
+		$this->template->context = $this->context;
+		$this->template->moon = $moon;
+
+	}
+
 	public function actionSystems($galaxy, $system)
 	{
 		$this->handlePermissions("perm_galaxyview");

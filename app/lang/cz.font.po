@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2012-10-26 17:37:35
+# Created: 2012-11-18 18:56:28
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-10-26 17:37+0200\n"
+"PO-Revision-Date: 2012-11-18 18:56+0100\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -301,8 +301,14 @@ msgstr "Nové heslo"
 msgid "No admin account found, you should now create one!"
 msgstr "Nebyl nalezen žádný administrátorský účet. Vytvořte ho!"
 
+msgid "No reports found!"
+msgstr "Nebyla nalezeny žádné zprávy!"
+
 msgid "No results found!"
 msgstr "Nebyly nalezeny žádné výsledky!"
+
+msgid "No score history found for this selection!"
+msgstr "Pro tento výběr nebyl nalezen historický přehled!"
 
 msgid "Note:"
 msgstr "Poznámka:"
@@ -442,6 +448,9 @@ msgstr "Zaregistrovat se"
 msgid "Remember me on this computer"
 msgstr "Zapomatovat si mě na tomto počítači"
 
+msgid "Report archive"
+msgstr "Archiv zpráv"
+
 msgid "Research"
 msgstr "Výzkum"
 
@@ -465,6 +474,12 @@ msgstr "Sobota"
 
 msgid "Save"
 msgstr "Uložit"
+
+msgid "Scan depth"
+msgstr "Hloubka skenu"
+
+msgid "Scan time"
+msgstr "Čas skenu"
 
 msgid "Score"
 msgstr "Score"
@@ -556,6 +571,9 @@ msgstr "Celkové score"
 msgid "Tue"
 msgstr "Út"
 
+msgid "Tuesday"
+msgstr "Úterý"
+
 msgid "Type"
 msgstr "Typ"
 
@@ -643,11 +661,20 @@ msgstr "alianční sklad"
 msgid "alliance page"
 msgstr "alianční stránka"
 
+msgid "alliance_page"
+msgstr "ali stránka"
+
+msgid "alliances"
+msgstr "aliance"
+
 msgid "antiballistic missiles"
 msgstr "antibalistické rakety"
 
 msgid "apg inactivity"
 msgstr "ali stránka neaktivita"
+
+msgid "apg_inactivity"
+msgstr "ali str. neaktivita"
 
 msgid "armour technology"
 msgstr "pancéřování"
@@ -751,6 +778,9 @@ msgstr "těžký stíhač"
 msgid "heavy laser"
 msgstr "těžký laser"
 
+msgid "highscores"
+msgstr "statistiky"
+
 msgid "hyperspace drive"
 msgstr "hyperprostorový pohon"
 
@@ -835,8 +865,14 @@ msgstr "plasmová technologie"
 msgid "plasma turret"
 msgstr "plasmová věž"
 
+msgid "players"
+msgstr "hráče"
+
 msgid "recycler"
 msgstr "recyklátor"
+
+msgid "research"
+msgstr "výzkumy"
 
 msgid "research lab"
 msgstr "výzkumná laboratoř"
@@ -889,6 +925,9 @@ msgstr "terraformer"
 msgid "trader"
 msgstr "obchodník"
 
+msgid "universe"
+msgstr "vesmír"
+
 msgid "war"
 msgstr "válka"
 
@@ -901,6 +940,6 @@ msgstr "wing"
 msgid "yes"
 msgstr "ano"
 
-msgid "No score history found for this selection!"
-msgstr "Pro tento výběr nebyl nalezen historický přehled!"
+msgid "manual_inactivity"
+msgstr "manuální neaktivita"
 

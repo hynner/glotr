@@ -46,3 +46,8 @@
 {
 	margin: 10px 0;
 }
+.scroll-x
+{
+	width: 100%;
+	overflow-x: auto;
+}
