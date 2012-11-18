@@ -31,6 +31,7 @@ function ajaxCallback()
 	if($(".dataTable").innerHtml != undefined)
 	{
 		new FixedColumns( dataTable);
+	}
 		$("#ajax-spinner").hide();
 		$(".tooltip").each(function() {
 			$(this).tipTip({
@@ -39,8 +40,8 @@ function ajaxCallback()
 				keepAlive: false
 			});
 		});
-		
-	}
+
+
 
 
 
