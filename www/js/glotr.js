@@ -17,6 +17,20 @@ jQuery.ajaxSetup({
 
 function ajaxCallback()
 {
+		var dataTable = $(".dataTable").dataTable({
+		"bJQueryUI": true,
+		"sScrollX": "100%",
+		"bSort": false,
+		"bFilter": false,
+		"bInfo": false,
+        "sScrollXInner": "",
+        "bScrollCollapse": true,
+		"bPaginate": false
+
+	});
+	if($(".dataTable").innerHtml != undefined)
+	{
+		new FixedColumns( dataTable);
 		$("#ajax-spinner").hide();
 		$(".tooltip").each(function() {
 			$(this).tipTip({
@@ -25,6 +39,9 @@ function ajaxCallback()
 				keepAlive: false
 			});
 		});
+		
+	}
+
 
 
 	$("#sidebar").height($(document).height() - $("#panel-top").outerHeight());
@@ -43,6 +60,7 @@ function ajaxCallback()
 	$(".flash").fadeOut(10000);
 	createHighlight($(".flash.success"));
 	createError($(".flash.error"));
+
 
 }
 function createHighlight(obj){

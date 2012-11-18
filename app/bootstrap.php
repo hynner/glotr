@@ -32,6 +32,7 @@ $container = $configurator->createContainer();
 $container->router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
 $container->router[] = new Route('update/galaxyplugin.php', 'Update:galaxyplugin', Route::ONE_WAY); // URL for galaxyplugin
 $container->router[] = new Route('information/systems/<galaxy=1>/<system=1>', "Information:systems");
+$container->router[] = new Route('information/reportarchive/<id_planet>/<moon=0>', "Information:reportArchive");
 $container->router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
 
 

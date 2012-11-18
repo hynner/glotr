@@ -102,7 +102,7 @@ class Universe extends Table
 				$values["$key"] = str_replace("*", "%", $values["$key"]);
 				$values["$key"] = str_replace("?", "_", $values["$key"]);
 			}
-			
+
 		$alliances_columns = $this->container->alliances->getPrefixedColumnList("_");
 		$columns = "$uniT.*, $alliances_columns $playersT.*";
 		if(!is_null($paginator))

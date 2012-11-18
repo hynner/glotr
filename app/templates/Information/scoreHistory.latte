@@ -33,12 +33,8 @@
 {input add}
 {/form}
 {snippet scoreHistoryCharts}
-{if !empty($selected["alliances"]) || !empty($selected["players"])}
-{if !empty($scoreHistory)}
+
  {control scoreHistoryCharts, $scoreHistory, $selected, $redraw}
-{else}
-<p>{_ "No score history found for this selection!"}</p>
-{/if}
-{/if}
+
 {/snippet}
 {/block}

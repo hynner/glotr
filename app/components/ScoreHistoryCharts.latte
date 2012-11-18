@@ -1,7 +1,10 @@
-    <script type="text/javascript">
+{if !empty($selected["alliances"]) || !empty($selected["players"])}
+{if !empty($scoreHistory)}
+
+<script type="text/javascript">
 
      {if !$redraw}
-        google.load("visualization", "1", { packages:["corechart"]});
+		google.load("visualization", "1", { packages:["corechart"]});
 		google.setOnLoadCallback(drawChart);
 	  {/if}
 
@@ -22,7 +25,10 @@
 				],
 				{foreach $scoreHistory as $year => $results}
 						{foreach $results as $period => $res}
-							[{date("j. n. Y", (($year-1970)*3600*24*365) + ($period*$periodDuration*3600*24))},
+
+							<?php $dt = new DateTime("1/1/$year");
+									$tmp = $dt->getTimestamp(); ?>
+							[{date("j. n. Y", ($tmp + (($period*$periodDuration)*3600*24)))},
 							{foreach $selected as $key => $val}
 								{foreach $selected[$key] as $id => $name}
 									{isset($res[$id]) ? ($res[$id][$type]) : 0},
@@ -40,7 +46,8 @@
 		 {foreach $types as $key => $title}
         var {!$key}_options = {
 						'title':{$title},
-						'hAxis': {'slantedTextAngle':90}
+						'hAxis': {'slantedTextAngle':90},
+						"pointSize": 5
 					};
 
         // Instantiate and draw our chart, passing in some options.
@@ -57,3 +64,11 @@
 {foreach $types as $key => $title}
     <div id="{!$key}_chart" class="chart-margin"></div>
 	{/foreach}
+{else}
+<p>{_ "No score history found for this selection!"}</p>
+{/if}
+{else}
+<script type="text/javascript">
+google.load("visualization", "1", { packages:["corechart"]});
+</script>
+{/if}

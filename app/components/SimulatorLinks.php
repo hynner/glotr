@@ -56,11 +56,20 @@ class SimulatorLinks extends Control
 
 		$template->osimulate = "http://www.osimulate.com?ref=glotr&lang=".$this->getPresenter()->lang."&uni_speed=".$server["speed"]."&defense_debris=".((int) ($server["defToTF"]*$server["debrisFactor"]))."&defense_repair=".((int) ($server["repairFactor"]*100));
 		$template->osimulate .= "&fleet_debris=".((int) ($server["debrisFactor"]*100))."&enemy_pos=".$result['galaxy'].":".$result['system'].":".$result['position'];
-		if(!empty($researches))
+		/*
+		 * If researches are unknown, $researches is the array with all keys set to NULL
+		 */
+		$researchesUnknown = array_values(array_unique($researches));
+		$researchesUnknown = is_null($researchesUnknown[0]) && (count($researchesUnknown) === 1);
+
+		if(!$researchesUnknown)
 			$template->osimulate .= "&tech_d0_0=".((int) $researches["weapons_technology"])."&tech_d0_1=".((int) $researches["shielding_technology"])."&tech_d0_2=".((int) $researches["armour_technology"]);
-		if(isset($this->userPlayer))
+
+		if(!empty($this->userPlayer))
 		{
-			$template->osimulate .= "&tech_a0_0=".((int) $this->userPlayer["player"]["weapons_technology"])."&tech_a0_1=".((int) $this->userPlayer["player"]["shielding_technology"])."&tech_a0_2=".((int) $this->userPlayer["player"]["armour_technology"]);
+			if(!$researchesUnknown) // don´t fill in techs if target´s techs are unknown
+				$template->osimulate .= "&tech_a0_0=".((int) $this->userPlayer["player"]["weapons_technology"])."&tech_a0_1=".((int) $this->userPlayer["player"]["shielding_technology"])."&tech_a0_2=".((int) $this->userPlayer["player"]["armour_technology"]);
+
 			$template->osimulate .= "&engine0_0=".((int) $this->userPlayer["player"]["combustion_drive"])."&engine0_1=".((int) $this->userPlayer["player"]["impulse_drive"])."&engine0_2=".((int) $this->userPlayer["player"]["hyperspace_drive"]);
 
 		}
