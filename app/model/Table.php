@@ -16,7 +16,7 @@ class Table extends Nette\Object
 	public function __construct(Nette\Database\Connection $database,  Nette\DI\Container $container)
 	{
 		$this->connection = $database;
-		
+
 		if($this->tableName === NULL)
 		{
 			$class =  get_class($this);
@@ -128,5 +128,82 @@ class Table extends Nette\Object
 				if($planet["moon_size"] || $planet["moon_res_updated"])
 					$moons[] = $planet;
 		return $moons;
+	}
+	protected function invokeQuery($query, $params)
+	{
+		$args = array();
+		$args[] = $query;
+		$args = array_merge($args, $params);
+		$method = new \ReflectionMethod("Nette\Database\Connection", "query");
+
+		$res = $method->invokeArgs($this->connection, $args);
+
+		$results = array();
+
+		while($result = $res->fetch())
+		{
+			$results[] = $result;
+		}
+		return $results;
+	}
+	protected function chunkedMultiQuery($query, $delimiter = ';')
+	{
+		$mysqli = $this->container->mysqli;
+		$r = $mysqli->query("SHOW VARIABLES LIKE 'max_allowed_packet'");
+		$max = 1024*1024; // DEFAULT settings
+		if($r)
+		{
+			$max = $r->fetch_row();
+			$max = $max[1];
+		}
+		$max -= 1024; // just to be safe
+		if(strlen($query) > $max)
+		{
+			$tmp = explode($delimiter, $query);
+			if($max < strlen($tmp[0]))
+			{
+				throw new Nette\Application\ApplicationException("Mysql max_allowed_packet too small!");
+				return false;
+			}
+			else
+			{
+				$queryPart = "";
+				$len = 0;
+				$i = 0;
+				$count = count($tmp);
+				foreach($tmp as $t)
+				{
+					$i++;
+					$t .= ";";
+					if(($len+strlen($t)) < $max)
+					{
+						$len += strlen($t);
+						$queryPart .= $t;
+						if($i == $count)
+						{
+							$mysqli->multi_query($queryPart);
+							while ($mysqli->more_results() && $mysqli->next_result()){}
+						}
+
+					}
+					else
+					{
+
+						$mysqli->multi_query($queryPart);
+						while ($mysqli->more_results() && $mysqli->next_result()){}
+						$queryPart = $t;
+						$len = strlen($queryPart);
+					}
+				}
+
+			}
+		}
+		else
+		{
+			$mysqli->multi_query($query);
+			while ($mysqli->more_results() && $mysqli->next_result());
+		}
+
+		return false;
 	}
 }

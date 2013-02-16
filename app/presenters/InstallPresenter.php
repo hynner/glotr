@@ -20,6 +20,7 @@ class InstallPresenter extends BasePresenter
 
 
 	}
+
 	public function actionSetupDatabase()
 	{
 		$conn = $this->users->getConnection();

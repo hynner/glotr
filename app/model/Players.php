@@ -14,52 +14,52 @@ class Players extends Table
 		$data = $this->container->ogameApi->getData($this->apiFile);
 		if($data !== false)
 		{
-			$timestamp = (int)$data["timestamp"];
+			$data->read();
+			$timestamp = (int)$data->getAttribute("timestamp");
 			/* this can´t be done at the moment
 			 * // data in ogame api are always valid at the time of their creation, so I can delete all older data, because they will be replaced anyway
 			// this way I also get rid of nonexisting players
 			if($data->player)
 				$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();*/
 
-			$start = (int) $this->container->config->load("$this->tableName-start");
+		/*	$start = (int) $this->container->config->load("$this->tableName-start");
 
-			$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];
+			$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];*/
 
-			for($i = $start; $i < $end; $i++)
+			$query = "";
+			while($data->read())
 			{
-
-				if($data->player[$i])
+				if($data->name === "player" && $data->nodeType == \XMLReader::ELEMENT)
 				{
-					$player = $data->player[$i];
-				}
 
-				else
-					{
-						// this is the end of update, save the timestamp
-						$this->container->config->save("$this->tableName-finished", $timestamp);
-						$this->container->config->save("$this->tableName-start", 0);
-						return true;
-					}
 
-				$playername = (string) $player["name"];
-				$id = (int) $player["id"];
-				$status = (string) $player["status"];
-				$alliance = (int) $player["alliance"];
 				$dbData = array(
-								"id_player_ogame" => $id,
-								"playername" => $playername,
-								"status" =>  $status,
-								"id_alliance" => $alliance,
+								"id_player_ogame" => (int) $data->getAttribute("id"),
+								"playername" => (string) $data->getAttribute("name"),
+								"status" =>  (string) $data->getAttribute("status"),
+								"id_alliance" => (int) $data->getAttribute("alliance"),
 								"last_update" => $timestamp
 								);
-				$this->insertPlayer($dbData);
+				$dataFields = " id_player_ogame = $dbData[id_player_ogame], playername = '$dbData[playername]', status = '$dbData[status]',id_alliance = $dbData[id_alliance],last_update = $dbData[last_update] ";
+				//$this->insertPlayer($dbData);
+
+
+				//$query .= " update $this->tableName  set playername = '".\Nette\Utils\Strings::random(12, "a-z")."' where playername = '$dbData[playername]' and id_player_ogame != $dbData[id_player_ogame] ;";
+				$query .= " insert into $this->tableName set $dataFields on duplicate key update $dataFields;";
 
 
 
+				}
 
 			}
-			$this->container->config->save("$this->tableName-start", $end);
+			$this->chunkedMultiQuery($query);
+			//$this->container->config->save("$this->tableName-start", $end);
+			// this is the end of update, save the timestamp
+			$this->container->config->save("$this->tableName-finished", $timestamp);
+			$this->container->config->save("$this->tableName-start", 0);
+
 			return true;
+
 		}
 		else
 			return false;

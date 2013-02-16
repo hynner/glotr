@@ -10,74 +10,69 @@ class Universe extends Table
 	protected $apiFile = "universe.xml";
 	public function updateFromApi()
 	{
+		$mc = microtime(1);
 		$data = $this->container->ogameApi->getData($this->apiFile);
 
 		if($data !== false)
 		{
-
-			$timestamp = (int)$data["timestamp"];
+			$data->read();
+			$timestamp = (int)$data->getAttribute("timestamp");
 			// data in ogame api are always valid at the time of their creation, so I can delete all older data, because they will be replaced anyway
 			// this way I also get rid of nonexisting planets
-			if($data->planet)
-				$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();
+			$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();
+
 			$start = (int) $this->container->config->load("$this->tableName-start");
 
 			$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];
 
-			for($i = $start; $i < $end; $i++)
+			$query = "";
+			$i = 0;
+			while($data->read())
 			{
-
-				if($data->planet[$i])
+			next_planet:
+				if($data->name === "planet" && $data->nodeType == \XMLReader::ELEMENT)
 				{
-					$planet = $data->planet[$i];
-				}
+					$i++;
 
-				else
-					{
-						// this is the end of update, save the timestamp
-						$this->container->config->save("$this->tableName-finished", $timestamp);
-						$this->container->config->save("$this->tableName-start", 0);
-						return true;
-					}
-
-				$name = (string) $planet["name"];
-				$id = (int) $planet["id"];
-				$player = (int) $planet["player"];
-
-
-				$coords = (string) $planet["coords"];
-				$coords = explode(":", $coords);
-				$dbData = array(
-								"id_planet_ogame" => $id,
-								"name" => $name,
-								"galaxy" =>  $coords[0],
-								"system" =>  $coords[1],
-								"position" =>  $coords[2],
-								"id_player" => $player,
-								"last_update" => $timestamp
+					$coords = (string) $data->getAttribute("coords");
+					$coords = explode(":", $coords);
+					$dbData = array(
+									"id_planet_ogame" => (int) $data->getAttribute("id"),
+									"name" => (string) $data->getAttribute("name"),
+									"galaxy" =>  $coords[0],
+									"system" =>  $coords[1],
+									"position" =>  $coords[2],
+									"id_player" => (int) $data->getAttribute("player"),
+									"last_update" => $timestamp
 								);
-				if($planet->moon)
-				{
-					$moon = $planet->moon;
-					$name = (string) $moon["name"];
-					$mid = (int) $moon["id"];
-					$size = (int) $moon["size"];
-					$dbData["moon_name"] = $name;
-					$dbData["moon_size"] = $size;
-					$dbData["id_moon_ogame"] = $mid;
+						$dataFields = " id_planet_ogame = $dbData[id_planet_ogame], name = '$dbData[name]',
+							galaxy = $dbData[galaxy], system = $dbData[system],
+							position = $dbData[position], id_player = $dbData[id_player],
+							last_update = $dbData[last_update] ";
 
+
+						$data->read();
+						if($data->name == "moon")
+						{
+							$dbData["moon_name"] = (string) $data->getAttribute("name");
+							$dbData["moon_size"] = (int) $data->getAttribute("size");
+							$dbData["id_moon_ogame"] = (int) $data->getAttribute("id");
+							$dataFields .= " , moon_name = '$dbData[moon_name]' , moon_size = $dbData[moon_size] , id_moon_ogame = $dbData[id_moon_ogame] ";
+						}
+						$query .= "delete from $this->tableName where position = $dbData[position] and system = $dbData[system] and galaxy = $dbData[galaxy] and id_player != $dbData[id_player];";
+						$query .= " insert into $this->tableName set $dataFields on duplicate key update $dataFields;";
+						// if $data->read() has moved to another planet element, it must be stored before, reading again
+						if($data->name == "planet")
+							goto next_planet;
 				}
-
-
-				$this->insertPlanet($dbData);
-
-
-
-
-
 			}
-			$this->container->config->save("$this->tableName-start", $end);
+
+			$this->chunkedMultiQuery($query);
+			// this is the end of update, save the timestamp
+			$this->container->config->save("$this->tableName-finished", $timestamp);
+			$this->container->config->save("$this->tableName-start", 0);
 			return true;
+			
 		}
 		else
 			return false;
@@ -324,19 +319,7 @@ class Universe extends Table
 			$params[] = $paginator->getLength();
 		}
 
-		$args = array();
-		$args[] = $select;
-		$args = array_merge($args, $params);
-		$method = new \ReflectionMethod("Nette\Database\Connection", "query");
-
-		// calls $this->container->universe->getConnection()->query() with each item from $args as a single argument
-		$res = $method->invokeArgs($this->connection, $args);
-		$results = array();
-		while($result = $res->fetch())
-		{
-			$results[] = $result;
-		}
-		return $results;
+		return $this->invokeQuery($select, $params);
 
 	}
 

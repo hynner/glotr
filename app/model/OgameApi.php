@@ -11,7 +11,7 @@ class OgameApi extends Nette\Object
 		$this->container = $container;
 		$this->url = $this->container->parameters["server"]."/api/";
 	}
-	public function getData($file, $params = array())
+	public function getData($file, $params = array(), $type = "XMLReader")
 	{
 		$expirationTime = $this->container->parameters["ogameApiExpirations"][$file];
 		$cache = new Cache($this->container->cacheStorage, 'OgameAPI');
@@ -27,6 +27,7 @@ class OgameApi extends Nette\Object
 			$file .= substr($p, 0, -1);
 
 		}
+
 		$data = $cache->load($file);
 		if($data === NULL)
 		{
@@ -51,22 +52,39 @@ class OgameApi extends Nette\Object
 
 				if($data !== FALSE)
 				{
-				$xml = simplexml_load_string($data);
-				$exp = (int) $xml->attributes()->timestamp;
+				$xml = new \XMLReader();
+
+				$xml->XML($data, "UTF-8");
+
+				$xml->next();
+				$exp = (int) $xml->getAttribute("timestamp");
 				$exp += $expirationTime;
 				$cache->save($file, $data, array(
 						Cache::EXPIRE => $exp
 					));
 				}
+				goto ret;
 			}
 		}
 		else
-			$xml = simplexml_load_string($data);
-		return $xml;
+	ret:
+		switch($type)
+		{
+			case "XMLReader":
+				$xml = new \XMLReader;
+				$xml->XML($data, "UTF-8");
+				return $xml;
+			case "SimpleXML":
+				return simplexml_load_string($data);
+			case "String":
+			default:
+				return $data;
+		}
 	}
 	public function getUrl()
 	{
 		return $this->url;
 	}
+
 }
 

@@ -10,7 +10,7 @@ common:
 		version: "0.1.0" # DON´T change this!
 		dbSetupFile: "../app/config/dbSetup.gl"
 		testServerAuthFile: "../app/config/testServerAuth.txt" #if you want to use GLOTR on test server, create this file and place there the username:password for the http authorization
-		testServer: true # true for development on 680 origin server, false otherwise
+		testServer: false # true for development on 680 origin server, false otherwise
 	php:
 
 		# zlib.output_compression: yes
@@ -44,8 +44,11 @@ common:
 		activities: GLOTR\Activities
 		espionages: GLOTR\Espionages
 		fs: GLOTR\Fleetsaves
+		mysqli:
+			class: \mysqli("%database.host%", "%database.user%", "%database.password%", "%database.dbname%")
 
 	factories:
+
 
 
 production < common:

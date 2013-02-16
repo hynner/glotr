@@ -11,7 +11,7 @@ class Server extends Table
 	private $data;
 	public function updateFromApi()
 	{
-		$data = $this->container->ogameApi->getData($this->apiFile);
+		$data = $this->container->ogameApi->getData($this->apiFile, array(), "SimpleXML");
 		if($data !== false)
 		{
 			$timestamp = (int)$data["timestamp"];
@@ -79,5 +79,5 @@ class Server extends Table
 		$this->_get();
 		return $this->data;
 	}
-	
+
 }

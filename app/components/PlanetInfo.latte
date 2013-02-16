@@ -2,7 +2,7 @@
 	<span  icon="ui-icon-script" n:attr="class => 'report-open button-icon', id => 'open-'.$ident"></span>
 
 	<div class="planet-info" id="info-{$ident}">
-	<p class="planet-info-title" id="info-title-{$ident}">{_ "Planet info"} - {$result["galaxy"].":".$result["system"].":".$result["position"]} {($moon) ? _("moon") : ""}</p>
+	<p class="planet-info-title" id="info-title-{$ident}">{_ "Planet info"} - {$result["galaxy"].":".$result["system"].":".$result["position"]} {($moon) ? __("moon") : ""}</p>
 	{control planetInfoBlock, ($resources) /*? $resources : array()*/, "resources", ($result[$prefix."res_updated"]) ? $result[$prefix."res_updated"] : NULL}
 
 	{control planetInfoBlock, ($fleet) /*? $fleet : array()*/, "fleet", ($result[$prefix."fleet_updated"]) ? $result[$prefix."fleet_updated"] : NULL}

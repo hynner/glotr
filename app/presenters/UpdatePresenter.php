@@ -105,17 +105,13 @@ class UpdatePresenter extends BasePresenter
 					$response = array("status" => "continue");
 				goto send;
 			}
-			foreach($this->context->highscore->getCategories() as $cat)
-				foreach($this->context->highscore->getTypes() as $type)
-					if($this->context->highscore->needApiUpdate($cat, $type))
-					{
-						$this->context->highscore->updateFromApi($cat, $type);
-						if($this->context->highscore->needApiUpdate($cat, $type))
-							$response = array("status" => "continue", "what" => $this->context->translator->translate("highscores"));
-						else
-							$response = array("status" => "continue");
-						goto send;
-					}
+			if($this->context->highscore->needApiUpdate())
+			{
+				$this->context->highscore->updateFromApi();
+				$response = array("status" => "continue");
+				goto send;
+			}
+
 		}
 		catch(Nette\Application\ApplicationException $e)
 		{
@@ -126,7 +122,9 @@ class UpdatePresenter extends BasePresenter
 					$this->context->universe->ogameApiGetFileNeeded(),
 					$this->context->alliances->ogameApiGetFileNeeded(),
 					$this->context->players->ogameApiGetFileNeeded()
-					)
+					),
+				"message" => $e->getMessage()
+
 
 				);
 			$response["what"] = array_merge($response["what"], $this->context->highscore->ogameApiGetFileNeeded());

@@ -50,7 +50,7 @@
 		<div id="user-panel">
 			{if $user->isLoggedIn()}
 				{_ "Logged as: "} {$user->getIdentity()->username}
-			<a n:href="Sign:out" n:attr="title => _('Logout')">{_ "Logout"}</a>
+			<a n:href="Sign:out" n:attr="title => __('Logout')">{_ "Logout"}</a>
 			{/if}
 		</div>
 		<div class="clear"></div>
@@ -79,10 +79,14 @@
 									}
 									else if(data["status"] == "continue")
 									{
+										$("#update-panel p.update").remove();
 										if(data["what"])
 										{
-											$("#update-panel p.update").remove();
 											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} " + data["what"] + " {!_ "from Ogame API!"}</p>");
+										}
+										else
+										{
+											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} {!_ "from Ogame API!"}</p>");
 										}
 										update();
 									}

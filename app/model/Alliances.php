@@ -10,61 +10,47 @@ class Alliances extends Table
 	protected $apiFile = "alliances.xml";
 	public function updateFromApi()
 	{
+		$mc = microtime(1);
 		$data = $this->container->ogameApi->getData($this->apiFile);
 
 		if($data !== false)
 		{
-
-			$timestamp = (int)$data["timestamp"];
+			$data->read();
+			$timestamp = (int)$data->getAttribute("timestamp");
 			/* this can´t be done at the moment!
 			// data in ogame api are always valid at the time of their creation, so I can delete all older data, because they will be replaced anyway
 			// this way I also get rid of nonexisting alliances
 			if($data->alliance)
 				$res = $this->getTable()->where("last_update < ?", $timestamp)->delete(); */
 
-
-			$start = (int) $this->container->config->load("$this->tableName-start");
-
-			$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];
-
-			for($i = $start; $i < $end; $i++)
+			$query = "";
+			$i = 0;
+			while($data->read())
+			{
+				if($data->name === "alliance" && $data->nodeType == \XMLReader::ELEMENT)
 				{
-					if($data->alliance[$i])
-						$alliance = $data->alliance[$i];
-					else
-						{
-							// this is the end of update, save the timestamp
-							$this->container->config->save("$this->tableName-finished", $timestamp);
-							$this->container->config->save("$this->tableName-start", 0);
-							return true;
-						}
-				$name = (string) $alliance["name"];
-				$id = (int) $alliance["id"];
-				$tag = (string) $alliance["tag"];
-				$logo = (string) $alliance["logo"];
-				$homepage = (string) $alliance["homepage"];
-				$open = (int) $alliance["open"];
-
-
-				$dbData = array(
-								"id_alliance_ogame" => $id,
-								"name" => $name,
-								"tag" =>  $tag,
-								"open" =>  $open,
-								"logo" => $logo,
-								"homepage" => $homepage,
-								"last_update" => $timestamp
-								);
-				$this->insertAlliance($dbData);
-
-				foreach($alliance->player as $player)
-				{
-					$id = (int) $player["id"];
-					$this->container->players->setAlliance($id, $dbData["id_alliance_ogame"]);
+					$i++;
+						$dbData = array(
+							"id_alliance_ogame" => (int) $data->getAttribute("id"),
+							"name" => (string) $data->getAttribute("name"),
+							"tag" =>  (string) $data->getAttribute("tag"),
+							"open" =>  (int) $data->getAttribute("open"),
+							"logo" => (string) $data->getAttribute("logo"),
+							"homepage" => (string) $data->getAttribute("homepage"),
+							"last_update" => $timestamp
+						);
+						$dataFields = " id_alliance_ogame = $dbData[id_alliance_ogame], name = '$dbData[name]',
+							tag = '$dbData[tag]', open = $dbData[open],
+							logo = '$dbData[logo]', homepage = '$dbData[homepage]',
+							last_update = $dbData[last_update] ";
+						$query .= " insert into $this->tableName set $dataFields on duplicate key update $dataFields;";
 				}
-
 			}
-			$this->container->config->save("$this->tableName-start", $end);
+			$this->chunkedMultiQuery($query);
+
+			// this is the end of update, save the timestamp
+			$this->container->config->save("$this->tableName-finished", $timestamp);
+			$this->container->config->save("$this->tableName-start", 0);
 			return true;
 		}
 		else
