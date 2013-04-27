@@ -153,11 +153,34 @@
 							<th>{_ "Planets"}</th>
 						</tr>
 					<tbody>
+						<?php
+							$activity_cache = array();
+							$date_cache = array();
+						?>
 						{foreach $results["activity_all"] as $a}
+							<?php
+								$date = date("l", $a["timestamp"]);
+								if(isset($activity_cache[$a["type"]]))
+								{
+									$a["type_tr"] = $activity_cache[$a["type"]];
+								}
+								else
+								{
+									$activity_cache[$a["type"]] = $a["type_tr"] = __($a["type"]);
+								}
+								if(isset($date_cache[$date]))
+								{
+									$date = $date_cache[$date];
+								}
+								else
+								{
+									$date_cache[$date] = $date = __($date);
+								}
+							?>
 						<tr n:class="$iterator->odd ? odd">
 							<td>{$a["timestamp"]|date:'j. n. Y H:i:s'}</td>
-							<td>{_(date("l", $a["timestamp"]))}</td>
-							<td>{_ $a["type"]}</td>
+							<td>{$date}</td>
+							<td>{$a["type_tr"]}</td>
 							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"] : "-"}</td>
 							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["planets"] : "-"}</td>
 						</tr>

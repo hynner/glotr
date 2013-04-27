@@ -16,20 +16,25 @@ class Server extends Table
 		{
 			$timestamp = (int)$data["timestamp"];
 			// data in ogame api are always valid at the time of their creation, so I can delete all older data, because they will be replaced anyway
-			// this way I also get rid of nonexisting players
-			if($data->name)
+			if($data->domain)
+			{
+
 				$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();
+				$dbData = array();
+				foreach($data as $key => $value)
+					$dbData[$key] = (string) $value;
+				$res_c = $this->getConnection()->query("show columns from $this->tableName" );
+				$cols = array();
+				while($col = $res_c->fetch())
+					$cols[] = $col->Field;
 
-			$dbData = array();
-			foreach($data as $key => $value)
-				$dbData[$key] = (string) $value;
+				foreach($dbData as $k => $d)
+				{
+					if(!in_array($k, $cols))
+							unset($dbData[$k]);
+				}
 
-			unset($dbData["name"]);
-			unset($dbData["topScore"]);
-			$dbData["last_update"] = $timestamp;
-
-
-
+				$dbData["last_update"] = $timestamp;
 
 				try{
 					// only insertion matters, there is no need for update, because there is no old data in the database
@@ -38,13 +43,11 @@ class Server extends Table
 				// I don´t have to care about exceptions, the only source is duplicate unique keys => newer data I don´t want to replace
 				catch(\PDOException $e)
 				{}
+				$this->container->config->save($this->tableName."-finished", $timestamp);
 				$this->data = $dbData;
-
-
-
-
-
-			return true;
+				return true;
+			}
+			return false;
 		}
 		else
 			return false;

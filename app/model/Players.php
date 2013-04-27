@@ -8,7 +8,6 @@ class Players extends Table
 	protected $tableName = "players";
 	/** @var string api filename */
 	protected $apiFile = "players.xml";
-	protected $numPlayers;
 	public function updateFromApi()
 	{
 		$data = $this->container->ogameApi->getData($this->apiFile);
@@ -31,8 +30,6 @@ class Players extends Table
 			{
 				if($data->name === "player" && $data->nodeType == \XMLReader::ELEMENT)
 				{
-
-
 				$dbData = array(
 								"id_player_ogame" => (int) $data->getAttribute("id"),
 								"playername" => (string) $data->getAttribute("name"),
@@ -41,19 +38,12 @@ class Players extends Table
 								"last_update" => $timestamp
 								);
 				$dataFields = " id_player_ogame = $dbData[id_player_ogame], playername = '$dbData[playername]', status = '$dbData[status]',id_alliance = $dbData[id_alliance],last_update = $dbData[last_update] ";
-				//$this->insertPlayer($dbData);
-
-
-				//$query .= " update $this->tableName  set playername = '".\Nette\Utils\Strings::random(12, "a-z")."' where playername = '$dbData[playername]' and id_player_ogame != $dbData[id_player_ogame] ;";
 				$query .= " insert into $this->tableName set $dataFields on duplicate key update $dataFields;";
-
-
 
 				}
 
 			}
 			$this->chunkedMultiQuery($query);
-			//$this->container->config->save("$this->tableName-start", $end);
 			// this is the end of update, save the timestamp
 			$this->container->config->save("$this->tableName-finished", $timestamp);
 			$this->container->config->save("$this->tableName-start", 0);
@@ -103,28 +93,37 @@ class Players extends Table
 
 		return $this->container->universe->getTable()->where($coords)->limit(1)->fetch()->id_player;
 	}
-	public function search($id_player, $id_user = NULL)
+	public function search($id_player, $id_user = NULL, $playerOnly = false)
 	{
 		if(!$id_player)
 			return array();
-		$ret["activity"]  = $this->container->activities->search($id_player);
-		$ret["activity_all"]  = $this->container->activities->searchUngrouped($id_player);
 		$ret["player"] = $this->getTable()->where(array("id_player_ogame" => $id_player))->fetch()->toArray();
-		$ret["fs"] = $this->container->fs->search($id_player);
-		if($ret["player"]["id_alliance"])
+		if(!$playerOnly)
 		{
-			$ret["alliance"] = $this->container->alliances->find($ret["player"]["id_alliance"])->toArray();
+			$ret["activity"]  = $this->container->activities->search($id_player);
+			$ret["activity_all"]  = $this->container->activities->searchUngrouped($id_player);
+
+			$ret["fs"] = $this->container->fs->search($id_player);
+			$ret["planets"] = array();
+			if($ret["player"]["id_alliance"])
+			{
+				$ret["alliance"] = $this->container->alliances->find($ret["player"]["id_alliance"])->toArray();
+			}
+			else
+			{
+				$ret["alliance"] = false;
+			}
+			$res = $this->container->universe->findBy(array("id_player" => $id_player));
+			while($r = $res->fetch())
+			{
+				$ret["planets"][] = $r->toArray();
+			}
+			if($ret["planets"])
+			{
+				$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
+			}
 		}
-		else
-		{
-			$ret["alliance"] = false;
-		}
-		$res = $this->container->universe->findBy(array("id_player" => $id_player));
-		while($r = $res->fetch())
-		{
-			$ret["planets"][] = $r->toArray();
-		}
-		$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
+
 		// find user´s personal status for this player
 		if($id_user)
 		{
@@ -148,7 +147,7 @@ class Players extends Table
 	{
 		$status = array();
 		// first check whether player is a bandit/ star lord
-		$numPlayers = $this->getNumPlayers();
+		$numPlayers = $this->getCount();
 		$isBandit = false;
 		$isOutlaw = false;
 		if(($player["score_7_position"] >= ($numPlayers - 10)) && $player["score_7"] <= -15000)
@@ -216,14 +215,7 @@ class Players extends Table
 
 
 	}
-	public function getNumPlayers()
-	{
-		if(!$this->numPlayers)
-		{
-			$this->numPlayers = $this->getTable()->count("id_player");
-		}
-		return $this->numPlayers;
-	}
+
 	public function getNewbieProtection($player, $player2)
 	{
 		$isOutlaw = false;

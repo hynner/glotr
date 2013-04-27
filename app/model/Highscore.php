@@ -88,13 +88,18 @@ class Highscore extends Table
 			}
 		}
 		$pids = implode(", ", array_keys($queryData[1])); // ids of all players
+		// delete data of old players
 		$this->container->mysqli->query("delete from ".$this->container->players->tableName." where id_player_ogame  not in ($pids) and status != 'a'"); // delete non-existent players
-
+		$this->container->mysqli->query("delete from ".$this->container->universe->tableName." where id_player not in ($pids) "); // delete old planets
 		$this->container->mysqli->query("delete from ".$this->tableName." where id_item not in ($pids) and category = 1"); // delete score history
 		$this->container->mysqli->query("delete from ".$this->container->activities->tableName." where id_player not in ($pids)"); // delete activities
 		$this->container->mysqli->query("delete from ".$this->container->fs->tableName." where id_player not in ($pids)"); // delete fleetsaves
 
+		/* delete old alliances */
+		$aids = implode(", ", array_keys($queryData[2])); // ids of all alliances, PHP is case sensitive, so aids != AIDS :-)
+
 		$period = ceil(intval(date("z"))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
+		$this->container->mysqli->query("delete from ".$this->container->alliances->tableName." where id_alliance_ogame  not in ($aids)"); // delete non-existent players
 		$year = intval(date("Y"));
 		$query = "";
 
@@ -131,17 +136,10 @@ class Highscore extends Table
 				$query .= "insert into $this->tableName set period = $period, year = $year, category = $cat, id_item = $id, $dataFields on duplicate key update $dataFields;";
 
 			}
-
-
 		}
 		$this->chunkedMultiQuery($query);
-
+		$this->cleanUpScoreHistory();
 		$this->container->config->save("$this->tableName-finished", $timestamp);
-
-
-
-
-
 	}
 
 	public function cleanUpScoreHistory()

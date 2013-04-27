@@ -87,4 +87,8 @@ class Alliances extends Table
 		$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
 		return $ret;
 	}
+	public function getNumAlliances()
+	{
+		
+	}
 }

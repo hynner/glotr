@@ -10,6 +10,7 @@ class Table extends Nette\Object
 	protected $tableName;
 	protected $container;
 	protected $apiFile;
+	protected $count;
 
 	/** @var string $columnListPrefix prefix used by \GLOTR\Table::getPrefixedColumnList method */
 	protected $columnListPrefix;
@@ -107,9 +108,7 @@ class Table extends Nette\Object
 	 */
 	public function needApiUpdate()
 	{
-
 		return ($this->container->config->load("$this->tableName-finished")+$this->container->parameters["ogameApiExpirations"][$this->apiFile] < time());
-
 	}
 
 	public function ogameApiGetFileNeeded()
@@ -175,6 +174,7 @@ class Table extends Nette\Object
 				{
 					$i++;
 					$t .= ";";
+					//$mysqli->query($t); continue;
 					if(($len+strlen($t)) < $max)
 					{
 						$len += strlen($t);
@@ -201,9 +201,17 @@ class Table extends Nette\Object
 		else
 		{
 			$mysqli->multi_query($query);
-			while ($mysqli->more_results() && $mysqli->next_result());
+			while ($mysqli->more_results() && $mysqli->next_result()){}
 		}
 
 		return false;
+	}
+	public function getCount()
+	{
+		if(!$this->count)
+		{
+			$this->count = $this->getTable()->count("*");
+		}
+		return $this->count;
 	}
 }

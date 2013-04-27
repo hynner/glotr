@@ -62,10 +62,6 @@ class UpdatePresenter extends BasePresenter
 
 		if($check && !$this->getUser()->isLoggedIn())
 			$this->redirect("Sign:in");
-
-
-
-
 	}
 	public function actionUpdateAll()
 	{
@@ -111,6 +107,12 @@ class UpdatePresenter extends BasePresenter
 				$response = array("status" => "continue");
 				goto send;
 			}
+			if($this->context->server->needApiUpdate())
+			{
+				$this->context->server->updateFromApi();
+				$response = array("status" => "continue");
+				goto send;
+			}
 
 		}
 		catch(Nette\Application\ApplicationException $e)
@@ -124,8 +126,6 @@ class UpdatePresenter extends BasePresenter
 					$this->context->players->ogameApiGetFileNeeded()
 					),
 				"message" => $e->getMessage()
-
-
 				);
 			$response["what"] = array_merge($response["what"], $this->context->highscore->ogameApiGetFileNeeded());
 		}

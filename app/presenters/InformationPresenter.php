@@ -44,7 +44,6 @@ class InformationPresenter extends BasePresenter
 			throw new Nette\Application\BadRequestException;
 		$this->id_player = $id;
 		$this->template->results = $this->context->players->search($id, $this->getUser()->getIdentity()->id_user);
-		$this->context->activities->predict($id);
 		$this->template->scores = array(
 			0 => "Total",
 			1 => "Economy",
@@ -655,7 +654,7 @@ class InformationPresenter extends BasePresenter
 	protected function getUserPlayer()
 	{
 		if(!isset($this->userPlayerData))
-			$this->userPlayerData = $this->context->players->search($this->getUser()->getIdentity()->id_player);
+			$this->userPlayerData = $this->context->players->search($this->getUser()->getIdentity()->id_player, NULL, true);
 		return $this->userPlayerData;
 	}
 }
