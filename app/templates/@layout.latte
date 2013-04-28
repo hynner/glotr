@@ -64,6 +64,7 @@
 					<div id="update-panel">
 						<script type="text/javascript">
 						// checks for updates from Ogame API
+						var tries = 0;
 						function update()
 						{
 								$.ajax({
@@ -100,6 +101,17 @@
 									{
 										$("#update-panel p.update").remove();
 										$("#update-panel").append("<p class='update disabled'>{!_ "Updating from Ogame API failed!"}<br />{!_ "Ogame API was disabled by server administrator!"}</p>");
+									}
+								},
+								error: function(){
+									if(tries++ < 10)
+									{
+										update();
+									}
+									else
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update failed'>{!_ "Updating from Ogame API failed!"}</p>");
 									}
 								}
 							});

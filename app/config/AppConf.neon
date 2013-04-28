@@ -48,6 +48,9 @@ common:
 			class: \mysqli("%database.host%", "%database.user%", "%database.password%", "%database.dbname%")
 
 	factories:
+		httpSocket:
+			parameters: [host, file, port: 80, timeout: NULL]
+			class: GLOTR\httpScoket(%host%,%file%, %port%, %timeout%)
 
 
 
