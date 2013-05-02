@@ -192,7 +192,7 @@ class InstallPresenter extends BasePresenter
 	{
 		$save = $this->getDatabaseStructure();
 		$success = file_put_contents($this->context->parameters["dbSetupFile"], serialize($save));
-		if($success === FALSE)
+		if($success !== FALSE)
 			$this->flashMessage("Database structure saved", "success");
 		else
 			$this->flashMessage("Unable to save database structure", "error");

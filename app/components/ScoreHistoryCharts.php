@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class ScoreHistoryCharts extends Control
+class ScoreHistoryCharts extends GLOTRControl
 {
 
 	protected $context;

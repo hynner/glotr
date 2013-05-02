@@ -17,9 +17,6 @@ class Universe extends Table
 		{
 			$data->read();
 			$timestamp = (int)$data->getAttribute("timestamp");
-			// data in ogame api are always valid at the time of their creation, so I can delete all older data, because they will be replaced anyway
-			// this way I also get rid of nonexisting planets
-			$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();
 
 			$start = (int) $this->container->config->load("$this->tableName-start");
 
@@ -72,7 +69,7 @@ class Universe extends Table
 			$this->container->config->save("$this->tableName-finished", $timestamp);
 			$this->container->config->save("$this->tableName-start", 0);
 			return true;
-			
+
 		}
 		else
 			return false;

@@ -123,6 +123,9 @@ class Galaxyplugin extends Nette\Object
 							);
 							if($position->player["status"])
 								$player["status"] = str_replace("n", "",  (string) $position->player["status"]);
+							else
+								$player["status"] = "";
+							$this->container->players->insertPlayer($player);
 							if($position->alliance)
 							{
 
@@ -133,6 +136,7 @@ class Galaxyplugin extends Nette\Object
 								$this->container->alliances->insertAlliance($alliance);
 								$this->container->players->setAlliance($player["id_player_ogame"], $alliance["id_alliance_ogame"]);
 							}
+
 
 							//DBG::log($position->asXml());
 						}
@@ -327,6 +331,61 @@ class Galaxyplugin extends Nette\Object
 						$this->container->espionages->insertEspionage($dbData, $player->id_player_ogame);
 					endforeach;
 					return $code;
+				break;
+			case "fleet_movement":
+				$code = 641;
+				foreach($xml->fleet as $fleet)
+				{
+					$dbData = array(
+						"mission" => (string) $fleet["mission"],
+						"arrival" => $this->dateTime2Timestamp((string) $fleet["arrival_time"]),
+						"last_updated" => $this->dateTime2Timestamp((string) $fleet["scantime"]),
+						"returning" => ((((string) $fleet["returning"]) == "false") ? "0" : "1"),
+						"origin_moon" => ((((string) $fleet->origin["moon"]) == "false") ? "0" : "1"),
+						"destination_moon" => ((((string) $fleet->destination["moon"]) == "false") ? "0" : "1")
+					);
+					if(isset($fleet["sub_fleet_id"]))
+					{
+						$dbData["id_fleet_ogame"] = (string) $fleet["sub_fleet_id"];// just to be safe
+						$dbData["id_parent"] = (string) $fleet["fleet_id"];
+					}
+					else
+					{
+						$dbData["id_fleet_ogame"] = (string) $fleet["fleet_id"];
+					}
+					$o_coords = array(
+						"galaxy" => (int) $fleet->origin["galaxy"],
+						"system" => (int) $fleet->origin["system"],
+						"position" => (int) $fleet->origin["planet"]
+					);
+					$d_coords = array(
+						"galaxy" => (int) $fleet->destination["galaxy"],
+						"system" => (int) $fleet->destination["system"],
+						"position" => (int) $fleet->destination["planet"]
+					);
+					$origin = $this->container->universe->findOneBy($o_coords);
+					$dest = $this->container->universe->findOneBy($d_coords);
+					if(!$origin || !$dest) // planet not found
+					{
+						return 642; // not updated
+					}
+					$dbData["id_origin"] = $origin->id_planet; // using GLOTR´s internal id, because planet might not be in API yet
+					$dbData["id_destination"] = $dest->id_planet;
+					// add ships and also resources - only visible for your own fleets
+					foreach($fleet->entry as $e)
+					{
+						$dbData[$this->getColumnName((string) $e["name"])] = (string) $e["amount"];
+					}
+					try{
+						$this->container->fleetMovements->insertFleetMovement($dbData);
+					}
+					catch(\PDOException $e)
+					{
+						return 642;
+					}
+
+				}
+				return $code;
 				break;
 		endswitch;
 	}

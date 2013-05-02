@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class ActivityChart extends Control
+class ActivityChart extends GLOTRControl
 {
 
 	protected $context;

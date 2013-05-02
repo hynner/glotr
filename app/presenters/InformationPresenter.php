@@ -118,6 +118,10 @@ class InformationPresenter extends BasePresenter
 		$this->template->galaxy = $galaxy;
 		$this->template->system = $system;
 	}
+	public function actionFleetMovements()
+	{
+		$this->template->movements = $this->context->fleetMovements->search();
+	}
 	public function actionScoreHistory()
 	{
 		$sess = $this->getSession("scoreHistory");
@@ -349,10 +353,18 @@ class InformationPresenter extends BasePresenter
 			return $control;
 
 	}
+	protected function createComponentFleetMovement()
+	{
+			$control = new GLOTR\FleetMovement;
+			$control->setContext($this->context);
+			return $control;
+	}
 	public function createComponentVp()
 	{
 
-		return new \VisualPaginator($this, "vp");
+		$vp = new \VisualPaginator($this, "vp");
+		$vp->setTranslator($this->context->translator);
+		return $vp;
 	}
 	protected function createComponentManualActivityForm()
 	{
@@ -415,6 +427,7 @@ class InformationPresenter extends BasePresenter
 
 		$form->setTranslator($this->context->translator);
 		$form->setDefaults(array("galaxy" => 1, "system" => 1));
+		$form->setValues(array("galaxy" => $this->template->galaxy, "system" => $this->template->system));
 
 		$form->onValidate[] = $this->validateSystemsControlsForm;
 		$form->onSuccess[] = $this->systemsControlsFormSubmitted;

@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class AllianceMembersCharts extends Control
+class AllianceMembersCharts extends GLOTRControl
 {
 
 	protected $context;

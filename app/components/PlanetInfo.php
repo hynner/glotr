@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class PlanetInfo extends Control
+class PlanetInfo extends GLOTRControl
 {
 
 	protected $context;
@@ -30,7 +30,7 @@ class PlanetInfo extends Control
 		$template->result = $result;
 		$template->dateTimeFormat = "j. n. Y H:i:s";
 		$tmp = $this->context->espionages->allInfo;
-		
+
 		$template->resources = $this->context->espionages->filterData($result, $tmp[$prefix."resources"], true);
 		$template->fleet = $this->context->espionages->filterData($result, $tmp[$prefix."fleet"], false);
 		$template->defence = $this->context->espionages->filterData($result, $tmp[$prefix."defence"], false);

@@ -31,41 +31,31 @@ class OgameApi extends Nette\Object
 		$data = $cache->load($file);
 		if($data === NULL)
 		{
-			if(ini_get("allow_url_fopen") == 0)
+			$sess = $this->container->session;
+			$conn = $this->container->createHttpSocket(str_replace("http://", "", $this->container->parameters["server"]),"/api/$file");
+			$conn->addHeader("Accept-Encoding:", "gzip, deflate");
+
+			if($this->container->parameters["testServer"])
 			{
-				throw new Nette\Application\ApplicationException("allow_url_fopen disabled!");
+				$conn->addHeader("Authorization:",  "Basic " . base64_encode(file_get_contents($this->container->parameters["testServerAuthFile"])));
 			}
-			else
+
+			$data = $conn->rangeDownload($sess->getId(), $cache,1024);
+
+			if($data !== FALSE)
 			{
-				$sess = $this->container->session;
-				$conn = $this->container->createHttpSocket(str_replace("http://", "", $this->container->parameters["server"]),"/api/$file");
-				$conn->addHeader("Accept-Encoding:", "gzip, deflate");
+			$xml = new \XMLReader();
 
-				if($this->container->parameters["testServer"])
-				{
-					$conn->addHeader("Authorization:",  "Basic " . base64_encode(file_get_contents($this->container->parameters["testServerAuthFile"])));
-				}
+			$xml->XML($data, "UTF-8");
 
-				$data = $conn->rangeDownload($sess->getId(), $cache,1024);
-
-				if($data !== FALSE)
-				{
-				$xml = new \XMLReader();
-
-				$xml->XML($data, "UTF-8");
-
-				$xml->next();
-				$exp = (int) $xml->getAttribute("timestamp");
-				$exp += $expirationTime;
-				$cache->save($file, $data, array(
-						Cache::EXPIRE => $exp
-					));
-				}
-				goto ret;
+			$xml->next();
+			$exp = (int) $xml->getAttribute("timestamp");
+			$exp += $expirationTime;
+			$cache->save($file, $data, array(
+					Cache::EXPIRE => $exp
+				));
 			}
 		}
-		else
-	ret:
 		switch($type)
 		{
 			case "XMLReader":

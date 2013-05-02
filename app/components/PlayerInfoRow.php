@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class PlayerInfoRow extends Control
+class PlayerInfoRow extends GLOTRControl
 {
 
 	protected $context;

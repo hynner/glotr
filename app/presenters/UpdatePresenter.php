@@ -162,29 +162,6 @@ class UpdatePresenter extends BasePresenter
 			{
 				$ret = $this->context->gtp->update($post["content"]);
 				$code = $xml->addChild("returncode", $ret);
-				/*switch($post["type"]):
-				case "galaxyview":
-					// 601 - galaxyview updated
-
-					break;
-				case "reports":
-					// 611 - espionage reports updated
-					$code = $xml->addChild("returncode", "611");
-					break;
-				case "allypage":
-					// 631 - allyhistory updated
-					$code = $xml->addChild("returncode", "631");
-					break;
-				case "player_highscore":
-					// 622 - stats updated
-					$code = $xml->addChild("returncode", "622");
-
-					break;
-				default:
-					Nette\Diagnostics\Debugger::log($post["type"]);
-					break;
-
-				endswitch;*/
 			}
 
 

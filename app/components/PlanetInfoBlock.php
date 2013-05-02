@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class PlanetInfoBlock extends Control
+class PlanetInfoBlock extends GLOTRControl
 {
 
 	protected $context;
