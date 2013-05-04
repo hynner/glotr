@@ -21,9 +21,22 @@ class FleetMovements extends Table
 		}
 		return true;
 	}
-	public function search()
+	public function search($paginator = NULL)
 	{
-		$data = $this->getTable()->where("arrival > ?", time())->order("arrival ASC")->fetchPairs("id_fleet_ogame");
+		$query = $this->getTable()->where("arrival > ?", time());
+		if($paginator !== NULL)
+		{
+			$count = $query->where("id_parent IS NULL OR id_parent = id_fleet_ogame")->count("id_fleet_ogame");
+			$paginator->setItemCount($count);
+			$paginator->setItemsPerPage(20);
+			// I must do this, so that ACS counts as 1 fleet movement
+			$query = $query->limit($paginator->getLength(), $paginator->getOffset())
+					->where("id_parent IS NULL OR id_parent = id_fleet_ogame")
+					->select("id_fleet_ogame");
+			$ids = array_keys($query->fetchPairs("id_fleet_ogame"));
+			$query = $this->getTable()->where("id_fleet_ogame IN (?) OR id_parent IN (?)", $ids, $ids);
+		}
+		$data = $query->order("arrival ASC")->fetchPairs("id_fleet_ogame");
 		$ret = array();
 		foreach($data as $id => $row)
 		{

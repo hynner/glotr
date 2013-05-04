@@ -5,7 +5,6 @@
 				<td class="fm-time-left">
 					<span class="time-ticking" time="{$movement['arrival']}">{$movement["arrival"]-time()|formatSeconds}</span>
 				</td>
-				{dump $movement}
 				<td class="fm-arrival">
 					{$movement["arrival"]|date:"j.n.Y H:i:s"}
 				</td>
@@ -16,6 +15,7 @@
 					{else}
 						{"Unknown"}
 					{/if}
+					<div class="clear"></div>
 				</td>
 				<td class="fm-direction">
 					<img n:attr="alt => '', src => $baseUrl.'/css/glotr-default/images/icons/fleet-'.(($movement['returning'] == 1) ? 'returing' : 'arriving').'.png'"/>
@@ -29,8 +29,8 @@
 					{/if}
 					{if isset($movement["children"])}
 						<button class="button-icon" icon="ui-icon-triangle-1-s"></button>
-						<div class="clear"></div>
 					{/if}
+					<div class="clear"></div>
 				</td>
 
 			</tr>

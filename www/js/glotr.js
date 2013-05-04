@@ -57,7 +57,7 @@ function ajaxCallback()
 	$(".current").addClass("ui-state-active");
 	$(".button.current").button("disable");
 	$(".button.current.ui-state-disabled").css({"opacity": 1});
-
+	$(".button.disabled").button("disable");
 	$(".flash").fadeOut(10000);
 	createHighlight($(".flash.success"));
 	createError($(".flash.error"));
@@ -79,12 +79,6 @@ function createError(obj){
 function showSpinner(event)
 {
 	$("#ajax-spinner").show();
-}
-function modulo(a,b)
-{
-	a = parseInt(a,10);
-	b = parseInt(b,10);
-	return (a-b*Math.floor(a/b));
 }
 function formatSeconds(seconds)
 {

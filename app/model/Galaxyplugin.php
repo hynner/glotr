@@ -122,7 +122,7 @@ class Galaxyplugin extends Nette\Object
 
 							);
 							if($position->player["status"])
-								$player["status"] = str_replace("n", "",  (string) $position->player["status"]);
+								$player["status"] = str_replace("n", "",  str_replace("iI", "I", (string) $position->player["status"]));
 							else
 								$player["status"] = "";
 							$this->container->players->insertPlayer($player);

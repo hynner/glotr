@@ -100,8 +100,8 @@ class Universe extends Table
 		if(!is_null($paginator))
 		{
 			$count = $this->sendQuery("count($uniT.id_planet) as count", $values);
-			$paginator->setItemCount($count[0]["count"]); // celkový počet položek (např. článků)
-			$paginator->setItemsPerPage(((isset($values["results_per_page"]) && $values["results_per_page"] !== "")) ? $values["results_per_page"] : 20); // počet položek na stránce
+			$paginator->setItemCount($count[0]["count"]);
+			$paginator->setItemsPerPage(((isset($values["results_per_page"]) && $values["results_per_page"] !== "")) ? $values["results_per_page"] : 20);
 		}
 
 		$results = $this->sendQuery($columns, $values, $paginator);

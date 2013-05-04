@@ -120,7 +120,12 @@ class InformationPresenter extends BasePresenter
 	}
 	public function actionFleetMovements()
 	{
-		$this->template->movements = $this->context->fleetMovements->search();
+		$vp = $this->getComponent("vp");
+		$this->template->movements = $this->context->fleetMovements->search($vp->getPaginator());
+		if($this->isAjax())
+		{
+			$this->invalidateControl("fleetMovements");
+		}
 	}
 	public function actionScoreHistory()
 	{

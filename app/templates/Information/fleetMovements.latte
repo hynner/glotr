@@ -1,9 +1,13 @@
 {block content}
 <h2>{_ "Fleet movements"}</h2>
+{snippet fleetMovements}
 <table id="fleet-movements">
-	{foreach $movements as $id => $movement}
-		{control fleetMovement, $movement, $id, $iterator->isOdd()}
-	{/foreach}
+		{if count($movements) > 0}
+			{control vp}
+			{foreach $movements as $id => $movement}
+				{control fleetMovement, $movement, $id, $iterator->isOdd()}
+			{/foreach}
+		{/if}
 </table>
-
+{/snippet}
 {/block}

@@ -3,7 +3,7 @@ log/*
 !log/web.config
 nbproject/
 nbproject/*
-temp/*
+temp/btfj.dat
 !temp/cache
 !temp/sessions
 !temp/.htaccess
