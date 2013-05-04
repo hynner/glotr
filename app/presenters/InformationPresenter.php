@@ -121,7 +121,7 @@ class InformationPresenter extends BasePresenter
 	public function actionFleetMovements()
 	{
 		$vp = $this->getComponent("vp");
-		$this->template->movements = $this->context->fleetMovements->search($vp->getPaginator());
+		$this->template->movements = $this->context->fleetMovements->search($this->getUserPlayer(),$vp->getPaginator());
 		if($this->isAjax())
 		{
 			$this->invalidateControl("fleetMovements");
@@ -656,17 +656,7 @@ class InformationPresenter extends BasePresenter
 			foreach($results as &$r)
 			{
 				$r["_computed_player_status"] = $this->context->players->getRelativeStatus($r, $player2);
-				$r["_computed_status_class"] = "";
-				foreach($r["_computed_player_status"] as $key => $value)
-				{
-
-					if(is_integer($key))
-						$r["_computed_status_class"] .= " ".$value;
-					elseif(is_bool($value) && $value)
-						$r["_computed_status_class"] .= " ".$key;
-					elseif(!is_bool($value))
-						$r["_computed_status_class"] .= " "."$key-$value";
-				}
+				$r["_computed_status_class"] = $this->context->players->getClassForPlayerStatus($r["_computed_player_status"]);
 			}
 	}
 	protected function getUserPlayer()

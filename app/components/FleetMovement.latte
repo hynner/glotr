@@ -9,11 +9,20 @@
 					{$movement["arrival"]|date:"j.n.Y H:i:s"}
 				</td>
 				<td class="fm-origin">
-					<img n:attr="alt => '', src => $baseUrl.'/css/glotr-default/images/icons/'.(($movement['origin_moon'] == 1) ? 'moon' : 'planet').'.png'"/>
-					{if $movement["origin"]}
-						<a href="{plink Information:systems $movement['origin']['galaxy'], $movement['origin']['system']}">{$movement["origin"]["galaxy"]}:{$movement["origin"]["system"]}:{$movement["origin"]["position"]}</a>
-					{else}
-						{"Unknown"}
+					{if (isset($movement["id_parent"]) && $child) || !isset($movement["id_parent"]) }
+						<img n:attr="alt => '', src => $baseUrl.'/css/glotr-default/images/icons/'.(($movement['origin_moon'] == 1) ? 'moon' : 'planet').'.png'"/>
+						{if $movement["origin"]}
+							<a href="{plink Information:systems $movement['origin']['galaxy'], $movement['origin']['system']}">{$movement["origin"]["galaxy"]}:{$movement["origin"]["system"]}:{$movement["origin"]["position"]}</a>
+						{else}
+							{_ "Unknown"}
+						{/if}
+						<span class="fm-player">
+						{if $movement["player_or"]}
+							<a href="{plink Information:playerInfo $movement["player_or"]["id_player_ogame"]}" n:attr="class => 'playername '. $movement['player_or']['_computed_status_class']">{$movement["player_or"]["playername"]}</a>
+						{else}
+							{_ "Unknown player"}
+						{/if}
+						</span>
 					{/if}
 					<div class="clear"></div>
 				</td>
@@ -25,11 +34,19 @@
 					{if $movement["dest"]}
 						<a href="{plink Information:systems $movement['dest']['galaxy'], $movement['dest']['system']}">{$movement["dest"]["galaxy"]}:{$movement["dest"]["system"]}:{$movement["dest"]["position"]}</a>
 					{else}
-						{"Unknown"}
+						{_ "Unknown"}
 					{/if}
+
 					{if isset($movement["children"])}
 						<button class="button-icon" icon="ui-icon-triangle-1-s"></button>
 					{/if}
+					<span class="fm-player">
+					{if $movement["player_dest"]}
+						<a href="{plink Information:playerInfo $movement["player_dest"]["id_player_ogame"]}" n:attr="class => 'playername '. $movement['player_dest']['_computed_status_class']">{$movement["player_dest"]["playername"]}</a>
+					{else}
+						{_ "Unknown player"}
+					{/if}
+					</span>
 					<div class="clear"></div>
 				</td>
 

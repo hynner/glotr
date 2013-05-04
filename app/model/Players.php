@@ -196,26 +196,50 @@ class Players extends Table
 		// now check relative status
 		if(!empty($player2))
 		{
-			//check whether it is honorable target
-			if($isBandit)
-				$status["plunder"] = 100;
-			elseif((($player["score_3"] > 0.5*$player2["score_3"]) || (($player["score_3_position"] - $player2["score_3_position"]) <= 100) || (($player2["score_3"] - $player["score_3"]) <= 10)) && !in_array("inactive", $status) && !in_array("long_inactive", $status))
-				$status["plunder"] = 75;
-			else
-				$status["plunder"] = 50;
-			$status["newbie"] = $this->getNewbieProtection($player, $player2, $status);
-			// player may also be stronger
-			if(!$status["newbie"])
+			if($player["id_player_ogame"] == $player2["id_player_ogame"])
 			{
-				$status["stronger"] = $this->getNewbieProtection($player2, $player);
+				$status["player-self"] = true;
+			}
+			else
+			{
+				//check whether it is honorable target
+				if($isBandit)
+					$status["plunder"] = 100;
+				elseif((($player["score_3"] > 0.5*$player2["score_3"]) || (($player["score_3_position"] - $player2["score_3_position"]) <= 100) || (($player2["score_3"] - $player["score_3"]) <= 10)) && !in_array("inactive", $status) && !in_array("long_inactive", $status))
+					$status["plunder"] = 75;
+				else
+					$status["plunder"] = 50;
+				$status["newbie"] = $this->getNewbieProtection($player, $player2, $status);
+				// player may also be stronger
+				if(!$status["newbie"])
+				{
+					$status["stronger"] = $this->getNewbieProtection($player2, $player);
+				}
 			}
 
 		}
 		return $status;
-
-
 	}
+	/**
+	 * get CSS classes for player status array
+	 * @param array $status
+	 * @return string
+	 */
+	public function getClassForPlayerStatus($status)
+	{
+		$ret = "";
+		foreach($status as $key => $value)
+		{
 
+			if(is_integer($key))
+				$ret .= " ".$value;
+			elseif(is_bool($value) && $value)
+				$ret .= " ".$key;
+			elseif(!is_bool($value))
+				$ret .= " "."$key-$value";
+		}
+		return $ret;
+	}
 	public function getNewbieProtection($player, $player2)
 	{
 		$isOutlaw = false;

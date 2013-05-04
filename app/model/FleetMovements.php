@@ -21,8 +21,10 @@ class FleetMovements extends Table
 		}
 		return true;
 	}
-	public function search($paginator = NULL)
+	public function search($userPlayer = array(), $paginator = NULL)
 	{
+		if(!empty($userPlayer))
+			$userPlayer = $userPlayer["player"];
 		$query = $this->getTable()->where("arrival > ?", time());
 		if($paginator !== NULL)
 		{
@@ -40,13 +42,32 @@ class FleetMovements extends Table
 		$ret = array();
 		foreach($data as $id => $row)
 		{
+			$player_or = $player_dest = false;
 			$origin = $this->container->universe->getTable()->where("id_planet", $row->id_origin)->fetch();
 			if($origin)
+			{
 				$origin = $origin->toArray();
+				$player_or = $this->container->players->getTable()
+						->where(array("id_player_ogame" => $origin["id_player"]))->fetch();
+				if($player_or)
+				{
+					$player_or = $player_or->toArray();
+					$player_or["_computed_status_class"] = $this->container->players->getClassForPlayerStatus($this->container->players->getRelativeStatus($player_or, $userPlayer));
+				}
+			}
+
 			$dest = $this->container->universe->getTable()->where("id_planet", $row->id_destination)->fetch();
 			if($dest)
+			{
 				$dest = $dest->toArray();
-
+				$player_dest = $this->container->players->getTable()
+						->where(array("id_player_ogame" => $dest["id_player"]))->fetch();
+				if($player_dest)
+				{
+					$player_dest = $player_dest->toArray();
+					$player_dest["_computed_status_class"] = $this->container->players->getClassForPlayerStatus($this->container->players->getRelativeStatus($player_dest, $userPlayer));
+				}
+			}
 			$init = false;
 			if(isset($row->id_parent))
 			{
@@ -74,6 +95,8 @@ class FleetMovements extends Table
 				}
 				$ret[$row->id_parent]["children"][$row->id_fleet_ogame]["origin"] = $origin;
 				$ret[$row->id_parent]["children"][$row->id_fleet_ogame]["dest"] = $dest;
+				$ret[$row->id_parent]["children"][$row->id_fleet_ogame]["player_or"] = $player_or;
+				$ret[$row->id_parent]["children"][$row->id_fleet_ogame]["player_dest"] = $player_dest;
 			}
 			else
 			{
@@ -83,6 +106,8 @@ class FleetMovements extends Table
 			{
 				$ret[$row->id_fleet_ogame]["origin"] = $origin;
 				$ret[$row->id_fleet_ogame]["dest"] = $dest;
+				$ret[$row->id_fleet_ogame]["player_or"] = $player_or;
+				$ret[$row->id_fleet_ogame]["player_dest"] = $player_dest;
 			}
 
 		}
