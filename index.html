@@ -34,7 +34,14 @@
         <h2>What GLOTR is?</h2>
 
 <p>GLOTR is an Ogame database tool. It can store different in-game information. So far it uses OgameAPI and Galaxytool plugin for updating.</p>
-
+<p>Did I mention that GLOTR is already <strong>tolerated</strong>? Check it out <a href="http://board.origin.ogame.de/board6-origin/board38-tools-scripts-skins/board39-tolerated-tools-addons-scripts/4358-glotr/#post22848">here</a>.</p>
+<h2>Requirements</h2>
+<ul>
+	<li>PHP >= 5.3</li>
+	<li>MySQL >= 5</li>
+	<li>Apache >= 2.2, mod_rewrite</li>
+	<li>There are some other PHP configuration requirements, but don´t worry I´m planing to create requirments checker one day :-)</li>
+</ul>
 <h2>Installation</h2>
 <ol>
 <li>Download the archive with GLOTR sources.</li>
@@ -48,26 +55,28 @@
 <li><strong>server</strong> - your ogame server URL without / at the end</li>
 
 <li>Another important options are <strong>database</strong> settings: <br>
-<pre><code>        database:
-            default:
-                dsn: 'mysql:host=localhost;dbname=glotr_devel'
-                user: 'root'
-                password: ''
-
-
+<pre>
+<code>database:
+	host: "127.0.0.1" # if your server is running on windows use IP adress instead of name, it is MUCH faster!
+	dbname: "glotr_devel"
+	user: "root"
+	password: ""
 </code></pre>
 	<ul>
-		<li>replace localhost with the name of your mysql server</li>
+		<li>replace 127.0.0.1 with the IP address/name of your mysql server</li>
 
 <li>replace glotr_devel with the name of your database</li>
 
 <li>replace root with your database username and fill in your password</li>
 	</ul>
 </li>
-<li>Please note, that GLOTR isn´t tolerated yet, so it should be only used on test server (uni680) for testing purposes.
-	Because of that it is defaultly configured for test server, to change this you have to change <strong>testServer</strong> option in
-	<strong>/app/config/AppConf.neon</strong> file to <strong>true</strong>.<br>
-	In order to use it on test server, you have to create /app/config/testServerAuth.txt and put there the text username:password, you should fill in the username and password for test server´s HTTP authorization!
+<li>
+	Next check <strong>AppConf.neon</strong> if <strong>testServer</strong> directive is set to false, it might happen
+	that it´s not, so unless you intend to use GLOTR on uni680 set it to false.
+</li>
+<li>If you want to use GLOTR on uni680 set  <strong>testServer</strong> option in
+	<strong>/app/config/AppConf.neon</strong> file to <strong>true</strong>.
+	Then you have to create /app/config/testServerAuth.txt and put there the text username:password, you should fill in the username and password for test server´s HTTP authorization!
 
 </li>
 
@@ -75,7 +84,7 @@
 
 </ul>
 <li>Upload it to your server</li>
-<li>Change permissions to folders temp, log, temp/cache, temp/sessions, app/model to 777, this step is not neccessary when you use windows localhost as your server.</li>
+<li>Change permissions to folders temp, log, temp/cache, temp/sessions to 777, this step is not neccessary when you use windows localhost as your server.</li>
 <li>And finally visit yourdomain/path_to_glotr/www/install and just follow instructions.</li>
 </ol>
 <h2>Features:</h2>
@@ -87,6 +96,7 @@
 	<li>Player detail - notes, FS records (only manual for now), activity</li>
 	<li>Alliance detail - members overview, members graphs</li>
 	<li>Score history</li>
+	<li>Fleet movements</li>
 	<li>And more coming soon ...</li>
 </ul>
 <h2>Screenshots</h2>
@@ -98,7 +108,8 @@
 <a href="images/ScreenShot006.jpg"  target="_blank"><img src="images/ScreenShot006.jpg" alt=""></a>
 <a href="images/ScreenShot007.jpg"  target="_blank"><img src="images/ScreenShot007.jpg" alt=""></a>
 <a href="images/ScreenShot008.jpg"  target="_blank"><img src="images/ScreenShot008.jpg" alt=""></a>
-
+<h2>Credits</h2>
+So far all done by hynner
       </section>
       <footer>
         <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
