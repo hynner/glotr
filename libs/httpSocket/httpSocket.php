@@ -42,7 +42,7 @@ class httpScoket
 		{
 			$headers .= "$key $value\r\n";
 		}
-		$headers .= "\r\n";
+        $headers .= "\r\n";
 		fwrite($this->socket, $headers);
 		return $this;
 	}
@@ -54,10 +54,12 @@ class httpScoket
 		{
 			$matches = array();
 			$ret = str_replace("\r", "", str_replace("\n", "", $ret));
-
 			if($i++ == 0)
-			{
-				$this->responseHeaders["responseCode"] = $ret;
+            {
+                $tmp = explode(" ", $ret);
+                // HTTP response headers are like "HTTP/1.1 code message"
+                $this->responseHeaders["responseCode"] =(int) $tmp[1];
+                $this->responseHeaders["responseMessage"] = $ret;
 				continue;
 			}
 
@@ -71,7 +73,7 @@ class httpScoket
 				$this->responseHeaders[$matches[0]] = str_replace($matches[0]." ", "", $ret);
 			}
 
-		}
+        }
 		return $this->responseHeaders;
 	}
 	public function getData()
@@ -108,16 +110,22 @@ class httpScoket
 			{
 				$first_headers = $headers;
 			}
-
-			if($headers["responseCode"] == "HTTP/1.1 416 Requested Range Not Satisfiable")
-			{
+            // range not Satisfiable => end of file
+			if($headers["responseCode"] == 416)
+            {
 				break;
-			}
+            }
+            //error
+            if($headers["responseCode"] > 400)
+            {
+                throw new \Nette\Application\ApplicationException("Downloading file failed. HTTP error code $headers[responseCode]");
+            }
 			$data .= $this->getData();
 			$cache->save($key, $data, array(
 				Cache::EXPIRATION => "+ 5 minutes"
-			));
-			if($headers["responseCode"] == "HTTP/1.1 200 OK")
+            ));
+            // OK
+			if($headers["responseCode"] == 200)
 			{
 				break;
 			}
