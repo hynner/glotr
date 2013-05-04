@@ -55,6 +55,7 @@ class SignPresenter extends BasePresenter
 				$this->getUser()->setExpiration('+ 30 minutes', TRUE);
 			}
 			$this->getUser()->login($values->username, $values->password);
+			$this->lang = $this->getUser()->getIdentity()->lang;
 			$this->redirect('Homepage:');
 
 		} catch (NS\AuthenticationException $e) {
