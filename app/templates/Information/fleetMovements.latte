@@ -6,7 +6,9 @@
 			{control vp}
 			{foreach $movements as $id => $movement}
 				{control fleetMovement, $movement, $id, $iterator->isOdd()}
-			{/foreach}
+            {/foreach}
+        {else}
+            {_ "No fleet movements!"}
 		{/if}
 </table>
 {/snippet}

@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-04 15:48:37
+# Created: 2013-05-04 20:51:20
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-04 15:48+0000\n"
+"PO-Revision-Date: 2013-05-04 20:51+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -625,6 +625,9 @@ msgstr "Nepodařilo se uložit strukturu databáze"
 msgid "Unknown"
 msgstr "Neznámé"
 
+msgid "Unknown player"
+msgstr "Neznámý hráč"
+
 msgid "Update"
 msgstr "Aktualizace"
 
@@ -1003,6 +1006,6 @@ msgstr "wing"
 msgid "yes"
 msgstr "ano"
 
-msgid "Unknown player"
-msgstr "Neznámý hráč"
+msgid "No fleet movements!"
+msgstr "Žádné pohyby letek!"
 
