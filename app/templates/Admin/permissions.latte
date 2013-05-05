@@ -1,32 +1,29 @@
 
 {block content}
+<h2>{_ "Permissions"}</h2>
 {snippet permissionsForm}
 	{form permissionsForm, class => "ajax"}
 		{control $form errors}
 <table>
-	<thead>
-		<tr>
-			<th>Username</th>
-			{foreach $permissions as $perm}
-			<th>{$perm}</th>
-			{/foreach}
-		</tr>
-	</thead>
-	<tbody>
-		{foreach $form->getComponents() as $c}
-		{if substr($c->name,0, 4) == "user"}
-		<tr>
-			<td>{$users[str_replace("user", "", $c->name)]["username"]}</td>
-			{foreach $permissions as $name => $perm}
-				<td>{$c[$name]->getControl() }</td>
-			{/foreach}
-		</tr>
-		{/if}
+     <tr>
+        <th class="text-left">{_ "Username"}</th>
+        {foreach $form->getComponents() as $c}
+            {if substr($c->name,0, 4) == "user"}
+                <td>{$users[str_replace("user", "", $c->name)]["username"]}</td>
+            {/if}
 		{/foreach}
-
-		<tr><td n:attr="colspan => count($permissions) +1">{input set }</td></tr>
-	</tbody>
-
+    </tr>
+    {foreach $permissions as $name => $perm}
+    <tr>
+        <th class="text-left">{$perm}</th>
+        {foreach $form->getComponents() as $c}
+            {if substr($c->name,0, 4) == "user"}
+                <td>{$c[$name]->getControl() }</td>
+            {/if}
+		{/foreach}
+    </tr>
+    {/foreach}
+    <tr><td n:attr="colspan => count($permissions) +1">{input set }</td></tr>
 </table>
 	{/form}
 {/snippet}

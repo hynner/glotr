@@ -166,7 +166,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		if(is_null($label))
 			$label = $name;
-
+        $this->context->users->addPermissionColumn($name);
 		$this->permissions[$name] = $label;
 	}
 	protected function setUserParams($params)

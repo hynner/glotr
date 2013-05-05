@@ -101,7 +101,17 @@ class Table extends Nette\Object
 		return $columns;
 		}
 
-	}
+    }
+    public function getColumns()
+    {
+        $cols = array();
+        $data = $this->getConnection()->query("Show columns from $this->tableName");
+        while($col = $data->fetch())
+        {
+            $cols[$col->Field] =(array) $col;
+        }
+        return $cols;
+    }
 	/**
 	 * checks if model needs update from Ogame API
 	 * @return boolean
