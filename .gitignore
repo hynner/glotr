@@ -3,6 +3,11 @@ log/*
 !log/web.config
 nbproject/
 nbproject/*
+temp/btfj.dat
+!temp/cache
+!temp/sessions
+!temp/.htaccess
+!temp/web.config
 temp/cache/*
 temp/sessions/*
 app/config/testServerAuth.txt

@@ -20,6 +20,7 @@ class InstallPresenter extends BasePresenter
 
 
 	}
+
 	public function actionSetupDatabase()
 	{
 		$conn = $this->users->getConnection();
@@ -190,7 +191,12 @@ class InstallPresenter extends BasePresenter
 	public function actionSaveDatabase()
 	{
 		$save = $this->getDatabaseStructure();
-		file_put_contents($this->context->parameters["dbSetupFile"], serialize($save));
+		$success = file_put_contents($this->context->parameters["dbSetupFile"], serialize($save));
+		if($success !== FALSE)
+			$this->flashMessage("Database structure saved", "success");
+		else
+			$this->flashMessage("Unable to save database structure", "error");
+		$this->redirect("Homepage:");
 	}
 	protected function getDatabaseStructure($remove_table_prefix = true)
 	{

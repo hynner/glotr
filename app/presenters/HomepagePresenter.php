@@ -14,12 +14,9 @@ class HomepagePresenter extends BasePresenter
 	}
 	public function renderDefault()
 	{
-		$this->template->anyVariable = 'any value';
-		//$this->context->server->updateFromApi();
-		//$this->context->universe->updateFromApi();
-		//$this->context->players->updateFromApi();
-		//$this->context->universe->updateFromApi(2,0);
-		//$this->context->highscore->cleanUpScoreHistory();
+		$this->template->serverData = $this->context->server->getData();
+		$this->template->numPlayers = $this->context->players->getCount();
+		$this->template->numAllis = $this->context->alliances->getCount();
 	}
 	public function handleGetNewKey()
 	{

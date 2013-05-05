@@ -37,85 +37,121 @@ class Highscore extends Table
 
 		if(!in_array($cat, $this->categories) || !in_array($type, $this->types))
 			throw new Nette\Application\ApplicationException("Unknown type or category when updating highscores!");
+		$queryData = array();
+
+
+		foreach($this->categories as $cat)
+		{
+			foreach($this->types as $type)
+			{
 				$data = $this->container->ogameApi->getData($this->apiFile, array("category" => $cat, "type" => $type));
 				if($data !== false)
 				{
-					$timestamp = (int)$data["timestamp"];
-					$start = (int) $this->container->config->load("$this->tableName-$cat-$type-start");
-
-					$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];
+					if($data->name != "highscore")
+						$data->next();
+					if($data->name != "highscore")
+						throw new Nette\Application\ApplicationException("Invalid XML!");
+						$timestamp = (int)$data->getAttribute("timestamp");
 					if($cat == 1)
 					{
-						$service = "players";
-						$item = "player";
 						$idField = "id_player_ogame";
+						$item = "player";
 					}
 					else
 					{
-						$service = "alliances";
-						$item = "alliance";
 						$idField = "id_alliance_ogame";
+						$item = "alliance";
 					}
 
-						for($i = $start; $i < $end; $i++)
+
+
+					while($data->read())
+					{
+						if($data->name === $item && $data->nodeType == \XMLReader::ELEMENT)
 						{
-							if($data->{$item}[$i])
-								$player = $data->{$item}[$i];
-							else
-								{
-									// this is the end of update, save the timestamp
-									$this->container->config->save("$this->tableName-$cat-$type-finished", $timestamp);
-									$this->container->config->save("$this->tableName-$cat-$type-start", 0);
-									return true;
-								}
-							$id = (int) $player["id"];
-							$score = (string) $player["score"]; // as seen on uni680, int is not big enough :)
-							$position = (int) $player["position"];
-							$ships = (string) $player["ships"];
-							$dbData = array(
-											"score_$type" => $score,
-											"score_$type"."_position" =>  $position
-											);
-							if($ships)
-								$dbData["ships"] = $ships;
-							$this->container->$service->getTable()->where(array($idField => $id))->update($dbData);
-							$period = ceil(intval(date("z"))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
-							$year = intval(date("Y"));
 
-							try // fill in the score history, only one record per period
+							$id = (int) $data->getAttribute("id");
+
+							$queryData[$cat][$id]["score_$type"] = (string) $data->getAttribute("score");
+							$queryData[$cat][$id]["score_$type"."_position"] = (int) $data->getAttribute("position");
+							if($type == 3 && $cat == 1)
 							{
-								$this->getTable()->insert(array("period" => $period, "year" => $year, "category" => $cat, "id_item" => $id));
+								$queryData[$cat][$id]["ships"] = (string) $data->getAttribute("ships");
+								if($queryData[$cat][$id]["ships"] == "")
+									$queryData[$cat][$id]["ships"] = 0;
 							}
-							catch(\PDOException $e)
-							{}
-							$this->findBy(array("period" => $period, "year" => $year, "category" => $cat, "id_item" => $id))->limit(1)->update($dbData);
 
+							}
+					}
 
-
-						}
-
-					$this->container->config->save("$this->tableName-$cat-$type-start", $end);
-
-						return true;
 				}
-				else
-					return false;
+			}
+		}
+		$pids = implode(", ", array_keys($queryData[1])); // ids of all players
+		// delete data of old players
+		$this->container->mysqli->query("delete from ".$this->container->players->tableName." where id_player_ogame  not in ($pids) and status != 'a'"); // delete non-existent players
+		$this->container->mysqli->query("delete from ".$this->container->universe->tableName." where id_player not in ($pids) "); // delete old planets
+		$this->container->mysqli->query("delete from ".$this->tableName." where id_item not in ($pids) and category = 1"); // delete score history
+		$this->container->mysqli->query("delete from ".$this->container->activities->tableName." where id_player not in ($pids)"); // delete activities
+		$this->container->mysqli->query("delete from ".$this->container->fs->tableName." where id_player not in ($pids)"); // delete fleetsaves
+
+		/* delete old alliances */
+		$aids = implode(", ", array_keys($queryData[2])); // ids of all alliances, PHP is case sensitive, so aids != AIDS :-)
+
+		$period = ceil(intval(date("z"))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
+		$this->container->mysqli->query("delete from ".$this->container->alliances->tableName." where id_alliance_ogame  not in ($aids)"); // delete non-existent players
+		$year = intval(date("Y"));
+		$query = "";
 
 
+		foreach($queryData as $cat => $entries)
+		{
+			if($cat == 1)
+			{
+				$idField = "id_player_ogame";
+				$service = "players";
+			}
+			elseif($cat == 2)
+			{
+				$idField = "id_alliance_ogame";
+				$service = "alliances";
+			}
+
+			$tbl_name = $this->container->$service->getTableName();
+
+			foreach($entries as $id => $entry)
+			{
+
+				$dataFields = array();
+				foreach($entry as $key => $value)
+				{
+					$dataFields[] = " $key = $value ";
+				}
+				$dataFields = implode(",", $dataFields);
 
 
+				$query .= "update $tbl_name set  $dataFields where $idField = $id;";
+
+
+				$query .= "insert into $this->tableName set period = $period, year = $year, category = $cat, id_item = $id, $dataFields on duplicate key update $dataFields;";
+
+			}
+		}
+		$this->chunkedMultiQuery($query);
+		$this->cleanUpScoreHistory();
+		$this->container->config->save("$this->tableName-finished", $timestamp);
 	}
+
 	public function cleanUpScoreHistory()
 	{
 		// if player or alliance isn´t in its table, it doesn´t exist anymore
 		$this->findBy(array("category" => 1))->where("NOT id_item", $this->container->players->getTable()->select("id_player_ogame"))->delete();
 		$this->findBy(array("category" => 2))->where("NOT id_item", $this->container->alliances->getTable()->select("id_alliance_ogame"))->delete();
 	}
-	public function needApiUpdate($cat = "", $type = "")
+	public function needApiUpdate()
 	{
-		if(!in_array($cat, $this->categories) || !in_array($type, $this->types))
-			throw new Nette\Application\ApplicationException("Unknown type or category when updating highscores!");
-		return ($this->container->config->load("$this->tableName-$cat-$type-finished")+$this->container->parameters["ogameApiExpirations"][$this->apiFile] < time());
+
+		return ($this->container->config->load("$this->tableName-finished")+$this->container->parameters["ogameApiExpirations"][$this->apiFile] < time());
 	}
 	public function getCategories()
 	{

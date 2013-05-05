@@ -252,3 +252,100 @@ a[href^="error:"] {
 	width: 100%;
 	margin: 0.1em 0;
 }
+
+/* fleet movements */
+#fleet-movements
+{
+	width: 100%;
+	font-size: 90%;
+}
+.fleet-movement-table
+{
+	width: 95%;
+	border: 1px solid #fff;
+	background: #000;
+}
+.fleet-movement-table.odd
+{
+	background: #111;
+}
+.fleet-movement.child > td
+{
+	padding-right: 5%;
+}
+
+.fleet-movement.child > td > table
+{
+	width: 95%;
+	float: right;
+}
+.fleet-movement-table button
+{
+	float: right;
+	font-size: 150%;
+}
+#fleet-movements .fleet-movement-last-updated td
+{
+	width: 100%;
+	text-align: right;
+	padding-right: 5%;
+}
+.fm-time-left, .fm-mission
+{
+	width: 10%;
+	text-align: center;
+}
+.fm-arrival
+{
+	width: 20%;
+	text-align: center;
+}
+.fm-origin,.fm-destination
+{
+	width: 10%;
+	text-align: left;
+	vertical-align: middle;
+}
+.fm-origin img, .fm-destination img
+{
+	display: block;
+	float: left;
+	margin-right: 2em;
+}
+.fm-direction
+{
+	width: 5%;
+	text-align: center;
+}
+.fm-ships
+{
+	vertical-align: top;
+}
+.fm-mission
+{
+	font-weight: bold;
+	font-size: 150%;
+	vertical-align: top;
+}
+.fm-ships table
+{
+	width: 99%;
+	border: 1px solid #fff;
+	border-collapse: collapse;
+}
+.fm-ships table td
+{
+	padding: 1%;
+	width: 48%;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+}
+.fm-resources table td:last-child
+{
+	text-align: right;
+	width: 100%;
+}
+.fm-player
+{
+	display: block;
+}

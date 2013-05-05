@@ -44,8 +44,15 @@ common:
 		activities: GLOTR\Activities
 		espionages: GLOTR\Espionages
 		fs: GLOTR\Fleetsaves
+		fleetMovements: GLOTR\FleetMovements
+		mysqli:
+			class: \mysqli("%database.host%", "%database.user%", "%database.password%", "%database.dbname%")
 
 	factories:
+		httpSocket:
+			parameters: [host, file, port: 80, timeout: NULL]
+			class: GLOTR\httpScoket(%host%,%file%, %port%, %timeout%)
+
 
 
 production < common:

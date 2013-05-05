@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette\Application\UI\Control;
 
-class SimulatorLinks extends Control
+class SimulatorLinks extends GLOTRControl
 {
 
 	protected $context;

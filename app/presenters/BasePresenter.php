@@ -53,6 +53,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$homepage->add(__("Search in database"), $this->link("Information:search"), "perm_search");
 		$homepage->add(__("View systems"), $this->link("Information:systems"), "perm_galaxyview");
 		$homepage->add(__("Score history"), $this->link("Information:scoreHistory"));
+		$homepage->add(__("Fleet movements"), $this->link("Information:fleetMovements"));
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 
@@ -74,6 +75,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$this->addPermission("perm_detail", __("Player/alli detail"));
 		$this->addPermission("perm_activity", __("Player activity"));
 		$this->addPermission("perm_planet_info", __("Espionages"));
+		$this->addPermission("perm_fleet_movements", __("Fleet movements"));
 		// setup timezone
 		if($this->getUser()->isLoggedIn())
 			$timezone = $this->getUser()->getIdentity()->timezone;
@@ -130,14 +132,11 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			"confederation" => $translator->translate("confederation"),
 			"wing" => $translator->translate("wing")
 		);
-
-
 	}
 	public function createTemplate($class= NULL)
 	{
 		$template = parent::createTemplate($class);
-
-
+		$template->registerHelperLoader("\GLOTR\Helpers::loader");
 		$template->setTranslator($this->context->translator);
 		$template->parameters = $this->context->parameters;
 		return $template;
@@ -167,7 +166,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		if(is_null($label))
 			$label = $name;
-
+        $this->context->users->addPermissionColumn($name);
 		$this->permissions[$name] = $label;
 	}
 	protected function setUserParams($params)

@@ -37,6 +37,5 @@ $container->router[] = new Route('information/reportarchive/<id_planet>/<moon=0>
 $container->router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
 
 
-
 // Configure and run the application!
 $container->application->run();

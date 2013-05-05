@@ -79,7 +79,10 @@ class VisualPaginator extends Control
 		$this->template->setFile(dirname(__FILE__) . '/VisualPaginator.latte');
 		$this->template->render();
 	}
-
+	public function setTranslator($translator)
+	{
+		$this->template->setTranslator($translator);
+	}
 
 
 	/**

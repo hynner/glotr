@@ -11,7 +11,7 @@ class OgameApi extends Nette\Object
 		$this->container = $container;
 		$this->url = $this->container->parameters["server"]."/api/";
 	}
-	public function getData($file, $params = array())
+	public function getData($file, $params = array(), $type = "XMLReader")
 	{
 		$expirationTime = $this->container->parameters["ogameApiExpirations"][$file];
 		$cache = new Cache($this->container->cacheStorage, 'OgameAPI');
@@ -27,46 +27,62 @@ class OgameApi extends Nette\Object
 			$file .= substr($p, 0, -1);
 
 		}
+
 		$data = $cache->load($file);
 		if($data === NULL)
 		{
-			if(ini_get("allow_url_fopen") == 0)
+
+			$sess = $this->container->session;
+			$conn = $this->container->createHttpSocket(str_replace("http://", "", $this->container->parameters["server"]),"/api/$file");
+			// zlib_decode is present in PHP >= 5.4.0
+			if(function_exists("zlib_decode"))
 			{
-				throw new Nette\Application\ApplicationException("allow_url_fopen disabled!");
+				$conn->addHeader("Accept-Encoding:", "gzip, deflate");
 			}
-			else
+
+			if($this->container->parameters["testServer"])
 			{
-				if($this->container->parameters["testServer"])
-				{
+				$conn->addHeader("Authorization:",  "Basic " . base64_encode(preg_replace("/[\r\n]/", "", file_get_contents($this->container->parameters["testServerAuthFile"]))));
+			}
+			try {
+				$data = $conn->rangeDownload($sess->getId(), $cache,1024);
+			}
+			catch (\Nette\Application\ApplicationException $e) {
+				return false;
+			}
 
-					$context = stream_context_create(array(
-						'http' => array(
-							'header'  => "Authorization: Basic " . base64_encode(file_get_contents($this->container->parameters["testServerAuthFile"]))
-						)
-					));
-					$data = file_get_contents($this->url.$file, false, $context);
-				}
-				else
-					$data = @file_get_contents($this->url.$file);
 
-				if($data !== FALSE)
-				{
-				$xml = simplexml_load_string($data);
-				$exp = (int) $xml->attributes()->timestamp;
-				$exp += $expirationTime;
-				$cache->save($file, $data, array(
-						Cache::EXPIRE => $exp
-					));
-				}
+			if($data !== FALSE)
+			{
+			$xml = new \XMLReader();
+
+			$xml->XML($data, "UTF-8");
+
+			$xml->next();
+			$exp = (int) $xml->getAttribute("timestamp");
+			$exp += $expirationTime;
+			$cache->save($file, $data, array(
+					Cache::EXPIRE => $exp
+				));
 			}
 		}
-		else
-			$xml = simplexml_load_string($data);
-		return $xml;
+		switch($type)
+		{
+			case "XMLReader":
+				$xml = new \XMLReader;
+				$xml->XML($data, "UTF-8");
+				return $xml;
+			case "SimpleXML":
+				return simplexml_load_string($data);
+			case "String":
+			default:
+				return $data;
+		}
 	}
 	public function getUrl()
 	{
 		return $this->url;
 	}
+
 }
 

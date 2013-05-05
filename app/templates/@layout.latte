@@ -37,6 +37,7 @@
 	<script type="text/javascript" src="{$basePath}/js/FixedColumns.min.js"></script>
 	<script type="text/javascript" src="{$basePath}/js/glotr.js"></script>
 
+
 	{block head}{/block}
 </head>
 
@@ -50,7 +51,7 @@
 		<div id="user-panel">
 			{if $user->isLoggedIn()}
 				{_ "Logged as: "} {$user->getIdentity()->username}
-			<a n:href="Sign:out" n:attr="title => _('Logout')">{_ "Logout"}</a>
+			<a n:href="Sign:out" n:attr="title => __('Logout')">{_ "Logout"}</a>
 			{/if}
 		</div>
 		<div class="clear"></div>
@@ -64,6 +65,7 @@
 					<div id="update-panel">
 						<script type="text/javascript">
 						// checks for updates from Ogame API
+						var tries = 0;
 						function update()
 						{
 								$.ajax({
@@ -79,10 +81,14 @@
 									}
 									else if(data["status"] == "continue")
 									{
+										$("#update-panel p.update").remove();
 										if(data["what"])
 										{
-											$("#update-panel p.update").remove();
 											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} " + data["what"] + " {!_ "from Ogame API!"}</p>");
+										}
+										else
+										{
+											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} {!_ "from Ogame API!"}</p>");
 										}
 										update();
 									}
@@ -96,6 +102,17 @@
 									{
 										$("#update-panel p.update").remove();
 										$("#update-panel").append("<p class='update disabled'>{!_ "Updating from Ogame API failed!"}<br />{!_ "Ogame API was disabled by server administrator!"}</p>");
+									}
+								},
+								error: function(){
+									if(tries++ < 10)
+									{
+										update();
+									}
+									else
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update failed'>{!_ "Updating from Ogame API failed!"}</p>");
 									}
 								}
 							});

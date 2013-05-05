@@ -53,9 +53,10 @@ class AdminPresenter extends BasePresenter
 			$this->template->users[$r->id_user] = $r->toArray();
 			if($r->id_player)
 				$this->template->users[$r->id_user]["player"] = $this->context->players->findOneBy(array("id_player_ogame" => $r->id_player));
-
+			else
+				$this->template->users[$r->id_user]["player"] = "";
 		}
-		
+
 	}
 	public function handledelete($id)
 	{

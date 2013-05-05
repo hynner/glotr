@@ -62,10 +62,6 @@ class UpdatePresenter extends BasePresenter
 
 		if($check && !$this->getUser()->isLoggedIn())
 			$this->redirect("Sign:in");
-
-
-
-
 	}
 	public function actionUpdateAll()
 	{
@@ -105,17 +101,19 @@ class UpdatePresenter extends BasePresenter
 					$response = array("status" => "continue");
 				goto send;
 			}
-			foreach($this->context->highscore->getCategories() as $cat)
-				foreach($this->context->highscore->getTypes() as $type)
-					if($this->context->highscore->needApiUpdate($cat, $type))
-					{
-						$this->context->highscore->updateFromApi($cat, $type);
-						if($this->context->highscore->needApiUpdate($cat, $type))
-							$response = array("status" => "continue", "what" => $this->context->translator->translate("highscores"));
-						else
-							$response = array("status" => "continue");
-						goto send;
-					}
+			if($this->context->highscore->needApiUpdate())
+			{
+				$this->context->highscore->updateFromApi();
+				$response = array("status" => "continue");
+				goto send;
+			}
+			if($this->context->server->needApiUpdate())
+			{
+				$this->context->server->updateFromApi();
+				$response = array("status" => "continue");
+				goto send;
+			}
+
 		}
 		catch(Nette\Application\ApplicationException $e)
 		{
@@ -126,8 +124,8 @@ class UpdatePresenter extends BasePresenter
 					$this->context->universe->ogameApiGetFileNeeded(),
 					$this->context->alliances->ogameApiGetFileNeeded(),
 					$this->context->players->ogameApiGetFileNeeded()
-					)
-
+					),
+				"message" => $e->getMessage()
 				);
 			$response["what"] = array_merge($response["what"], $this->context->highscore->ogameApiGetFileNeeded());
 		}
@@ -164,29 +162,6 @@ class UpdatePresenter extends BasePresenter
 			{
 				$ret = $this->context->gtp->update($post["content"]);
 				$code = $xml->addChild("returncode", $ret);
-				/*switch($post["type"]):
-				case "galaxyview":
-					// 601 - galaxyview updated
-
-					break;
-				case "reports":
-					// 611 - espionage reports updated
-					$code = $xml->addChild("returncode", "611");
-					break;
-				case "allypage":
-					// 631 - allyhistory updated
-					$code = $xml->addChild("returncode", "631");
-					break;
-				case "player_highscore":
-					// 622 - stats updated
-					$code = $xml->addChild("returncode", "622");
-
-					break;
-				default:
-					Nette\Diagnostics\Debugger::log($post["type"]);
-					break;
-
-				endswitch;*/
 			}
 
 

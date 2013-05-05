@@ -118,6 +118,15 @@ class InformationPresenter extends BasePresenter
 		$this->template->galaxy = $galaxy;
 		$this->template->system = $system;
 	}
+	public function actionFleetMovements()
+	{
+		$vp = $this->getComponent("vp");
+		$this->template->movements = $this->context->fleetMovements->search($this->getUserPlayer(),$vp->getPaginator());
+		if($this->isAjax())
+		{
+			$this->invalidateControl("fleetMovements");
+		}
+	}
 	public function actionScoreHistory()
 	{
 		$sess = $this->getSession("scoreHistory");
@@ -349,10 +358,18 @@ class InformationPresenter extends BasePresenter
 			return $control;
 
 	}
+	protected function createComponentFleetMovement()
+	{
+			$control = new GLOTR\FleetMovement;
+			$control->setContext($this->context);
+			return $control;
+	}
 	public function createComponentVp()
 	{
 
-		return new \VisualPaginator($this, "vp");
+		$vp = new \VisualPaginator($this, "vp");
+		$vp->setTranslator($this->context->translator);
+		return $vp;
 	}
 	protected function createComponentManualActivityForm()
 	{
@@ -415,6 +432,7 @@ class InformationPresenter extends BasePresenter
 
 		$form->setTranslator($this->context->translator);
 		$form->setDefaults(array("galaxy" => 1, "system" => 1));
+		$form->setValues(array("galaxy" => $this->template->galaxy, "system" => $this->template->system));
 
 		$form->onValidate[] = $this->validateSystemsControlsForm;
 		$form->onSuccess[] = $this->systemsControlsFormSubmitted;
@@ -638,23 +656,13 @@ class InformationPresenter extends BasePresenter
 			foreach($results as &$r)
 			{
 				$r["_computed_player_status"] = $this->context->players->getRelativeStatus($r, $player2);
-				$r["_computed_status_class"] = "";
-				foreach($r["_computed_player_status"] as $key => $value)
-				{
-
-					if(is_integer($key))
-						$r["_computed_status_class"] .= " ".$value;
-					elseif(is_bool($value) && $value)
-						$r["_computed_status_class"] .= " ".$key;
-					elseif(!is_bool($value))
-						$r["_computed_status_class"] .= " "."$key-$value";
-				}
+				$r["_computed_status_class"] = $this->context->players->getClassForPlayerStatus($r["_computed_player_status"]);
 			}
 	}
 	protected function getUserPlayer()
 	{
 		if(!isset($this->userPlayerData))
-			$this->userPlayerData = $this->context->players->search($this->getUser()->getIdentity()->id_player);
+			$this->userPlayerData = $this->context->players->search($this->getUser()->getIdentity()->id_player, NULL, true);
 		return $this->userPlayerData;
 	}
 }

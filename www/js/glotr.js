@@ -57,7 +57,7 @@ function ajaxCallback()
 	$(".current").addClass("ui-state-active");
 	$(".button.current").button("disable");
 	$(".button.current.ui-state-disabled").css({"opacity": 1});
-
+	$(".button.disabled").button("disable");
 	$(".flash").fadeOut(10000);
 	createHighlight($(".flash.success"));
 	createError($(".flash.error"));
@@ -80,13 +80,84 @@ function showSpinner(event)
 {
 	$("#ajax-spinner").show();
 }
+function formatSeconds(seconds)
+{
+	var minutes, hours, days, weeks, months, years ;
+	var ret = new String();
+	minutes = Math.floor(seconds/60);
+	seconds -= minutes*60;
+	if(minutes >= 60)
+	{
+		hours = Math.floor(minutes/60);
+		minutes -= hours*60;
+		if(hours >= 24)
+		{
+			days = Math.floor(hours/24);
+			hours -= days*24;
+			if(days >= 365)
+			{
+				years = Math.floor(days/365);
+				days -= years*365;
+			}
+			if(days >= 30)
+			{
+				months = Math.floor(days/30);
+				days -= months*30;
+			}
+			if(days >= 7)
+			{
+				weeks = Math.floor(days/7);
+				days -= weeks*7;
+			}
+		}
+	}
+	if(seconds < 10)
+		seconds = "0"+seconds;
+	if(minutes < 10)
+		minutes = "0"+minutes;
+	if(hours < 10)
+		hours = "0"+hours;
+	ret = minutes+":"+seconds;
+	if(hours !== undefined)
+	{
+		ret = hours + ":"+ret;
+		if(days !== undefined)
+		{
+			ret = days + "d "+ret;
+			if(weeks !== undefined)
+			{
+				ret = weeks + "w " + ret;
+				if(months !== undefined)
+				{
+					ret = months + "m " + ret;
+					if(years !== undefined)
+					{
+						ret = years + "y " + ret;
+					}
+				}
+			}
+		}
+
+	}
+	return ret;
+
+}
+function updateTimers()
+{
+	var d = new Date();
+	$(".time-ticking").each(function() {
+		$(this).html(formatSeconds(parseInt($(this).attr("time")-d.getTime()/1000,10)));
+	});
+}
 $(function () {
-		$(document).on("click", ".request_confirmation", function () {
+		$(document).on("click", ".request_confirmation", function (e) {
 			var text = $(this).attr("conf_msg");
 			if(text == "")
 				text = "This step needs your confirmation";
-			if(!confirm(text))
+			if(!confirm(text)){
+                e.stopImmediatePropagation();
 				return false;
+            }
 			return true;
 		});
 
@@ -199,6 +270,20 @@ $(document).ready(function () {
 			showSpinner();
 			$(this).parent("form").ajaxSubmit();
 		});
+	$(document).on("click", ".fleet-movement button", function () {
+		var id = $(this).parents(".fleet-movement").attr("id");
+		$("#fleet-movements tr[id|='"+id+"'].child").toggleClass("hidden");
+		$(this).removeClass("ui-state-focus");
+		if($(this).button("option", "icons")["primary"] === "ui-icon-triangle-1-s")
+		{
+			$(this).button("option", "icons", {primary: "ui-icon-triangle-1-n"});
+		}
+		else
+		{
+			$(this).button("option", "icons", {primary: "ui-icon-triangle-1-s"});
+		}
+	});
+	setInterval(updateTimers,1000);
 
 });
 $( function() {
