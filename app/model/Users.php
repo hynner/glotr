@@ -36,6 +36,14 @@ class Users extends Table
 	public function setPermissions($id, $permissions)
 	{
 		$this->getTable()->where(array("id_user" => $id))->update($permissions);
-	}
+    }
+    public function addPermissionColumn($name)
+    {
+        $cols = array_keys($this->getColumns());
+        if(!in_array($name,$cols))
+        {
+            $this->getConnection()->query("Alter table $this->tableName ADD COLUMN $name tinyint(1) NOT NULL DEFAULT 0 ");
+        }
+    }
 
 }

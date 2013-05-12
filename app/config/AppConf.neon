@@ -7,10 +7,10 @@
 # You SHOULDN´T change anything in this file!
 common:
 	parameters:
-		version: "0.2.0" # DON´T change this!
+		version: "0.3.0" # DON´T change this!
 		dbSetupFile: "../app/config/dbSetup.gl"
 		testServerAuthFile: "../app/config/testServerAuth.txt" #if you want to use GLOTR on test server, create this file and place there the username:password for the http authorization
-		testServer: true # true for development on 680 origin server, false otherwise
+		testServer: false # true for development on 680 origin server, false otherwise
 	php:
 
 		# zlib.output_compression: yes

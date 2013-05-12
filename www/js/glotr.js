@@ -150,12 +150,14 @@ function updateTimers()
 	});
 }
 $(function () {
-		$(document).on("click", ".request_confirmation", function () {
+		$(document).on("click", ".request_confirmation", function (e) {
 			var text = $(this).attr("conf_msg");
 			if(text == "")
 				text = "This step needs your confirmation";
-			if(!confirm(text))
+			if(!confirm(text)){
+                e.stopImmediatePropagation();
 				return false;
+            }
 			return true;
 		});
 

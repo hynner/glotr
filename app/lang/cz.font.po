@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-04 15:48:37
+# Created: 2013-05-05 11:13:37
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-04 15:48+0000\n"
+"PO-Revision-Date: 2013-05-05 11:13+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -78,6 +78,9 @@ msgstr "Aliance"
 
 msgid "Ascendant"
 msgstr "Vzestupně"
+
+msgid "Back to login"
+msgstr "Zpět na přihlašovací stránku"
 
 msgid "Banned"
 msgstr "Zabanovaní"
@@ -321,6 +324,9 @@ msgstr "Další"
 
 msgid "No admin account found, you should now create one!"
 msgstr "Nebyl nalezen žádný administrátorský účet. Vytvořte ho!"
+
+msgid "No fleet movements!"
+msgstr "Žádné pohyby letek!"
 
 msgid "No reports found!"
 msgstr "Nebyla nalezeny žádné zprávy!"
@@ -625,6 +631,9 @@ msgstr "Nepodařilo se uložit strukturu databáze"
 msgid "Unknown"
 msgstr "Neznámé"
 
+msgid "Unknown player"
+msgstr "Neznámý hráč"
+
 msgid "Update"
 msgstr "Aktualizace"
 
@@ -690,6 +699,12 @@ msgstr "Byl/a jste odhlášen/a"
 
 msgid "You must enter valid email address!"
 msgstr "Prosím zadejte validní emailovou adresu!"
+
+msgid "Your account hasn´t been activated yet."
+msgstr "Váš účet ještě nebyl aktivován."
+
+msgid "Your registration was submitted, now you have to wait untill administrator accepts it!"
+msgstr "Vaše registrace byla odeslána, nyní musíte počkat než ji potvrdí administrátor!"
 
 msgid "Your server is NOT properly configured!"
 msgstr "Váš server NENí správně nakonfigurován!"
@@ -1003,6 +1018,9 @@ msgstr "wing"
 msgid "yes"
 msgstr "ano"
 
-msgid "Unknown player"
-msgstr "Neznámý hráč"
+msgid "You don´t have permission for this action!"
+msgstr "Pro tuto akci nemáte oprávnění!"
+
+msgid "Email:"
+msgstr ""
 

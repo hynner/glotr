@@ -35,7 +35,9 @@ class FleetMovements extends Table
 			$query = $query->limit($paginator->getLength(), $paginator->getOffset())
 					->where("id_parent IS NULL OR id_parent = id_fleet_ogame")
 					->select("id_fleet_ogame");
-			$ids = array_keys($query->fetchPairs("id_fleet_ogame"));
+            $ids = array_keys($query->fetchPairs("id_fleet_ogame"));
+            if(!$ids)
+                return array();
 			$query = $this->getTable()->where("id_fleet_ogame IN (?) OR id_parent IN (?)", $ids, $ids);
 		}
 		$data = $query->order("arrival ASC")->fetchPairs("id_fleet_ogame");

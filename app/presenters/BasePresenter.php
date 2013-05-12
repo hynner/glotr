@@ -66,16 +66,22 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$nav->setCurrentByUrl();
 
 		// setup permissions
-		$this->addPermission("perm_user_mng", __("Manage users"));
-		$this->addPermission("perm_perm_mng", __("Manage permissions"));
-		$this->addPermission("perm_diplomacy", __("Diplomacy"));
-		$this->addPermission("perm_update", __("Update"));
-		$this->addPermission("perm_search", __("Search"));
-		$this->addPermission("perm_galaxyview", __("System browsing"));
-		$this->addPermission("perm_detail", __("Player/alli detail"));
-		$this->addPermission("perm_activity", __("Player activity"));
-		$this->addPermission("perm_planet_info", __("Espionages"));
-		$this->addPermission("perm_fleet_movements", __("Fleet movements"));
+		try{
+			$this->addPermission("perm_user_mng", __("Manage users"));
+			$this->addPermission("perm_perm_mng", __("Manage permissions"));
+			$this->addPermission("perm_diplomacy", __("Diplomacy"));
+			$this->addPermission("perm_update", __("Update"));
+			$this->addPermission("perm_search", __("Search"));
+			$this->addPermission("perm_galaxyview", __("System browsing"));
+			$this->addPermission("perm_detail", __("Player/alli detail"));
+			$this->addPermission("perm_activity", __("Player activity"));
+			$this->addPermission("perm_planet_info", __("Espionages"));
+			$this->addPermission("perm_fleet_movements", __("Fleet movements"));
+		}
+		catch(PDOException $e)
+		{
+			// database is not ready yet
+		}
 		// setup timezone
 		if($this->getUser()->isLoggedIn())
 			$timezone = $this->getUser()->getIdentity()->timezone;
@@ -166,7 +172,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		if(is_null($label))
 			$label = $name;
-
+        $this->context->users->addPermissionColumn($name);
 		$this->permissions[$name] = $label;
 	}
 	protected function setUserParams($params)
