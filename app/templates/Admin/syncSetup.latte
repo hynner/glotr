@@ -1,0 +1,39 @@
+{block content}
+<h2>{_ "Synchronization setup"}</h2>
+{snippet syncAddForm}
+	{control syncAddForm}
+{/snippet}
+{snippet syncList}
+	{if !empty($servers)}
+	<table class="fullTable" id="syncTable">
+		<tr>
+			<th>{_ "Server name"}</th>
+			<th>{_ "URL"}</th>
+			<th>{_ "Username"}</th>
+			<th>{_ "Password"}</th>
+			<th>{_ "Compression"}</th>
+			<th>{_ "Input limit"}</th>
+			<th>{_ "Active"}</th>
+			<th>{_ "Action"}</th>
+		</tr>
+		{foreach $servers as $server}
+		<tr>
+			<td>{$server->name}</td>
+			<td><a href="http://{$server->url}">{_ "here"}</a></td>
+			<td>{$server->username}</td>
+			<td>{$server->password}</td>
+			<td>{isset($server->compression) ? $server->compression : __("unknown")}</td>
+			<td>{isset($server->max_input_items) ? $server->max_input_items : __("unknown")}</td>
+			<td>{($server->active == "1") ? __("YES") : __("NO")}</td>
+			<td>
+				<a n:href="verifySyncServer! $server->id_server" class="ajax" title="{_ "Verify"}"><img n:attr="src => $baseUrl.'/css/glotr-default/images/icons/reload.png', alt => ''" /></a>
+				<a n:href="deleteSyncServer! $server->id_server" class="ajax request_confirmation" title="{_ "Delete"}"><img n:attr="src => $baseUrl.'/css/glotr-default/images/icons/delete.png', alt => ''" /></a>
+			</td>
+		</tr>
+		{/foreach}
+	</table>
+	{else}
+	<p>{_ "You have no synchronization servers yet"}!</p>
+	{/if}
+{/snippet}
+{/block}

@@ -11,14 +11,13 @@ class MyForm extends Form
             return $container[$name] = new \JanTvrdik\Components\DatePicker($label);
         });
 	}
-	public function addError($message)
+	public function addError($message, $translate = true)
 	{
-
-		if($this->getTranslator())
+		if($translate && $this->getTranslator())
 			$message = $this->getTranslator()->translate($message);
 
 		parent::addError($message);
 	}
-	
+
 }
 

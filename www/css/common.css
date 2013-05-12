@@ -18,7 +18,7 @@
 {
     text-align: left;
 }
-.text_right
+.text-right
 {
 	text-align:  right;
 }
@@ -54,4 +54,8 @@
 {
 	width: 100%;
 	overflow-x: auto;
+}
+.fullTable
+{
+	width: 100%;
 }

@@ -52,19 +52,13 @@ class UpdatePresenter extends BasePresenter
 
 				}
 		}
-
-
-
-
-
-
-
-
 		if($check && !$this->getUser()->isLoggedIn())
 			$this->redirect("Sign:in");
 	}
 	public function actionUpdateAll()
 	{
+
+		//$this->context->syncServers->verify(1);die();
 		if(!$this->context->parameters["enableOgameApi"])
 		{
 			$response = array("status" => "disabled");

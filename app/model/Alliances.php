@@ -10,7 +10,6 @@ class Alliances extends Table
 	protected $apiFile = "alliances.xml";
 	public function updateFromApi()
 	{
-		$mc = microtime(1);
 		$data = $this->container->ogameApi->getData($this->apiFile);
 
 		if($data !== false)
@@ -89,6 +88,6 @@ class Alliances extends Table
 	}
 	public function getNumAlliances()
 	{
-		
+
 	}
 }

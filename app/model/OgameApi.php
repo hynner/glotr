@@ -31,20 +31,20 @@ class OgameApi extends Nette\Object
 		$data = $cache->load($file);
 		if($data === NULL)
 		{
-
 			$sess = $this->container->session;
-			$conn = $this->container->createHttpSocket(str_replace("http://", "", $this->container->parameters["server"]),"/api/$file");
-			// zlib_decode is present in PHP >= 5.4.0
-			if(function_exists("zlib_decode"))
-			{
-				$conn->addHeader("Accept-Encoding:", "gzip, deflate");
-			}
-
-			if($this->container->parameters["testServer"])
-			{
-				$conn->addHeader("Authorization:",  "Basic " . base64_encode(preg_replace("/[\r\n]/", "", file_get_contents($this->container->parameters["testServerAuthFile"]))));
-			}
 			try {
+				$conn = $this->container->createHttpSocket(str_replace("http://", "", $this->container->parameters["server"]),"/api/$file", 80,2,2);
+				// zlib_decode is present in PHP >= 5.4.0
+				if(function_exists("zlib_decode"))
+				{
+					$conn->addHeader("Accept-Encoding:", "gzip, deflate");
+				}
+
+				if($this->container->parameters["testServer"])
+				{
+					$conn->addHeader("Authorization:",  "Basic " . base64_encode(preg_replace("/[\r\n]/", "", file_get_contents($this->container->parameters["testServerAuthFile"]))));
+				}
+
 				$data = $conn->rangeDownload($sess->getId(), $cache,1024);
 			}
 			catch (\Nette\Application\ApplicationException $e) {

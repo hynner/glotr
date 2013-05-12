@@ -62,6 +62,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$homepage->add(__("Your settings"), $this->link("User:userSettings"));
 		$homepage->add(__("User management"), $this->link("Admin:users"), "perm_user_mng");
 		$homepage->add(__("Permissions"), $this->link("Admin:permissions"), "perm_perm_mng");
+		$homepage->add(__("Synchronization"), $this->link("Admin:syncSetup"), "perm_sync_mng");
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 
@@ -77,6 +78,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 			$this->addPermission("perm_activity", __("Player activity"));
 			$this->addPermission("perm_planet_info", __("Espionages"));
 			$this->addPermission("perm_fleet_movements", __("Fleet movements"));
+			$this->addPermission("perm_sync_mng", __("Manage synchronization"));
 		}
 		catch(PDOException $e)
 		{

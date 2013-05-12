@@ -349,3 +349,7 @@ a[href^="error:"] {
 {
 	display: block;
 }
+#syncTable
+{
+	text-align: left;
+}
