@@ -12,7 +12,7 @@ class httpScoket
 	protected $headers;
 	protected $file;
 	protected $responseHeaders, $data;
-	public function __construct($host, $file, $port = 80, $conn_timeout = NULL )
+	public function __construct($host, $file, $port = 80, $conn_timeout = NULL, $timeout = NULL )
 	{
 		if($conn_timeout === NULL)
 			$conn_timeout = ini_get("default_socket_timeout");
@@ -21,12 +21,27 @@ class httpScoket
 		$this->file = $file;
 		$this->port = $port;
 		$this->conn_timeout = $conn_timeout;
+		$this->timeout = $timeout;
 		$this->connect();
 		$this->addHeader("Host:", $this->host);
 	}
 	protected function connect()
 	{
-		$this->socket = fsockopen($this->host, $this->port, $this->errno, $this->errstr, $this->conn_timeout);
+		$this->socket = @fsockopen($this->host, $this->port, $this->errno, $this->errstr, $this->conn_timeout);
+		if($this->socket === FALSE)
+			throw new \Nette\Application\ApplicationException("Can´t open connection to given host.");
+		if($this->timeout !== NULL)
+			stream_set_timeout($this->socket, $this->timeout);
+	}
+	public function close()
+	{
+		fclose($this->socket);
+		return $this;
+	}
+	protected function clearCache()
+	{
+		$this->responseHeaders = array();
+		$this->data = "";
 	}
 	public function addHeader($name, $value)
 	{
@@ -35,8 +50,7 @@ class httpScoket
 	}
 	public function sendHeaders()
 	{
-		$this->responseHeaders = array();
-		$this->data = "";
+		$this->clearCache();
 		$headers  = "GET $this->file HTTP/1.1\r\n";
 		foreach($this->headers as $key => $value)
 		{
@@ -46,10 +60,29 @@ class httpScoket
 		fwrite($this->socket, $headers);
 		return $this;
 	}
+	public function postData($data)
+	{
+		$this->clearCache();
+		$content = http_build_query($data);
+		$headers  = "POST $this->file HTTP/1.1\r\n";
+		$ignored = array("Content-Type:", "Content-Length:");
+		foreach($this->headers as $key => $value)
+		{
+			if(in_array($key, $ignored)) continue;
+			$headers .= "$key $value\r\n";
+		}
+		$headers .= "Content-Type: application/x-www-form-urlencoded\r\n";
+		$headers .= "Content-Length: ".strlen($content)."\r\n";
+        $headers .= "\r\n";
+		fwrite($this->socket, $headers);
+		fwrite($this->socket, $content);
+		return $this;
+	}
 	public function getResponseHeaders()
 	{
 		$this->responseHeaders = array();
 		$i = 0;
+
 		while($ret = fgets($this->socket))
 		{
 			$matches = array();
@@ -81,6 +114,9 @@ class httpScoket
 		$data = "";
 		if(empty($this->responseHeaders))
 			return false;
+		$acceptable = array(200, 206);
+		if(!in_array($this->responseHeaders["responseCode"], $acceptable))
+				return false;
 
 		while($ret = fgets($this->socket))
 		{
@@ -182,5 +218,9 @@ class httpScoket
 		// Return the decoded data of FALSE if it is incomplete
 		return ($chunkLen) ? FALSE : $result;
 
+	}
+	function __destruct()
+	{
+		$this->close();
 	}
 }

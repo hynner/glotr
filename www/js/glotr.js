@@ -152,7 +152,8 @@ function updateTimers()
 $(function () {
 		$(document).on("click", ".request_confirmation", function (e) {
 			var text = $(this).attr("conf_msg");
-			if(text == "")
+			
+			if(text === ""  || text === undefined)
 				text = "This step needs your confirmation";
 			if(!confirm(text)){
                 e.stopImmediatePropagation();

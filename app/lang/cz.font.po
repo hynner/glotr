@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-05 11:13:37
+# Created: 2013-05-12 16:26:53
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-05 11:13+0200\n"
+"PO-Revision-Date: 2013-05-12 16:26+0000\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,6 +52,9 @@ msgstr "Typ aktivity"
 msgid "Add"
 msgstr "Přidat"
 
+msgid "Add server"
+msgstr "Přidat server"
+
 msgid "Admin"
 msgstr "Admin"
 
@@ -85,8 +88,14 @@ msgstr "Zpět na přihlašovací stránku"
 msgid "Banned"
 msgstr "Zabanovaní"
 
+msgid "Can´t open connection to given host."
+msgstr "Na daný server se nelze připojit."
+
 msgid "Click on the link to proceed with installation"
 msgstr "Klikněte na odkaz pro pokračování v instalaci"
+
+msgid "Compression"
+msgstr "Komprese"
 
 msgid "Confirm new password"
 msgstr "Potvrďte nové heslo"
@@ -111,6 +120,9 @@ msgstr "Pole trosek"
 
 msgid "Defence to debris"
 msgstr "Obrana do trosek"
+
+msgid "Delete"
+msgstr "Vymazat"
 
 msgid "Descendant"
 msgstr "Sestupně"
@@ -235,8 +247,14 @@ msgstr "Informace o hráči"
 msgid "Ingame nickname"
 msgstr "Herní přezdívka"
 
+msgid "Input limit"
+msgstr "Omezení vstupu"
+
 msgid "Installation complete!"
 msgstr "Instalace dokončena!"
+
+msgid "Invalid data!"
+msgstr "Špatná data!"
 
 msgid "Invalid password."
 msgstr "Špatné heslo"
@@ -267,6 +285,9 @@ msgstr "Odhlásit"
 
 msgid "Manage permissions"
 msgstr "Spravovat oprávnění"
+
+msgid "Manage synchronization"
+msgstr "Spravovat synchronizaci"
 
 msgid "Manage users"
 msgstr "Spravovat uživatele"
@@ -318,6 +339,9 @@ msgstr "NE"
 
 msgid "New password"
 msgstr "Nové heslo"
+
+msgid "New synchronization server added!"
+msgstr "Byl přidán nový synchronizační server!"
 
 msgid "Next"
 msgstr "Další"
@@ -375,6 +399,9 @@ msgstr "Heslo znovu:"
 
 msgid "Password must be filled!"
 msgstr "Heslo musí být vyplňeno!"
+
+msgid "Password must from %d to %d long!"
+msgstr "Heslo musí být od %d do %d znaků dlouhé!"
 
 msgid "Password must have at least %d characters!"
 msgstr "Heslo musí mít alespoň %d znaků!"
@@ -535,8 +562,14 @@ msgstr "Adresa serveru"
 msgid "Server name"
 msgstr "Jméno serveru"
 
+msgid "Server name must from %d to %d long!"
+msgstr "Jméno serveru musí být od %d do %d znaků dlouhé!"
+
 msgid "Server specifications"
 msgstr "Vlastnosti serveru"
+
+msgid "Servername already exists!"
+msgstr "Server s tímto jménem již existuje!"
 
 msgid "Set global status"
 msgstr "Nastavit globální status"
@@ -579,6 +612,12 @@ msgstr "Ne"
 
 msgid "Sunday"
 msgstr "Neděle"
+
+msgid "Synchronization"
+msgstr "Synchronizace"
+
+msgid "Synchronization setup"
+msgstr "Nastavnení synchronizace"
 
 msgid "System"
 msgstr "Systém"
@@ -625,6 +664,18 @@ msgstr "Úterý"
 msgid "Type"
 msgstr "Typ"
 
+msgid "URL"
+msgstr "URL"
+
+msgid "URL lenght can be at most %d!"
+msgstr "URL může mít nejvíce %d znaků!"
+
+msgid "URL must be filled!"
+msgstr "URL musí být vyplněna!"
+
+msgid "URL must be valid!"
+msgstr "URL musí být validní!"
+
 msgid "Unable to save database structure"
 msgstr "Nepodařilo se uložit strukturu databáze"
 
@@ -655,6 +706,9 @@ msgstr "Jméno uživatele"
 msgid "Username must be filled!"
 msgstr "Uživatelské jméno musí být vyplňeno!"
 
+msgid "Username must from %d to %d long!"
+msgstr "Jméno uživatele musí být od %d do %d znaků dlouhé!"
+
 msgid "Username must have at least %d characters!"
 msgstr "Uživatelské jméno musí mít alespoň %d znaků!"
 
@@ -672,6 +726,9 @@ msgstr "Nastavení oprávnění bylo změněno!"
 
 msgid "V-mode"
 msgstr "Zmražení"
+
+msgid "Verify"
+msgstr "Ověřit"
 
 msgid "Verify the setting change with your password please."
 msgstr "Prosím potvrďte změny vaším starým heslem!"
@@ -847,6 +904,9 @@ msgstr "těžký stíhač"
 msgid "heavy laser"
 msgstr "těžký laser"
 
+msgid "here"
+msgstr "zde"
+
 msgid "highscores"
 msgstr "statistiky"
 
@@ -1006,6 +1066,9 @@ msgstr "transport"
 msgid "universe"
 msgstr "vesmír"
 
+msgid "unknown"
+msgstr "neznámé"
+
 msgid "war"
 msgstr "válka"
 
@@ -1024,3 +1087,5 @@ msgstr "Pro tuto akci nemáte oprávnění!"
 msgid "Email:"
 msgstr ""
 
+msgid "You have no synchronization servers yet"
+msgstr "Zatím nemáte nastaven žádný synchronizační server"

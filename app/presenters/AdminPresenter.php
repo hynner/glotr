@@ -24,6 +24,11 @@ class AdminPresenter extends BasePresenter
 		$this->loadUsers2Template();
 		$this->template->permissions = $this->permissions;
 	}
+	public function actionSyncSetup()
+	{
+		$this->handlePermissions(array("perm_sync_mng"));
+		$this->loadSyncServers2Template();
+	}
 	public function handletoggleActive($id)
 	{
 		$usr = $this->context->users->find($id);
@@ -58,6 +63,10 @@ class AdminPresenter extends BasePresenter
 		}
 
 	}
+	protected function loadSyncServers2Template()
+	{
+		$this->template->servers = $this->context->syncServers->getTable()->fetchPairs("id_server");
+	}
 	public function handledelete($id)
 	{
 		$this->context->users->getTable()->where(array("id_user" => $id))->delete();
@@ -65,6 +74,32 @@ class AdminPresenter extends BasePresenter
 		{
 			$this->loadUsers2Template();
 			$this->invalidateControl("userTable");
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+	}
+	public function handleDeleteSyncServer($id)
+	{
+		$this->context->syncServers->getTable()->where(array("id_server" => $id))->delete();
+		if($this->isAjax())
+		{
+			$this->loadSyncServers2Template();
+			$this->invalidateControl("syncList");
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+	}
+	public function handleVerifySyncServer($id)
+	{
+		$this->context->syncServers->verify($id);
+		if($this->isAjax())
+		{
+			$this->loadSyncServers2Template();
+			$this->invalidateControl("syncList");
 		}
 		else
 		{
@@ -89,7 +124,63 @@ class AdminPresenter extends BasePresenter
 		return $form;
 	}
 
+	protected function createComponentSyncAddForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
 
+		$form->onSuccess[] = $this->addSyncFormSubmitted;
+		$form->addText("servername", "Server name")
+				->addRule(Form::LENGTH, "Server name must from %d to %d long!", array(3,30));
+		$form->addText("username", "Username")
+				->addRule(Form::LENGTH, "Username must from %d to %d long!", array(3,30));
+		$form->addText("url", "URL")
+				->addRule(Form::MAX_LENGTH, "URL lenght can be at most %d!", 255)
+				->addRule(Form::FILLED, "URL must be filled!")
+				->addRule(Form::URL, "URL must be valid!");
+		$form->addText("password", "Password")
+				->addRule(Form::LENGTH, "Password must from %d to %d long!", array(3,30));
+
+		$form->setDefaults(array(
+			"password" => Nette\Utils\Strings::random(16, "0-9a-zA-Z")
+		));
+
+		$form->addSubmit("add", "Add server");
+		$form->setTranslator($this->context->translator);
+		return $form;
+	}
+	public function addSyncFormSubmitted($form)
+	{
+		$values = $form->getValues();
+		$success = false;
+		// remove protocol from url
+		try
+		{
+			$success = $this->context->syncServers->register($values);
+		}
+		catch(\Nette\Application\ApplicationException $e)
+		{
+			// don´t translate these errors, they are variable
+			$form->addError($e->getMessage(), false);
+		}
+		if($success)
+		{
+			$this->flashMessage ("New synchronization server added!", "success");
+			$this->loadSyncServers2Template();
+		}
+
+
+		if($this->isAjax())
+		{
+			$this->invalidateControl("syncAddForm");
+			$this->invalidateControl("syncList");
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+
+	}
 	public function permissionsFormSubmitted($form)
 	{
 		$values = $form->getValues();
