@@ -38,32 +38,29 @@ class UpdatePresenter extends BasePresenter
 			}
 				if($token)
 				{
+					$check = false;
 					try{
 						$this->userIdentity = $this->context->authenticator->authenticateByLogonKey($token);
-
-						$check = false;
 						//$this->getUser()->getStorage()->setAuthenticated(true);
 						//$this->getUser()->setExpiration("+30 minutes");
 					}
 					catch(NS\AuthenticationException $e)
 					{
 						echo "User not found";
+						Nette\Diagnostics\Debugger::$bar = FALSE;
+						exit();
 					}
 
 				}
 		}
 		if($check && !$this->getUser()->isLoggedIn())
+		{
 			$this->redirect("Sign:in");
+		}
+
 	}
 	public function actionUpdateAll()
 	{
-
-		//$this->context->syncServers->verify(1);die();
-		if(!$this->context->parameters["enableOgameApi"])
-		{
-			$response = array("status" => "disabled");
-			goto send;
-		}
 		$response = array("status" => "ok");
 		try
 		{
@@ -105,6 +102,15 @@ class UpdatePresenter extends BasePresenter
 			{
 				$this->context->server->updateFromApi();
 				$response = array("status" => "continue");
+				goto send;
+			}
+			if($this->context->sync->needUpdate())
+			{
+				$this->context->sync->update();
+				if($this->context->sync->needUpdate())
+					$response = array("status" => "continue", "sync" => 1);
+				else
+					$response = array("status" => "continue");
 				goto send;
 			}
 
@@ -156,6 +162,10 @@ class UpdatePresenter extends BasePresenter
 			{
 				$ret = $this->context->gtp->update($post["content"]);
 				$code = $xml->addChild("returncode", $ret);
+				if($ret%2 != 0)
+				{
+					$this->context->sync->insertSync("Galaxyplugin", $post["content"], \GLOTR\Sync::COMPRESSION_PLAIN);
+				}
 			}
 
 

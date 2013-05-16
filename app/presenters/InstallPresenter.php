@@ -111,14 +111,9 @@ class InstallPresenter extends BasePresenter
 		}
 		$this->flashMessage("All tables are OK!", "success");
 
-		if(ini_get("allow_url_fopen") != "1")
+		if(!$this->context->server->updateFromApi())
 		{
-			$this->flashMessage("allow_url_fopen directive disabled! You have to set server properties manually!", "error");
-			$this->redirect("Install:serverSetup");
-		}
-		elseif(!$this->context->parameters["enableOgameApi"])
-		{
-			$this->flashMessage("Ogame API disabled by server administrator! You have to set server properties manually!", "error");
+			$this->flashMessage("Setting server properties from Ogame API failed! You have to set server properties manually!", "error");
 			$this->redirect("Install:serverSetup");
 		}
 		elseif($this->users->getAdminCount() == 0)
@@ -137,7 +132,7 @@ class InstallPresenter extends BasePresenter
 	{
 		$query_end = " `$col->Field` $col->Type ".(($col->Null == "NO") ? "NOT" : "")." NULL";
 		if(!is_null($col->Default))
-			$query_end .= " DEFAULT $col->Default";
+			$query_end .= " DEFAULT '$col->Default'";
 		if($col->Key == "UNI")
 			$query_end .= " UNIQUE";
 		elseif($col->Key == "PRI")

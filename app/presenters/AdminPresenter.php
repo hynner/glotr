@@ -26,6 +26,11 @@ class AdminPresenter extends BasePresenter
 	}
 	public function actionSyncSetup()
 	{
+		if($this->context->parameters["enableSync"] === FALSE)
+		{
+			$this->flashMessage("Synchronization is disabled!", "error");
+			$this->redirect("Homepage:");
+		}
 		$this->handlePermissions(array("perm_sync_mng"));
 		$this->loadSyncServers2Template();
 	}
@@ -140,6 +145,7 @@ class AdminPresenter extends BasePresenter
 				->addRule(Form::URL, "URL must be valid!");
 		$form->addText("password", "Password")
 				->addRule(Form::LENGTH, "Password must from %d to %d long!", array(3,30));
+		$form->addCheckbox("not_register", "Account is already created on sync server");
 
 		$form->setDefaults(array(
 			"password" => Nette\Utils\Strings::random(16, "0-9a-zA-Z")
@@ -167,12 +173,11 @@ class AdminPresenter extends BasePresenter
 		{
 			$this->flashMessage ("New synchronization server added!", "success");
 			$this->loadSyncServers2Template();
+			$form->setValues(array("password" => Nette\Utils\Strings::random(16, "0-9a-zA-Z"), "not_register" => false), true);
 		}
-
-
 		if($this->isAjax())
 		{
-			$this->invalidateControl("syncAddForm");
+			$this->invalidateControl("syncForm");
 			$this->invalidateControl("syncList");
 		}
 		else

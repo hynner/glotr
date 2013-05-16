@@ -11,6 +11,7 @@ class Table extends Nette\Object
 	protected $container;
 	protected $apiFile;
 	protected $count;
+	protected $columns = array();
 
 	/** @var string $columnListPrefix prefix used by \GLOTR\Table::getPrefixedColumnList method */
 	protected $columnListPrefix;
@@ -104,13 +105,17 @@ class Table extends Nette\Object
     }
     public function getColumns()
     {
-        $cols = array();
-        $data = $this->getConnection()->query("Show columns from $this->tableName");
-        while($col = $data->fetch())
-        {
-            $cols[$col->Field] =(array) $col;
-        }
-        return $cols;
+		if(empty($this->columns))
+		{
+			$this->columns = array();
+			$data = $this->getConnection()->query("Show columns from $this->tableName");
+			while($col = $data->fetch())
+			{
+				$this->columns[$col->Field] =(array) $col;
+			}
+		}
+
+        return $this->columns;
     }
 	/**
 	 * checks if model needs update from Ogame API

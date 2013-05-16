@@ -18,10 +18,6 @@ class Universe extends Table
 			$data->read();
 			$timestamp = (int)$data->getAttribute("timestamp");
 
-			$start = (int) $this->container->config->load("$this->tableName-start");
-
-			$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];
-
 			$query = "";
 			$i = 0;
 			while($data->read())
@@ -128,9 +124,11 @@ class Universe extends Table
 		}
 		catch(\PDOException $e)
 		{
-			// exception means, there is already planet on that position in dbDatabase
-			// first I try to delete planet with the same coordinates but different id_player
-			$this->getTable()->where($coords)->where("NOT id_player",$dbData["id_player"] )->delete();
+			// exception means, there is already planet on that position in Database
+			// first I try to "delete" planet with the same coordinates but different id_player
+			$this->getTable()->where($coords)->where("NOT id_player",$dbData["id_player"])
+					->where("last_update < ?", $dbData["last_update"])
+					->update(array("galaxy" => NULL, "system" => NULL, "position" => NULL));
 
 			try{ // problem could be solved, try insert again
 				$this->getTable()->insert($dbData);
@@ -138,20 +136,26 @@ class Universe extends Table
 			catch(\PDOException $e)
 			{
 				// exception means there is a planet on this coordinates and it is the planet of the same player, update it
-				$this->getTable()->where($coords)->update($dbData);
+				$this->getTable()->where($coords)
+						->where("last_update < ?", $dbData["last_update"])->update($dbData);
 
 			}
 		}
 		return true;
 	}
 	/**
-	 * deletes the planet with given coordinates from database
+	 * Planet´s can´t be deleted unless player is deleted, because information are bound to it
+	 * this way I can recover the info
 	 * @param array $coords required indexes galaxy, system, position
 	 * @return bool
 	 */
 	public function deletePlanet($coords)
 	{
-		$this->getTable()->where($coords)->delete();
+		$this->getTable()->where($coords)->update(array(
+			"galaxy" => NULL,
+			"system" => NULL,
+			"position" => NULL
+		));
 		return true;
 	}
 

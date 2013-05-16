@@ -62,26 +62,19 @@ class SyncServers extends Table
 			$ret_code = $headers["responseCode"];
 			goto error;
 		}
-
-		$xml = simplexml_load_string($data);
-		$code = $xml->xpath("//*[@id='code']");
-		if(empty($code))
+		$code = $this->getElementContentById($data, "code");
+		if($code === FALSE)
 			goto error;
-		$code = (string) $code[0];
 		if($code == "OK")
 		{
-			$compression = $xml->xpath("//*[@id='compression']");
-			if(!empty($compression))
-				$compression = (string) $compression[0];
-			else
+			$compression = $this->getElementContentById($data, "compression");
+			if($compression === FALSE)
 				$compression = "";
-			$max_input = $xml->xpath("//*[@id='max_input_items']");
-			if(!empty($max_input))
-				$max_input = (string) $max_input[0];
-			else
+			$max_input = $this->getElementContentById($data, "max_transfer_items");
+			if($max_input === FALSE)
 				$max_input = "";
 			$this->getTable()->where("id_server", $id_server)
-					->update(array("compression" => $compression, "max_input_items" => $max_input, "active" => "1"));
+					->update(array("compression" => $compression, "max_transfer_items" => $max_input, "active" => "1"));
 		}
 		else
 		{
@@ -97,29 +90,35 @@ class SyncServers extends Table
 	public function register($values)
 	{
 		$url = preg_replace("/^[^:\/]*:\/\//","",$values["url"]);
-		$host = $this->getHost($values["url"]);
-		if($host === FALSE)
-			throw new \Nette\Application\ApplicationException("Bad URL!");
-		$port = $this->getPort($values["url"]);
-		// if connection can´t be established, Exception will be raised
-		$socket = $this->container->createHttpSocket($host, substr($url, strlen($host))."?pg=add_server&no-redir=1", $port, 2,5);
-		$post = array(
-				"name" => $values["username"],
-				"password" => $values["password"],
-				"password2" => $values["password"]
-		);
-		$socket->postData($post);
-		$headers = $socket->getResponseHeaders();
-		$data = $socket->getData();
-		if($data === FALSE)
+		if($values["not_register"] === FALSE)
 		{
-			throw new \Nette\Application\ApplicationException("No data! Return code ".$headers["responseCode"]);
+			$host = $this->getHost($values["url"]);
+			if($host === FALSE)
+				throw new \Nette\Application\ApplicationException("Bad URL!");
+			$port = $this->getPort($values["url"]);
+			// if connection can´t be established, Exception will be raised
+			$socket = $this->container->createHttpSocket($host, substr($url, strlen($host))."?pg=add_server&no-redir=1", $port, 2,5);
+			$post = array(
+					"name" => $values["username"],
+					"password" => $values["password"],
+					"password2" => $values["password"]
+			);
+			$socket->postData($post);
+			$headers = $socket->getResponseHeaders();
+			$_data = $socket->getData();
+			if($_data === FALSE)
+			{
+				throw new \Nette\Application\ApplicationException("No data! Return code ".$headers["responseCode"]);
+			}
+			$code = $this->getElementContentById($_data, "code");
+			if($code === FALSE)
+				throw new \Nette\Application\ApplicationException("Invalid data!");
 		}
-		$xml = simplexml_load_string($data);
-		$code = $xml->xpath("//*[@id='code']");
-		if(empty($code))
-			throw new \Nette\Application\ApplicationException("Invalid data!");
-		$code = (string) $code[0];
+		else
+		{
+			$code = "OK";
+		}
+
 		if($code == "OK")
 		{
 			$data = array(
@@ -150,10 +149,8 @@ class SyncServers extends Table
 		}
 		else
 		{
-			$error = $xml->xpath("//*[@id='error']");
-			if(!empty($error))
-				$error = (string) $error[0];
-			else
+			$error = $this->getElementContentById($_data, "error");
+			if($error === FALSE)
 				$error = "No error reported!";
 			throw new \Nette\Application\ApplicationException("Bad return code! $error");
 		}
@@ -176,16 +173,14 @@ class SyncServers extends Table
 		$socket = $this->container->createHttpSocket($host, substr($url, strlen($host))."?pg=input&action=ping", $port, 2,5);
 		$socket->sendHeaders();
 		$headers = $socket->getResponseHeaders();
-		$data = $socket->getData();
-		if($data === FALSE)
+		$_data = $socket->getData();
+		if($_data === FALSE)
 		{
-			throw new \Nette\Application\ApplicationException("No data! Return code %s", $headers["returnCode"]);
+			throw new \Nette\Application\ApplicationException("No data! Return code ".$headers["responseCode"]);
 		}
-		$xml = simplexml_load_string($data);
-		$code = $xml->xpath("//*[@id='code']");
-		if(empty($code))
+		$code = $this->getElementContentById($_data, "code");
+		if($code === FALSE)
 			throw new \Nette\Application\ApplicationException("Invalid data!");
-		$code = (string) $code[0];
 		if($code == "OK")
 		{
 			return true;
@@ -195,5 +190,120 @@ class SyncServers extends Table
 			throw new \Nette\Application\ApplicationException("Bad return code!");
 		}
 	}
+	public function getServersNeedingUpdate()
+	{
+		return $this->getTable()
+					->where("(last_download_time + ?) < ? OR last_download_time IS NULL",$this->container->parameters["syncFrequency"], time());
+	}
+	public function upload($server, $data)
+	{
+		if(!$data)
+		{
+			return false;
+		}
+		$host = $this->getHost($server["url"]);
+		if($host === FALSE)
+			throw new \Nette\Application\ApplicationException("Bad URL!");
+		$port = $this->getPort($server["url"]);
+		// if connection can´t be established, Exception will be raised
+		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,5);
+		$post = array(
+				"name" => $server["username"],
+				"password" => $server["password"],
+				"action" => "input",
+				"data" => $data
+		);
+		$socket->postData($post);
+		$headers = $socket->getResponseHeaders();
+		$_data = $socket->getData();
+		if($_data === FALSE)
+		{
+			throw new \Nette\Application\ApplicationException("No data! Return code ".$headers["responseCode"]);
+		}
+		$code = $this->getElementContentById($_data, "code");
+		if($code === FALSE)
+			throw new \Nette\Application\ApplicationException("Invalid data!");
+		if($code == "OK")
+		{
+			return true;
+		}
+		else
+		{
+			throw new \Nette\Application\ApplicationException("Bad return code - ". $code);
+		}
+	}
+	public function download($server)
+	{
+		$host = $this->getHost($server["url"]);
+		if($host === FALSE)
+			throw new \Nette\Application\ApplicationException("Bad URL!");
+		$port = $this->getPort($server["url"]);
+		// if connection can´t be established, Exception will be raised
+		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,5);
+		$post = array(
+				"name" => $server["username"],
+				"password" => $server["password"],
+				"action" => "download",
+				"last_id" => ($server["last_download_id"] === NULL) ? "0" : $server["last_download_id"],
+				"compression" => implode("|", $this->container->sync->getCompressions())
+		);
+		if($this->container->parameters["syncLimit"] !== NULL)
+			$post["limit"] = $this->container->parameters["syncLimit"];
+		$socket->postData($post);
+		$headers = $socket->getResponseHeaders();
+		$_data = $socket->getData();
+		if($_data === FALSE)
+		{
+			throw new \Nette\Application\ApplicationException("No data! Return code ".$headers["responseCode"]);
+		}
+		$code = $this->getElementContentById($_data, "code");
+		if($code === FALSE)
+			throw new \Nette\Application\ApplicationException("Invalid data!");
+		if($code == "OK")
+		{
+			$data = $this->getElementContentById($_data, "data");
+			if($data === FALSE)
+				throw new \Nette\Application\ApplicationException("No data!");
+			if($data == "NO-DATA")
+			{
+				$this->getTable()->where("id_server", $server["id_server"])->update(array("last_download_time" => time()));
+				return true;
+			}
+			else
+			{
+				$packet = $this->container->createTransferPacket($this->container->sync->getCompressions(), array());
+				$packet->loadString($data);
+				$items = $packet->getItems();
+				foreach($items as $i)
+				{
+					$tmp = $i;
+					$tmp["data"] = $packet->uncompress($tmp["data"], $tmp["compression"]);
+					if($tmp["data"] === FALSE) continue;
+					$tmp["compression"] = \TransferPacket::COMPRESSION_PLAIN;
+					$success = $this->container->sync->applySync($tmp);
+					// don´t store invalid updates
+					if($success !== FALSE)
+					{
+						$this->container->sync->insertSync($i["action"], $i["data"], $i["compression"], $i["timestamp"], $server["id_server"]);
+					}
 
+				}
+				$last_id = end($items);
+				$last_id = $last_id["id_update"];
+				$this->getTable()->where("id_server", $server["id_server"])->update(array("last_download_id" => $last_id));
+			}
+		}
+		else
+		{
+			throw new \Nette\Application\ApplicationException("Bad return code - ". $code);
+		}
+	}
+	public function getElementContentById($data, $id)
+	{
+		$matches = array();
+		preg_match("/<[^>]*id=[\"']".$id."[\"'][^>]*>([^<]*)<\/[^>]*>/", $data, $matches);
+		if(count($matches) < 2)
+			return false;
+		return $matches[1];
+	}
 }

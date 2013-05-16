@@ -1,8 +1,11 @@
 {block content}
 <h2>{_ "Synchronization setup"}</h2>
-{snippet syncAddForm}
+<h3>{_ "Add synchronization server"}</h3>
+{snippet syncForm}
 	{control syncAddForm}
 {/snippet}
+
+<h3>{_ "List of synchronization servers"}</h3>
 {snippet syncList}
 	{if !empty($servers)}
 	<table class="fullTable" id="syncTable">
@@ -23,7 +26,7 @@
 			<td>{$server->username}</td>
 			<td>{$server->password}</td>
 			<td>{isset($server->compression) ? $server->compression : __("unknown")}</td>
-			<td>{isset($server->max_input_items) ? $server->max_input_items : __("unknown")}</td>
+			<td>{isset($server->max_transfer_items) ? $server->max_transfer_items : __("unknown")}</td>
 			<td>{($server->active == "1") ? __("YES") : __("NO")}</td>
 			<td>
 				<a n:href="verifySyncServer! $server->id_server" class="ajax" title="{_ "Verify"}"><img n:attr="src => $baseUrl.'/css/glotr-default/images/icons/reload.png', alt => ''" /></a>
