@@ -61,7 +61,6 @@
 			{if $user->isLoggedIn()}
 			{control nav_info}
 			{control nav_admin}
-					{if $parameters["enableOgameApi"]}
 					<div id="update-panel">
 						<script type="text/javascript">
 						// checks for updates from Ogame API
@@ -125,7 +124,6 @@
 						</script>
 
 					</div>
-					{/if}
 			{control langSelectionForm}
 			{/if}
 		</div>

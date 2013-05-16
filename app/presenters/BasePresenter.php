@@ -14,7 +14,6 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	protected function startup()
 	{
 		parent::startup();
-
 		$this->context->translator->setLang($this->lang);
 		/* for case I need to get all strings to translate, that cannot be analyzed from code directly
 		$aI = $this->context->espionages->allInfo;
@@ -62,7 +61,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$homepage->add(__("Your settings"), $this->link("User:userSettings"));
 		$homepage->add(__("User management"), $this->link("Admin:users"), "perm_user_mng");
 		$homepage->add(__("Permissions"), $this->link("Admin:permissions"), "perm_perm_mng");
-		$homepage->add(__("Synchronization"), $this->link("Admin:syncSetup"), "perm_sync_mng");
+		if($this->context->parameters["enableSync"] === TRUE)
+			$homepage->add(__("Synchronization"), $this->link("Admin:syncSetup"), "perm_sync_mng");
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 

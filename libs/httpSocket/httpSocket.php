@@ -90,10 +90,14 @@ class httpScoket
 			if($i++ == 0)
             {
                 $tmp = explode(" ", $ret);
-                // HTTP response headers are like "HTTP/1.1 code message"
-                $this->responseHeaders["responseCode"] =(int) $tmp[1];
-                $this->responseHeaders["responseMessage"] = $ret;
-				continue;
+				if(count($tmp) > 1)
+				{
+					 // HTTP response headers are like "HTTP/1.1 code message"
+					$this->responseHeaders["responseCode"] =(int) $tmp[1];
+					$this->responseHeaders["responseMessage"] = $ret;
+					continue;
+				}
+				throw new \Nette\Application\ApplicationException("Response is not HTTP!");
 			}
 
 			if($ret == "") // start of data
@@ -107,6 +111,8 @@ class httpScoket
 			}
 
         }
+		if(empty($this->responseHeaders))
+			throw new \Nette\Application\ApplicationException("No headers!");
 		return $this->responseHeaders;
 	}
 	public function getData()
@@ -134,6 +140,7 @@ class httpScoket
 		$first_headers = array();
 		while(true)
 		{
+			$mc = microtime(1);
 			$start = strlen($data);
 			$end = $start + $step;
 			$this->addHeader("Range:", "bytes=$start-$end");

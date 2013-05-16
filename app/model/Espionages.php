@@ -150,7 +150,7 @@ class Espionages extends Table
 		{
 			$dbData = $this->container->espionages->addPrefixToKeys("moon_", $dbData, array_merge(array("timestamp", "scan_depth", "id_planet", "moon", "id_message_ogame"), $this->researches));
 		}
-		
+
 		$this->setPlanetInfo($dbData);
 		return true;
 	}
@@ -204,7 +204,9 @@ class Espionages extends Table
 					$tmp[$key] = $dbData["timestamp"];
 					// select planet by id, don´t overwrite newer data
 					// for buildings there is $empty parameter, because from planetinfo I get this data in parts (resources + factories), so I don´t want to overwrite mines when i update factories
-					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_buildings"}, $empty), array($key => $tmp[$key])));
+					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])
+							->where("$key < ? OR $key IS NULL", $tmp[$key])
+							->update(array_merge($this->filterData($tmp, $this->{$prefix."_buildings"}, $empty), array($key => $tmp[$key])));
 					if(isset($dbData["planetinfo"])) // another workaround, for GTP planetinfo update
 						goto fleet;
 				case "defence":

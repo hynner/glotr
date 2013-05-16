@@ -21,10 +21,6 @@ class Players extends Table
 			if($data->player)
 				$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();*/
 
-		/*	$start = (int) $this->container->config->load("$this->tableName-start");
-
-			$end = $start + $this->container->parameters["ogameApiRecordsAtOnce"];*/
-
 			$query = "";
 			while($data->read())
 			{
@@ -66,10 +62,12 @@ class Players extends Table
 			{
 					try { // if 2 players swap their names it will make PDOEception or one player gets deleted and anothe uses his name
 					//if player already exists update it
-					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))->update($dbData);
+					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))
+							->where("last_update < ?", $dbData["last_update"])->update($dbData);
 				}
 				catch (\PDOException $e)
 				{
+					// if last_update < $dbData["last_update"] then PDOExpection shouldn´t be raised, so it´s safe to let it unchecked
 					// ogame playername is max 20 chars long, so this will ensure there is no same playername
 					$this->getTable()->where(array("playername" => $dbData["playername"]))->update(array("playername" => Nette\Utils\Strings::random(21)));
 					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))->update($dbData);
@@ -78,14 +76,17 @@ class Players extends Table
 			}
 		return true;
 	}
-	public function setAlliance($id_player, $id_alliance)
+	public function setAlliance($id_player, $id_alliance, $last_update = NULL)
 	{
-		$this->getTable()->where("id_player_ogame" , $id_player)->update(array("id_alliance" => $id_alliance));
+		if($last_update === NULL) $last_update = time();
+		$this->getTable()->where("id_player_ogame" , $id_player)
+				->where("last_update < ?", $last_update)->update(array("id_alliance" => $id_alliance));
 		return true;
 	}
 	public function setResearches($id_player, $dbData)
 	{
-		$this->getTable()->where("id_player_ogame" , $id_player)->update($dbData);
+		$this->getTable()->where("id_player_ogame" , $id_player)
+				->where("research_updated < ?", $dbData["research_updated"])->update($dbData);
 		return true;
 	}
 	public function getIdByPlanet($coords)

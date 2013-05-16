@@ -14,8 +14,10 @@ class Galaxyplugin extends Nette\Object
 		$this->connection = $database;
 
 	}
-	public function update($data)
+	public function update($data, $time = NULL)
 	{
+		if($time === NULL)
+			$time = time();
 		//GTP sends times in server timezone
 		date_default_timezone_set($this->container->server->timezone);
 		//DBG::log($data);
@@ -38,7 +40,7 @@ class Galaxyplugin extends Nette\Object
 							$dbData = array(
 									"name" => (string) $position->planetname,
 									"id_player" => (int) $position->player["playerid"],
-									"last_update" => time()
+									"last_update" => $time
 
 							);
 							if($position->debris)
@@ -80,7 +82,7 @@ class Galaxyplugin extends Nette\Object
 									$this->container->activities->insertActivity($act);
 									// activity can also be something like 25 minutes, that means that the player was active 23minutes ago,
 									// but 8 minutes ago went to inactivity, so insert this inactivities
-									$inactivities = floor((time() - $act["timestamp"])/(15*60));
+									$inactivities = floor(($time - $act["timestamp"])/(15*60));
 
 									if($inactivities > 0)
 									{
@@ -99,7 +101,7 @@ class Galaxyplugin extends Nette\Object
 								{
 									$act["type"] = "inactivity";
 
-									$act["timestamp"] = time()+(15*60); // add 15 minutes, I will be substracting it again
+									$act["timestamp"] = $time+(15*60); // add 15 minutes, I will be substracting it again
 									// inactvity shows after 60minutes => 4*15
 									for($i = 1; $i <= 4; $i++)
 									{
@@ -118,7 +120,7 @@ class Galaxyplugin extends Nette\Object
 							$player = array(
 								"id_player_ogame" => $dbData["id_player"],
 								"playername" => (string) $position->player["playername"],
-								"last_update" => time()
+								"last_update" => $time
 
 							);
 							if($position->player["status"])
@@ -131,10 +133,11 @@ class Galaxyplugin extends Nette\Object
 
 								$alliance = array(
 									"id_alliance_ogame" =>  (int) $position->alliance["allyid"],
-									"tag" =>  (string) $position->alliance["allyname"]
+									"tag" =>  (string) $position->alliance["allyname"],
+									"last_update" => $time
 								);
 								$this->container->alliances->insertAlliance($alliance);
-								$this->container->players->setAlliance($player["id_player_ogame"], $alliance["id_alliance_ogame"]);
+								$this->container->players->setAlliance($player["id_player_ogame"], $alliance["id_alliance_ogame"], $time);
 							}
 
 
@@ -189,7 +192,7 @@ class Galaxyplugin extends Nette\Object
 								"timestamp" => mktime((int) $player->activity["hour"], (int) $player->activity["minute"], 0, (int) $player->activity["month"], (int) $player->activity["day"], (int) $player->activity["year"]),
 								"type" => "alliance_page"
 							);
-							$inactivities = floor((time() - $act["timestamp"])/(15*60));
+							$inactivities = floor(($time - $act["timestamp"])/(15*60));
 
 							if($inactivities > 0)
 							{
@@ -207,12 +210,12 @@ class Galaxyplugin extends Nette\Object
 						{
 								$act = array(
 								"id_player" => $id_player,
-								"timestamp" => time(),
+								"timestamp" => $time,
 								"type" => "apg_inactivity"
 							);
 
 
-									$act["timestamp"] = time()+(15*60); // add 15 minutes, I will be substracting it again
+									$act["timestamp"] = $time+(15*60); // add 15 minutes, I will be substracting it again
 									// inactvity shows after 60minutes => 4*15
 									for($i = 1; $i <= 4; $i++)
 									{
@@ -253,7 +256,7 @@ class Galaxyplugin extends Nette\Object
 						}
 
 						$dbData["scan_depth"] = $this->container->espionages->getScanDepthByData($dbData);
-						$dbData["timestamp"] = time();
+						$dbData["timestamp"] = $time;
 						$dbData["moon"] = (((string) $planetinfo["moon"]) == "false") ? false : true ;
 
 						$dbData["id_planet"] = $id_planet;
