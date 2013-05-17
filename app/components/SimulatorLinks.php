@@ -35,15 +35,15 @@ class SimulatorLinks extends GLOTRControl
 				"ship_d0_2_b" => $prefix."light_fighter",
 				"ship_d0_3_b" => $prefix."heavy_fighter",
 				"ship_d0_4_b" => $prefix."cruiser",
-				"ship_d0_5_b" => $prefix."battle_ship",
+				"ship_d0_5_b" => $prefix."battleship",
 				"ship_d0_6_b" => $prefix."colony_ship",
-				"ship_d0_7_b" => $prefix."recyclator",
+				"ship_d0_7_b" => $prefix."recycler",
 				"ship_d0_8_b" => $prefix."espionage_probe",
 				"ship_d0_9_b" => $prefix."bomber",
 				"ship_d0_10_b" => $prefix."solar_satellite",
 				"ship_d0_11_b" => $prefix."destroyer",
-				"ship_d0_12_b" => $prefix."death_star",
-				"ship_d0_13_b" => $prefix."battle_cruiser",
+				"ship_d0_12_b" => $prefix."deathstar",
+				"ship_d0_13_b" => $prefix."battlecruiser",
 				"ship_d0_14_b" => $prefix."rocket_launcher",
 				"ship_d0_15_b" => $prefix."light_laser",
 				"ship_d0_16_b" => $prefix."heavy_laser",
@@ -51,9 +51,9 @@ class SimulatorLinks extends GLOTRControl
 				"ship_d0_18_b" => $prefix."ion_cannon",
 				"ship_d0_19_b" => $prefix."plasma_turret",
 				"ship_d0_20_b" => $prefix."small_shield_dome",
-				"ship_d0_21_b" => $prefix."large_shield_dome"
+				"ship_d0_21_b" => $prefix."large_shield_dome",
+				"abm_b" => "antiballistic_missiles"
 			);
-
 		$template->osimulate = "http://www.osimulate.com?ref=glotr&lang=".$this->getPresenter()->lang."&uni_speed=".$server["speed"]."&defense_debris=".((int) ($server["defToTF"]*$server["debrisFactor"]))."&defense_repair=".((int) ($server["repairFactor"]*100));
 		$template->osimulate .= "&fleet_debris=".((int) ($server["debrisFactor"]*100))."&enemy_pos=".$result['galaxy'].":".$result['system'].":".$result['position'];
 		/*
