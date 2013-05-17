@@ -233,6 +233,15 @@ $tests[] = array(
 	'description' => '<code>$_SERVER["SERVER_ADDR"]</code> or <code>$_SERVER["LOCAL_ADDR"]</code> must be available for detecting development / production mode.',
 );
 
+$tests[] = array(
+	'title' => 'Directories writability',
+	'required' => TRUE,
+	'passed' => (is_writable("../../temp") && is_writable("../../log")),
+	"message" => "Writable",
+	"errorMessage" => "Not writable",
+	'description' => '/temp or /log directory is not writable',
+);
+
 paint($tests);
 
 
