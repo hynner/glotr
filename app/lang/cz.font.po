@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-17 11:28:34
+# Created: 2013-05-17 14:16:18
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-17 11:28+0000\n"
+"PO-Revision-Date: 2013-05-17 14:16+0000\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,7 +17,7 @@ msgid "ACS"
 msgstr "APP"
 
 msgid "Account is already created on sync server"
-msgstr "Účet je již na sync serveru vytvořen"
+msgstr "Účet již je na sync serveru vytvořen"
 
 msgid "Action"
 msgstr "Akce"
@@ -56,7 +56,7 @@ msgid "Add"
 msgstr "Přidat"
 
 msgid "Add server"
-msgstr "Přidat server"
+msgstr "přidat server"
 
 msgid "Add synchronization server"
 msgstr "Přidat synchronizační server"
@@ -88,11 +88,11 @@ msgstr "Aliance"
 msgid "Ascendant"
 msgstr "Vzestupně"
 
+msgid "Back to login"
+msgstr "Zpět na přihlašovací stránku"
+
 msgid "Banned"
 msgstr "Zabanovaní"
-
-msgid "Can´t open connection to given host."
-msgstr "Na daný server se nelze připojit."
 
 msgid "Click on the link to proceed with installation"
 msgstr "Klikněte na odkaz pro pokračování v instalaci"
@@ -123,9 +123,6 @@ msgstr "Pole trosek"
 
 msgid "Defence to debris"
 msgstr "Obrana do trosek"
-
-msgid "Delete"
-msgstr "Vymazat"
 
 msgid "Descendant"
 msgstr "Sestupně"
@@ -256,9 +253,6 @@ msgstr "Omezení vstupu"
 msgid "Installation complete!"
 msgstr "Instalace dokončena!"
 
-msgid "Invalid data!"
-msgstr "Špatná data!"
-
 msgid "Invalid password."
 msgstr "Špatné heslo"
 
@@ -345,9 +339,6 @@ msgstr "NE"
 
 msgid "New password"
 msgstr "Nové heslo"
-
-msgid "New synchronization server added!"
-msgstr "Byl přidán nový synchronizační server!"
 
 msgid "Next"
 msgstr "Další"
@@ -574,9 +565,6 @@ msgstr "Jméno serveru musí být od %d do %d znaků dlouhé!"
 msgid "Server specifications"
 msgstr "Vlastnosti serveru"
 
-msgid "Servername already exists!"
-msgstr "Server s tímto jménem již existuje!"
-
 msgid "Set global status"
 msgstr "Nastavit globální status"
 
@@ -623,13 +611,13 @@ msgid "Synchronization"
 msgstr "Synchronizace"
 
 msgid "Synchronization failed!"
-msgstr "Synchronizace selhala!"
-
-msgid "Synchronization is disabled!"
-msgstr "Synchronizace je zakázána!"
+msgstr "Synchronizace selhala"
 
 msgid "Synchronization setup"
-msgstr "Nastavnení synchronizace"
+msgstr "Nastavení synchronizace"
+
+msgid "Synchronizing"
+msgstr "Synchronizuji"
 
 msgid "System"
 msgstr "Systém"
@@ -676,11 +664,8 @@ msgstr "Úterý"
 msgid "Type"
 msgstr "Typ"
 
-msgid "URL"
-msgstr "URL"
-
 msgid "URL lenght can be at most %d!"
-msgstr "URL může mít nejvíce %d znaků!"
+msgstr "Délka URL může být max %d znaků!"
 
 msgid "URL must be filled!"
 msgstr "URL musí být vyplněna!"
@@ -763,14 +748,20 @@ msgstr "Špatné staré heslo!"
 msgid "YES"
 msgstr "ANO"
 
+msgid "You don´t have permission for this action!"
+msgstr "Pro tuto akci nemáte oprávnění!"
+
 msgid "You have been signed out."
 msgstr "Byl/a jste odhlášen/a"
 
-msgid "You have no synchronization servers yet"
-msgstr "Zatím nemáte nastaven žádný synchronizační server"
-
 msgid "You must enter valid email address!"
 msgstr "Prosím zadejte validní emailovou adresu!"
+
+msgid "Your account hasn´t been activated yet."
+msgstr "Váš účet ještě nebyl aktivován."
+
+msgid "Your registration was submitted, now you have to wait untill administrator accepts it!"
+msgstr "Vaše registrace byla odeslána, nyní musíte počkat než ji potvrdí administrátor!"
 
 msgid "Your server is NOT properly configured!"
 msgstr "Váš server NENí správně nakonfigurován!"
@@ -1075,9 +1066,6 @@ msgstr "transport"
 msgid "universe"
 msgstr "vesmír"
 
-msgid "unknown"
-msgstr "neznámé"
-
 msgid "war"
 msgstr "válka"
 
@@ -1090,17 +1078,6 @@ msgstr "wing"
 msgid "yes"
 msgstr "ano"
 
-msgid "You don´t have permission for this action!"
-msgstr "Pro tuto akci nemáte oprávnění!"
+msgid "Delete"
+msgstr "Smazat"
 
-msgid "Email:"
-msgstr ""
-
-msgid "Account is already created on sync server"
-msgstr "Účet je již na sync serveru vytvořen"
-
-msgid "Synchronizing"
-msgstr "Synchronizuji"
-
-msgid "You have no synchronization servers yet"
-msgstr "Zatím nemáte nastaven žádný synchronizační server"
