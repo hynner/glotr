@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-14 10:32:56
+# Created: 2013-05-17 11:28:34
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-14 10:32+0000\n"
+"PO-Revision-Date: 2013-05-17 11:28+0000\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,6 +15,9 @@ msgstr ""
 
 msgid "ACS"
 msgstr "APP"
+
+msgid "Account is already created on sync server"
+msgstr "Účet je již na sync serveru vytvořen"
 
 msgid "Action"
 msgstr "Akce"
@@ -352,6 +355,9 @@ msgstr "Další"
 msgid "No admin account found, you should now create one!"
 msgstr "Nebyl nalezen žádný administrátorský účet. Vytvořte ho!"
 
+msgid "No fleet movements!"
+msgstr "Žádné pohyby letek!"
+
 msgid "No reports found!"
 msgstr "Nebyla nalezeny žádné zprávy!"
 
@@ -615,6 +621,9 @@ msgstr "Neděle"
 
 msgid "Synchronization"
 msgstr "Synchronizace"
+
+msgid "Synchronization failed!"
+msgstr "Synchronizace selhala!"
 
 msgid "Synchronization is disabled!"
 msgstr "Synchronizace je zakázána!"
@@ -1089,6 +1098,9 @@ msgstr ""
 
 msgid "Account is already created on sync server"
 msgstr "Účet je již na sync serveru vytvořen"
+
+msgid "Synchronizing"
+msgstr "Synchronizuji"
 
 msgid "You have no synchronization servers yet"
 msgstr "Zatím nemáte nastaven žádný synchronizační server"

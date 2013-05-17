@@ -85,6 +85,10 @@
 										{
 											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} " + data["what"] + " {!_ "from Ogame API!"}</p>");
 										}
+										else if(data["sync"])
+										{
+											$("#update-panel").append("<p class='update proccess'>{!_ "Synchronizing"}</p>");
+										}
 										else
 										{
 											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} {!_ "from Ogame API!"}</p>");
@@ -96,6 +100,11 @@
 									{
 										$("#update-panel p.update").remove();
 										$("#update-panel").append("<p class='update failed'>{!_ "Updating from Ogame API failed!"}<br />{!_ "Your server is NOT properly configured!"}</p>");
+									}
+									else if(data["status"] == "sync-failed")
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update failed'>{!_ "Synchronization failed!"}<br />Message: "+data["message"]+"</p>");
 									}
 									else if(data["status"] == "disabled")
 									{
