@@ -10,7 +10,8 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
+require "Neon/Neon.php";
+require "../paths.php";
 
 /**
  * Check PHP configuration.
@@ -241,7 +242,26 @@ $tests[] = array(
 	"errorMessage" => "Not writable",
 	'description' => '/temp or /log directory is not writable',
 );
-
+$conf_ok = FALSE;
+$desc = "";
+try{
+	Neon::decode(file_get_contents("../".APP_DIR."/".CONF_DIRNAME."/AppConf.neon"));
+	Neon::decode(file_get_contents("../".APP_DIR."/".CONF_DIRNAME."/ServerConf.neon"));
+	$conf_ok = TRUE;
+	$desc = "Config files are OK!";
+}
+catch(NeonException $e)
+{
+	$desc = "Error in config file. Message - ".$e->getMessage();
+}
+$tests[] = array(
+	'title' => 'Config files validity',
+	'required' => TRUE,
+	'passed' => $conf_ok,
+	"message" => "Valid",
+	"errorMessage" => "Not valid",
+	'description' => $desc,
+);
 paint($tests);
 
 
