@@ -193,7 +193,8 @@ class SyncServers extends Table
 	public function getServersNeedingUpdate()
 	{
 		return $this->getTable()
-					->where("(last_download_time + ?) < ? OR last_download_time IS NULL",$this->container->parameters["syncFrequency"], time());
+					->where("(last_download_time + ?) < ? OR last_download_time IS NULL",$this->container->parameters["syncFrequency"], time())
+					->where("active", "1");
 	}
 	public function upload($server, $data)
 	{
@@ -206,7 +207,7 @@ class SyncServers extends Table
 			throw new \Nette\Application\ApplicationException("Bad URL!");
 		$port = $this->getPort($server["url"]);
 		// if connection can´t be established, Exception will be raised
-		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,5);
+		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,15);
 		$post = array(
 				"name" => $server["username"],
 				"password" => $server["password"],
@@ -239,7 +240,7 @@ class SyncServers extends Table
 			throw new \Nette\Application\ApplicationException("Bad URL!");
 		$port = $this->getPort($server["url"]);
 		// if connection can´t be established, Exception will be raised
-		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,5);
+		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,15);
 		$post = array(
 				"name" => $server["username"],
 				"password" => $server["password"],

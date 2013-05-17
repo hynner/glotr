@@ -106,7 +106,17 @@ class UpdatePresenter extends BasePresenter
 			}
 			if($this->context->sync->needUpdate())
 			{
+				try{
 				$this->context->sync->update();
+				}
+				catch(\Nette\Application\ApplicationException $e)
+				{
+					$response = array(
+						"status" => "sync-failed",
+						"message" => $e->getMessage()
+					);
+					goto send;
+				}
 				if($this->context->sync->needUpdate())
 					$response = array("status" => "continue", "sync" => 1);
 				else
