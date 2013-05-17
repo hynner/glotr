@@ -69,7 +69,7 @@ $tests['hf'] = array(
 
 $tests['hr'] = array(
 	'title' => '.htaccess mod_rewrite',
-	'required' => FALSE,
+	'required' => TRUE,
 	'description' => 'Mod_rewrite is probably not present. You will not be able to use Cool URL.',
 	'script' => '<script src="assets/rewrite/checker"></script> <script>displayResult("hr", typeof modRewriteChecker == "boolean")</script>',
 );
@@ -168,7 +168,7 @@ $tests[] = array(
 
 $tests[] = array(
 	'title' => 'PDO extension',
-	'required' => FALSE,
+	'required' => TRUE,
 	'passed' => $pdo = extension_loaded('pdo') && PDO::getAvailableDrivers(),
 	'message' => $pdo ? 'Available drivers: ' . implode(' ', PDO::getAvailableDrivers()) : NULL,
 	'description' => 'PDO extension or PDO drivers are absent. You will not be able to use <code>Nette\Database</code>.',
@@ -176,7 +176,7 @@ $tests[] = array(
 
 $tests[] = array(
 	'title' => 'Multibyte String extension',
-	'required' => FALSE,
+	'required' => TRUE,
 	'passed' => extension_loaded('mbstring'),
 	'description' => 'Multibyte String extension is absent. Some internationalization components may not work properly.',
 );
@@ -191,31 +191,10 @@ $tests[] = array(
 );
 
 $tests[] = array(
-	'title' => 'Memcache extension',
-	'required' => FALSE,
-	'passed' => extension_loaded('memcache'),
-	'description' => 'Memcache extension is absent. You will not be able to use <code>Nette\Caching\Storages\MemcachedStorage</code>.',
-);
-
-$tests[] = array(
-	'title' => 'GD extension',
-	'required' => FALSE,
-	'passed' => extension_loaded('gd'),
-	'description' => 'GD extension is absent. You will not be able to use <code>Nette\Image</code>.',
-);
-
-$tests[] = array(
-	'title' => 'Bundled GD extension',
-	'required' => FALSE,
-	'passed' => extension_loaded('gd') && GD_BUNDLED,
-	'description' => 'Bundled GD extension is absent. You will not be able to use some functions such as <code>Nette\Image::filter()</code> or <code>Nette\Image::rotate()</code>.',
-);
-
-$tests[] = array(
-	'title' => 'Fileinfo extension or mime_content_type()',
-	'required' => FALSE,
-	'passed' => extension_loaded('fileinfo') || function_exists('mime_content_type'),
-	'description' => 'Fileinfo extension or function <code>mime_content_type()</code> are absent. You will not be able to determine mime type of uploaded files.',
+	'title' => 'MySQLi extension',
+	'required' => TRUE,
+	'passed' => extension_loaded('mysqli'),
+	'description' => 'MySQLi extension is absent!',
 );
 
 $tests[] = array(
