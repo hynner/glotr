@@ -137,6 +137,11 @@ class Highscore extends Table
 				$query .= "insert into $this->tableName set period = $period, year = $year, category = $cat, id_item = $id, $dataFields on duplicate key update $dataFields;";
 				if($cat == 1)
 				{
+					// on the beginning of the universe it can happen that new player is only in some of the highscore files
+					if(!isset($entry["score_0"]))
+					{
+						$entry["score_0"] = 0;
+					}
 					// score_inactivity
 					$query .= "insert into ".$this->container->scoreInactivity->getTableName()."
 						set id_player=$id, score_0 = $entry[score_0], last_update = $time, duration = 0 on duplicate key update
