@@ -111,6 +111,19 @@ class AdminPresenter extends BasePresenter
 			$this->redirect("this");
 		}
 	}
+	public function handleSyncServerDeactivate($id)
+	{
+		$this->context->syncServers->getTable()->where("id_server", $id)->update(array("active" =>"0"));
+		if($this->isAjax())
+		{
+			$this->loadSyncServers2Template();
+			$this->invalidateControl("syncList");
+		}
+		else
+		{
+			$this->redirect("this");
+		}
+	}
 	protected function createComponentPermissionsForm()
 	{
 		$form = new GLOTR\MyForm;

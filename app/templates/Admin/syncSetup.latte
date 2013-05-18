@@ -27,7 +27,8 @@
 			<td>{$server->password}</td>
 			<td>{isset($server->compression) ? $server->compression : __("unknown")}</td>
 			<td>{isset($server->max_transfer_items) ? $server->max_transfer_items : __("unknown")}</td>
-			<td>{($server->active == "1") ? __("YES") : __("NO")}</td>
+			<td n:if="$server->active == '1'"><a n:href="syncServerDeactivate! $server->id_server" class="ajax">{_ "YES"}</a></td>
+			<td n:if="$server->active == '0'">{_ "NO"}</td>
 			<td>
 				<a n:href="verifySyncServer! $server->id_server" class="ajax" title="{_ "Verify"}"><img n:attr="src => $baseUrl.'/css/glotr-default/images/icons/reload.png', alt => ''" /></a>
 				<a n:href="deleteSyncServer! $server->id_server" class="ajax request_confirmation" title="{_ "Delete"}"><img n:attr="src => $baseUrl.'/css/glotr-default/images/icons/delete.png', alt => ''" /></a>
