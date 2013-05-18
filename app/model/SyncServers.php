@@ -92,10 +92,11 @@ class SyncServers extends Table
 		$url = preg_replace("/^[^:\/]*:\/\//","",$values["url"]);
 		if($values["not_register"] === FALSE)
 		{
-			$host = $this->getHost($values["url"]);
+			$host = $this->getHost($url);
+
 			if($host === FALSE)
 				throw new \Nette\Application\ApplicationException("Bad URL!");
-			$port = $this->getPort($values["url"]);
+			$port = $this->getPort($url);
 			// if connection can´t be established, Exception will be raised
 			$socket = $this->container->createHttpSocket($host, substr($url, strlen($host))."?pg=add_server&no-redir=1", $port, 2,5);
 			$post = array(
