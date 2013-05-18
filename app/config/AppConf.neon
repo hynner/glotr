@@ -47,6 +47,7 @@ common:
 		fleetMovements: GLOTR\FleetMovements
 		sync: GLOTR\Sync
 		syncServers: GLOTR\SyncServers
+		scoreInactivity: GLOTR\ScoreInactivity
 		mysqli:
 			class: \mysqli("%database.host%", "%database.user%", "%database.password%", "%database.dbname%")
 

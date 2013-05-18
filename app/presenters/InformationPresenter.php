@@ -139,6 +139,15 @@ class InformationPresenter extends BasePresenter
 		$this->template->periodDuration = $this->context->parameters["scoreHistoryPeriod"];
 		$this->template->redraw = false;
 	}
+	public function actionScoreInactivity()
+	{
+		$vp = $this->getComponent("vp");
+		$this->template->inactivity = $this->context->scoreInactivity->search($vp->getPaginator());
+		if($this->isAjax())
+		{
+			$this->invalidateControl("inactivityList");
+		}
+	}
 	protected function createComponentScoreHistoryForm()
 	{
 		$form = new GLOTR\MyForm;

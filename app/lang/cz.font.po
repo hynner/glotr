@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-17 14:16:18
+# Created: 2013-05-18 08:35:18
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-17 14:16+0000\n"
+"PO-Revision-Date: 2013-05-18 08:35+0000\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -123,6 +123,9 @@ msgstr "Pole trosek"
 
 msgid "Defence to debris"
 msgstr "Obrana do trosek"
+
+msgid "Delete"
+msgstr "Smazat"
 
 msgid "Descendant"
 msgstr "Sestupně"
@@ -539,10 +542,13 @@ msgid "Scan time"
 msgstr "Čas skenu"
 
 msgid "Score"
-msgstr "Score"
+msgstr "Skóre"
 
 msgid "Score history"
 msgstr "Historický přehled"
+
+msgid "Score inactivity"
+msgstr "Neaktivita skóre"
 
 msgid "Search"
 msgstr "Hledat"
@@ -1077,7 +1083,4 @@ msgstr "wing"
 
 msgid "yes"
 msgstr "ano"
-
-msgid "Delete"
-msgstr "Smazat"
 
