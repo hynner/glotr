@@ -15,7 +15,7 @@ common:
 		ogameApiExpirations: {players.xml: 86400, universe.xml: 604800, highscore.xml: 3600, alliances.xml: 86400, serverData.xml: 86400, playerData.xml: 604800}# don´t change it unless there is some change in ogameAPI, all values are in seconds
 		scoreHistoryPeriod: 1 # time in days, there will be one record in score_history table per this period per player and alliance, if you want to change it on running server, truncate score_history table first !!!
 		adminEmail: example@example.com # this is the e-mail address all emails will be send from
-		enableSync: true # enables/disables sync servers, allow it only if you plan to use it
+		enableSync: false # enables/disables sync servers, allow it only if you plan to use it
 		syncFrequency: 600 # how often to synchronize, in seconds
 		syncLimit: NULL # limit the number of transfered items per request, NULL will let sync server decide that
 		syncMinimum: 20 # Mimimum amount of updates to upload to sync server, prevents infinite updates, when somebody is going through galaxy
