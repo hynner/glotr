@@ -1,5 +1,6 @@
 {block content}
 	<h2>{_ "Score inactivity"}</h2>
+	{control scoreInactivityForm}
 	{snippet inactivityList}
 		{if !empty($inactivity)}
 			{control vp}
@@ -8,12 +9,14 @@
 					<th>{_ "Playername"}</th>
 					<th>{_ "Score"}</th>
 					<th>{_ "Inactivity"}</th>
+					<th>{_ "Planets"}</th>
 				</tr>
 				{foreach $inactivity as $i}
 				<tr>
-					<td><a n:href="Information:playerInfo $i->id_player">{$i->playername}</a></td>
+					<td><a n:href="Information:playerInfo $i->id_player">{$i->playername}</a> #{$i->pos}</td>
 					<td>{$i->score_0}</td>
 					<td>{$i->duration|formatSeconds}</td>
+					<td>{$i->planets}</td>
 				</tr>
 				{/foreach}
 			</table>
