@@ -148,6 +148,16 @@ class InformationPresenter extends BasePresenter
 			$this->invalidateControl("inactivityList");
 		}
 	}
+	public function scoreInactivityFormSubmitted($form)
+	{
+		$values = $form->getValues();
+		$vp = $this->getComponent("vp");
+		$this->template->inactivity = $this->context->scoreInactivity->search($vp->getPaginator(),$values);
+		if($this->isAjax())
+		{
+			$this->invalidateControl("inactivityList");
+		}
+	}
 	protected function createComponentScoreHistoryForm()
 	{
 		$form = new GLOTR\MyForm;
@@ -222,6 +232,40 @@ class InformationPresenter extends BasePresenter
 			$this->template->redraw = true;
 			$this->invalidateControl("scoreHistoryCharts");
 			$this->invalidateControl("scoreHistorySelected");
+	}
+	protected function createComponentScoreInactivityForm()
+	{
+		$form = new GLOTR\MyForm;
+		$form->getElementPrototype()->class("ajax");
+		$form->addText("galaxy", "Galaxy:", 4)
+				->addCondition(Form::FILLED)
+					->addRule(Form::INTEGER, "Galaxy must be a number!")
+					->addRule(Form::RANGE, "Galaxy must be a number from %d to %d", array(1, $this->context->server->getGalaxies()) );
+		$form->addText("system_start", "Start system:", 4)
+				->addCondition(Form::FILLED)
+					->addRule(Form::INTEGER, "System must be a number!")
+					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->context->server->getSystems()) );
+		$form->addText("system_end", "End system:", 4)
+				->addCondition(Form::FILLED)
+					->addRule(Form::INTEGER, "System must be a number!")
+					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->context->server->getSystems()) );
+		$form->addText("score_0_position_s", "Position(total) from:", 5)
+				->addCondition(Form::FILLED)
+					->addRule(Form::INTEGER, "Position must be a number!");
+		$form->addText("score_0_position_e", "Position(total) to:", 5)
+				->addCondition(Form::FILLED)
+					->addRule(Form::INTEGER, "Position must be a number!");
+		$form->addText("results_per_page", "Results per page:", 5)
+				->addCondition(Form::FILLED)
+					->addRule(Form::INTEGER, "Results per page must be a number!");
+		$form->addSubmit("search", "Search");
+		$form->setDefaults(array(
+				"results_per_page" => 50
+			));
+
+		$form->setTranslator($this->context->translator);
+		$form->onSuccess[] = $this->scoreInactivityFormSubmitted;
+		return $form;
 	}
 	protected function createComponentSearchForm()
 	{
