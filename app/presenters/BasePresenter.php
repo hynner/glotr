@@ -52,7 +52,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$homepage->add(__("Search in database"), $this->link("Information:search"), "perm_search");
 		$homepage->add(__("View systems"), $this->link("Information:systems"), "perm_galaxyview");
 		$homepage->add(__("Score history"), $this->link("Information:scoreHistory"));
-		$homepage->add(__("Fleet movements"), $this->link("Information:fleetMovements"));
+		$homepage->add(__("Score inactivity"), $this->link("Information:scoreInactivity"));
+		$homepage->add(__("Fleet movements"), $this->link("Information:fleetMovements"), "perm_fleet_movements");
 		$nav->setTranslator($this->context->translator);
 		$nav->setCurrentByUrl();
 

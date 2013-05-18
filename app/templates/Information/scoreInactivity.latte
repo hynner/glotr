@@ -1,0 +1,24 @@
+{block content}
+	<h2>{_ "Score inactivity"}</h2>
+	{snippet inactivityList}
+		{if !empty($inactivity)}
+			{control vp}
+			<table>
+				<tr>
+					<th>{_ "Playername"}</th>
+					<th>{_ "Score"}</th>
+					<th>{_ "Inactivity"}</th>
+				</tr>
+				{foreach $inactivity as $i}
+				<tr>
+					<td><a n:href="Information:playerInfo $i->id_player">{$i->playername}</a></td>
+					<td>{$i->score_0}</td>
+					<td>{$i->duration|formatSeconds}</td>
+				</tr>
+				{/foreach}
+			</table>
+		{else}
+			<p>{_ "No score inactivities"}!</p>
+		{/if}
+	{/snippet}
+{/block}

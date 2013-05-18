@@ -97,9 +97,10 @@ class Highscore extends Table
 
 		/* delete old alliances */
 		$aids = implode(", ", array_keys($queryData[2])); // ids of all alliances, PHP is case sensitive, so aids != AIDS :-)
+		$this->container->mysqli->query("delete from ".$this->container->alliances->tableName." where id_alliance_ogame  not in ($aids)"); // delete non-existent alliances
+		$this->container->mysqli->query("delete from ".$this->tableName." where id_item not in ($aids) and category = 2"); // delete score history
 
 		$period = ceil(intval(date("z"))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
-		$this->container->mysqli->query("delete from ".$this->container->alliances->tableName." where id_alliance_ogame  not in ($aids)"); // delete non-existent players
 		$year = intval(date("Y"));
 		$query = "";
 
@@ -118,7 +119,7 @@ class Highscore extends Table
 			}
 
 			$tbl_name = $this->container->$service->getTableName();
-
+			$time = time();
 			foreach($entries as $id => $entry)
 			{
 
@@ -134,20 +135,20 @@ class Highscore extends Table
 
 
 				$query .= "insert into $this->tableName set period = $period, year = $year, category = $cat, id_item = $id, $dataFields on duplicate key update $dataFields;";
+				if($cat == 1)
+				{
+					// score_inactivity
+					$query .= "insert into ".$this->container->scoreInactivity->getTableName()."
+						set id_player=$id, score_0 = $entry[score_0], last_update = $time, duration = 0 on duplicate key update
+						duration = (score_0 >= $entry[score_0])*(duration + $time -last_update), score_0 = $entry[score_0], last_update = $time;";
+				}
 
 			}
 		}
 		$this->chunkedMultiQuery($query);
-		$this->cleanUpScoreHistory();
 		$this->container->config->save("$this->tableName-finished", $timestamp);
 	}
 
-	public function cleanUpScoreHistory()
-	{
-		// if player or alliance isn´t in its table, it doesn´t exist anymore
-		$this->findBy(array("category" => 1))->where("NOT id_item", $this->container->players->getTable()->select("id_player_ogame"))->delete();
-		$this->findBy(array("category" => 2))->where("NOT id_item", $this->container->alliances->getTable()->select("id_alliance_ogame"))->delete();
-	}
 	public function needApiUpdate()
 	{
 
