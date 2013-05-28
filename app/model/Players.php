@@ -255,7 +255,7 @@ class Players extends Table
 		$srvData = $this->container->server->data;
 		// check for newbie protection
 
-		if($player["score_1"] > $srvData["newbieProtectionLimit"])
+		if($player["score_0"] > $srvData["newbieProtectionLimit"])
 		{
 			$ret = false;
 		}
@@ -264,8 +264,8 @@ class Players extends Table
 			if($player["score_0"] > $srvData["newbieProtectionHigh"])
 				$ratio = 0.1;
 			else
-				$ratio = 0.05;
-			if($player["score_0"] > $ratio*$player2["score_0"] || ($player["score_3"] > 0.5*$player2["score_3"]) || (($player["score_3_position"] - $player2["score_3_position"]) <= 100) || $isOutlaw || $isInactive)
+				$ratio = 0.2;
+			if($player["score_0"] >= $ratio*$player2["score_0"] || ($player["score_3"] > 0.5*$player2["score_3"]) || (($player["score_3_position"] - $player2["score_3_position"]) <= 100) || $isOutlaw || $isInactive)
 				$ret = false;
 			else
 				$ret = true;

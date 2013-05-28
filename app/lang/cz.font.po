@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-18 08:35:18
+# Created: 2013-05-18 18:14:18
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-18 08:35+0000\n"
+"PO-Revision-Date: 2013-05-18 18:14+0000\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -342,6 +342,9 @@ msgstr "NE"
 
 msgid "New password"
 msgstr "Nové heslo"
+
+msgid "New synchronization server added!"
+msgstr "Byl přidán nový synchronizační server!"
 
 msgid "Next"
 msgstr "Další"
@@ -1072,6 +1075,9 @@ msgstr "transport"
 msgid "universe"
 msgstr "vesmír"
 
+msgid "unknown"
+msgstr "neznámé"
+
 msgid "war"
 msgstr "válka"
 
@@ -1083,4 +1089,7 @@ msgstr "wing"
 
 msgid "yes"
 msgstr "ano"
+
+msgid "Synchronization is disabled!"
+msgstr "Synchronizace je zakázána!"
 
