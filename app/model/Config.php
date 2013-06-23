@@ -1,18 +1,14 @@
 <?php
 namespace GLOTR;
-use Nette;
 class Config extends Table
 {
 	/** @var string */
 	protected $tableName = "config";
 	/** @var array */
 	protected $config;
-	public function __construct(Nette\Database\Connection $database, Nette\DI\Container $container)
-	{
-		parent::__construct($database, $container);
+	/** @var bool */
+	protected $loaded = false;
 
-		$this->config = $this->getTable()->fetchPairs("k", "v");
-	}
 	public function save($key, $value)
 	{
 		try {
@@ -26,6 +22,10 @@ class Config extends Table
 	}
 	public function load($key)
 	{
+		if(!$this->loaded)
+		{
+			$this->config = $this->getTable()->fetchPairs("k", "v");
+		}
 		if(isset($this->config[$key]))
 			return $this->config[$key];
 	}

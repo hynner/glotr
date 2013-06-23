@@ -1,8 +1,10 @@
 <?php
 namespace GLOTR;
 use Nette;
-
-class SyncServers extends Table
+/**
+ * Class for communication with sync servers
+ */
+class SyncServers extends GLOTRApiModel
 {
 	/** @var string */
 	protected $tableName = "sync_servers";
@@ -41,7 +43,7 @@ class SyncServers extends Table
 		$port = $this->getPort($server->url);
 		try
 		{
-			$socket = $this->container->createHttpSocket($url, substr($server->url, strlen($url))."?pg=input", $port, 2,5);
+			$socket = $this->glotrApi->createHttpSocket($url, substr($server->url, strlen($url))."?pg=input", $port, 2,5);
 		}
 		// socket cannot be created
 		catch(\Nette\Application\ApplicationException $e)
@@ -98,7 +100,7 @@ class SyncServers extends Table
 				throw new \Nette\Application\ApplicationException("Bad URL!");
 			$port = $this->getPort($url);
 			// if connection can´t be established, Exception will be raised
-			$socket = $this->container->createHttpSocket($host, substr($url, strlen($host))."?pg=add_server&no-redir=1", $port, 2,5);
+			$socket = $this->glotrApi->createHttpSocket($host, substr($url, strlen($host))."?pg=add_server&no-redir=1", $port, 2,5);
 			$post = array(
 					"name" => $values["username"],
 					"password" => $values["password"],
@@ -171,7 +173,7 @@ class SyncServers extends Table
 	{
 		$host = $this->getHost($url);
 		// if connection can´t be established, Exception will be raised
-		$socket = $this->container->createHttpSocket($host, substr($url, strlen($host))."?pg=input&action=ping", $port, 2,5);
+		$socket = $this->glotrApi->createHttpSocket($host, substr($url, strlen($host))."?pg=input&action=ping", $port, 2,5);
 		$socket->sendHeaders();
 		$headers = $socket->getResponseHeaders();
 		$_data = $socket->getData();
@@ -194,9 +196,16 @@ class SyncServers extends Table
 	public function getServersNeedingUpdate()
 	{
 		return $this->getTable()
-					->where("(last_download_time + ?) < ? OR last_download_time IS NULL",$this->container->parameters["syncFrequency"], time())
+					->where("(last_download_time + ?) < ? OR last_download_time IS NULL",$this->params["syncFrequency"], time())
 					->where("active", "1");
 	}
+	/**
+	 * Upload updates to server
+	 * @param array $server
+	 * @param string $data
+	 * @return boolean
+	 * @throws \Nette\Application\ApplicationException
+	 */
 	public function upload($server, $data)
 	{
 		if(!$data)
@@ -208,7 +217,7 @@ class SyncServers extends Table
 			throw new \Nette\Application\ApplicationException("Bad URL!");
 		$port = $this->getPort($server["url"]);
 		// if connection can´t be established, Exception will be raised
-		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,15);
+		$socket = $this->glotrApi->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,15);
 		$post = array(
 				"name" => $server["username"],
 				"password" => $server["password"],
@@ -234,6 +243,12 @@ class SyncServers extends Table
 			throw new \Nette\Application\ApplicationException("Bad return code - ". $code);
 		}
 	}
+	/**
+	 * Download updates from sync server
+	 * @param array $server
+	 * @return array downloaded updates
+	 * @throws \Nette\Application\ApplicationException
+	 */
 	public function download($server)
 	{
 		$host = $this->getHost($server["url"]);
@@ -241,16 +256,16 @@ class SyncServers extends Table
 			throw new \Nette\Application\ApplicationException("Bad URL!");
 		$port = $this->getPort($server["url"]);
 		// if connection can´t be established, Exception will be raised
-		$socket = $this->container->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,15);
+		$socket = $this->glotrApi->createHttpSocket($host, substr($server["url"], strlen($host))."?pg=input", $port, 2,15);
 		$post = array(
 				"name" => $server["username"],
 				"password" => $server["password"],
 				"action" => "download",
 				"last_id" => ($server["last_download_id"] === NULL) ? "0" : $server["last_download_id"],
-				"compression" => implode("|", $this->container->sync->getCompressions())
+				"compression" => implode("|", $this->glotrApi->getCompressions())
 		);
-		if($this->container->parameters["syncLimit"] !== NULL)
-			$post["limit"] = $this->container->parameters["syncLimit"];
+		if($this->params["syncLimit"] !== NULL)
+			$post["limit"] = $this->params["syncLimit"];
 		$socket->postData($post);
 		$headers = $socket->getResponseHeaders();
 		$_data = $socket->getData();
@@ -269,30 +284,13 @@ class SyncServers extends Table
 			if($data == "NO-DATA")
 			{
 				$this->getTable()->where("id_server", $server["id_server"])->update(array("last_download_time" => time()));
-				return true;
+				return array();
 			}
 			else
 			{
-				$packet = $this->container->createTransferPacket($this->container->sync->getCompressions(), array());
+				$packet = $this->glotrApi->createTransferPacket($this->glotrApi->getCompressions(), array());
 				$packet->loadString($data);
-				$items = $packet->getItems();
-				foreach($items as $i)
-				{
-					$tmp = $i;
-					$tmp["data"] = $packet->uncompress($tmp["data"], $tmp["compression"]);
-					if($tmp["data"] === FALSE) continue;
-					$tmp["compression"] = \TransferPacket::COMPRESSION_PLAIN;
-					$success = $this->container->sync->applySync($tmp);
-					// don´t store invalid updates
-					if($success !== FALSE)
-					{
-						$this->container->sync->insertSync($i["action"], $i["data"], $i["compression"], $i["timestamp"], $server["id_server"]);
-					}
-
-				}
-				$last_id = end($items);
-				$last_id = $last_id["id_update"];
-				$this->getTable()->where("id_server", $server["id_server"])->update(array("last_download_id" => $last_id));
+				return $packet->getItems();
 			}
 		}
 		else

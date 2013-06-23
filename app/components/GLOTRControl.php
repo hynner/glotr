@@ -1,6 +1,6 @@
 <?php
 
-namespace GLOTR;
+namespace GLOTR\Components;
 use Nette\Application\UI\Control;
 /**
  * Base class for all of GLOTR´s components, register helpers

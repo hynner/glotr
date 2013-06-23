@@ -32,7 +32,7 @@ class NavigationNode extends Container
 	 * @return NavigationNode
 	 */
 	public function add($label, $url, $perm = NULL) {
-		if(!is_null($perm) && !$this->getParent()->getPresenter()->getContext()->authenticator->checkPermissions($perm))
+		if(!is_null($perm) && !$this->getParent()->getPresenter()->getAuthenticator()->checkPermissions($perm))
 			return;
 		$navigationNode = new self;
 		$navigationNode->label = $label;

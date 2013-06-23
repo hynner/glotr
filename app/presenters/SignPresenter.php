@@ -9,7 +9,6 @@ use Nette\Application\UI,
  */
 class SignPresenter extends BasePresenter
 {
-
 	public function actionDefault()
 	{
 		$this->redirect("Sign:in");
@@ -40,7 +39,7 @@ class SignPresenter extends BasePresenter
 		$form->addButton("forgotten", "Forgot password")
             ->setAttribute("onclick", "window.location.href='".$this->link("forgotPassword")."'");
 		$form->onSuccess[] = $this->signInFormSubmitted;
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		return $form;
 	}
 
@@ -59,7 +58,7 @@ class SignPresenter extends BasePresenter
 			$this->redirect('Homepage:');
 
 		} catch (NS\AuthenticationException $e) {
-			$form->addError($this->context->translator->translate($e->getMessage()));
+			$form->addError($this->translator->translate($e->getMessage()));
 		}
 	}
 	/**
@@ -80,7 +79,7 @@ class SignPresenter extends BasePresenter
 		$form->addButton("back", "Back")
             ->setAttribute("onclick", "window.location.href='".$this->link("in")."'");
 		$form->onSuccess[] = $this->forgottenPasswordFormSubmitted;
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		return $form;
 	}
 
@@ -89,21 +88,21 @@ class SignPresenter extends BasePresenter
 	{
 		try {
 			$values = $form->getValues();
-			$usr = $this->context->users->findOneBy(array("email" => $values["email"], "username" => $values["username"]));
+			$usr = $this->users->findOneBy(array("email" => $values["email"], "username" => $values["username"]));
 			if($usr)
 			{
 				$template = new Nette\Templating\FileTemplate(APP_DIR."/templates/Emails/forgotPass-email.latte");
 				$template->registerFilter(new Nette\Latte\Engine);
 				$template->pass = Nette\Utils\Strings::random(12);
-				$template->setTranslator($this->context->translator);
+				$template->setTranslator($this->translator);
 
-				$this->context->users->findOneBy(array("email" => $values["email"], "username" => $values["username"]))
-						->update(array("password" => $this->context->authenticator->calculateHash($template->pass)));
+				$this->users->findOneBy(array("email" => $values["email"], "username" => $values["username"]))
+						->update(array("password" => $this->authenticator->calculateHash($template->pass)));
 
 				$mail = new Nette\Mail\Message;
-				$mail->setFrom($this->context->parameters["adminEmail"])
+				$mail->setFrom($this->parameters["adminEmail"])
 						->addTo($values["email"])
-						->setSubject($this->context->translator->translate("GLOTR password reset"))
+						->setSubject($this->translator->translate("GLOTR password reset"))
 						->setHtmlBody($template)
 						->send();
 				$this->flashMessage("Your password was reset! You should get the email with new password soon.", "success");
@@ -113,7 +112,7 @@ class SignPresenter extends BasePresenter
 			}
 			else
 			{
-				$form->addError($this->context->translator->translate("Invalid username or e-mail!"));
+				$form->addError($this->translator->translate("Invalid username or e-mail!"));
 			}
 
 
@@ -141,20 +140,20 @@ class SignPresenter extends BasePresenter
 	{
 		$form = new GLOTR\UserRegistrationForm();
 		// player don´t have to be chosen, someone could be just admin without playing that server at all
-		$form->addSelect("id_player", "Ingame nickname:", $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
+		$form->addSelect("id_player", "Ingame nickname:", $this->glotrApi->getTable("players")->order("playername")->fetchPairs("id_player_ogame", "playername"))
 				->setPrompt("Choose player")
 				->setTranslator(NULL);
 		$form->onSuccess[] = $this->registrationFormSubmitted;
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		return $form;
 	}
 	public function registrationFormSubmitted($form)
 	{
 		$values = $form->values;
 		try{
-			$this->context->users->getTable()->insert(array(
+			$this->users->getTable()->insert(array(
 				"username" => $values["username"],
-				"password" => $this->context->authenticator->calculateHash($values["password"]),
+				"password" => $this->authenticator->calculateHash($values["password"]),
 				"email" => $values["email"],
 				"is_admin" => 0, // new user isn´t admin
 				"id_player" => $values["id_player"],

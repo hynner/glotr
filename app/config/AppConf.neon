@@ -10,7 +10,6 @@ common:
 		version: "0.4.0" # DON´T change this!
 		dbSetupFile: "../app/config/dbSetup.gl"
 		testServerAuthFile: "../app/config/testServerAuth.txt" #if you want to use GLOTR on test server, create this file and place there the username:password for the http authorization
-		testServer: true # true for development on 680 origin server, false otherwise
 	php:
 
 		# zlib.output_compression: yes
@@ -32,8 +31,10 @@ common:
 			setup:
 				- addFile(%appDir%/lang, font)
 				- NetteTranslator\Panel::register
+		glotrApi: GLOTR\GLOTRApi
 		users: GLOTR\Users
-		ogameApi: GLOTR\OgameApi
+		ogameApi:
+			class: GLOTR\OgameApi(@container, Nette\Caching\Cache(@cacheStorage, "OgameAPI"), @session, @httpSocketFactory)
 		players: GLOTR\Players
 		universe: GLOTR\Universe
 		alliances: GLOTR\Alliances
@@ -49,7 +50,7 @@ common:
 		syncServers: GLOTR\SyncServers
 		scoreInactivity: GLOTR\ScoreInactivity
 		mysqli:
-			class: \mysqli("%database.host%", "%database.user%", "%database.password%", "%database.dbname%")
+			class: GLOTR\LazyMysqli("%database.host%", "%database.user%", "%database.password%", "%database.dbname%")
 
 	factories:
 		httpSocket:

@@ -33,7 +33,7 @@ class UserPresenter extends BasePresenter
 				->setDefaultValue($user->email)
 				->addCondition(Form::FILLED)
 					->AddRule(Form::EMAIL, "You must enter valid email address!");
-		$form->addSelect("id_player", __("Ingame nickname"), $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
+		$form->addSelect("id_player", __("Ingame nickname"), $this->glotrApi->getTable("players")->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
 				->setPrompt("Choose player")
 				->setTranslator(NULL)
 				->setDefaultValue($user->id_player);
@@ -41,12 +41,12 @@ class UserPresenter extends BasePresenter
 				->setPrompt("Use ogame server timezone")
 				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()))
 				->setTranslator(NULL);
-		$form->addSelect("lang", __("Language"), $this->context->parameters["langs"])
-				->setDefaultValue(($user->lang) ? $user->lang : $this->context->parameters["lang"])
+		$form->addSelect("lang", __("Language"), $this->parameters["langs"])
+				->setDefaultValue(($user->lang) ? $user->lang : $this->parameters["lang"])
 				->setTranslator(NULL);
 
 		$form->addSubmit("save", "Save");
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->userSettingsFormSubmitted;
 		$form->onValidate[] = $this->userSettingsFormValidate;
 		return $form;
@@ -64,7 +64,7 @@ class UserPresenter extends BasePresenter
 		$timezones = DateTimeZone::listIdentifiers();
 		$params["timezone"] = (!is_null($values["timezone"])) ? $timezones[$values["timezone"]] : "";
 		$params["lang"] = $values["lang"];
-		$this->context->users->getTable()->where("id_user", $this->getUser()->getIdentity()->id)->update($params);
+		$this->users->getTable()->where("id_user", $this->getUser()->getIdentity()->id)->update($params);
 		$this->flashMessage("Your settings was saved!", "success");
 		$this->setUserParams($params);
 		if($this->isAjax())
@@ -79,7 +79,7 @@ class UserPresenter extends BasePresenter
 	public function userSettingsFormValidate($form)
 	{
 		$values = $form->getValues();
-		$tmp = $this->context->users->find($this->getUser()->getIdentity()->id_user);
+		$tmp = $this->users->find($this->getUser()->getIdentity()->id_user);
 		if($tmp->password != GLOTR\Authenticator::calculateHash($values["oldPass"], $tmp->password))
 				$form->addError("Wrong old password!");
 		if($this->isAjax())

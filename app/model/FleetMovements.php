@@ -1,15 +1,11 @@
 <?php
 namespace GLOTR;
 use Nette;
-class FleetMovements extends Table
+class FleetMovements extends GLOTRApiModel
 {
 	/** @var string */
 	protected $tableName = "fleet_movements";
 
-	public function __construct(Nette\Database\Connection $database, Nette\DI\Container $container)
-	{
-		parent::__construct($database, $container);
-	}
 	public function insertFleetMovement($dbData)
 	{
 		try {
@@ -23,8 +19,6 @@ class FleetMovements extends Table
 	}
 	public function search($userPlayer = array(), $paginator = NULL)
 	{
-		if(!empty($userPlayer))
-			$userPlayer = $userPlayer["player"];
 		$query = $this->getTable()->where("arrival > ?", time());
 		if($paginator !== NULL)
 		{
@@ -45,30 +39,20 @@ class FleetMovements extends Table
 		foreach($data as $id => $row)
 		{
 			$player_or = $player_dest = false;
-			$origin = $this->container->universe->getTable()->where("id_planet", $row->id_origin)->fetch();
+			$origin = $this->glotrApi->getPlanetDetail($row->id_origin);
 			if($origin)
 			{
 				$origin = $origin->toArray();
-				$player_or = $this->container->players->getTable()
-						->where(array("id_player_ogame" => $origin["id_player"]))->fetch();
-				if($player_or)
-				{
-					$player_or = $player_or->toArray();
-					$player_or["_computed_status_class"] = $this->container->players->getClassForPlayerStatus($this->container->players->getRelativeStatus($player_or, $userPlayer));
-				}
+				$player_or = $this->glotrApi->getPlayerDetail($origin["id_player"], $userPlayer, array("player"));
+				$player_or = $player_or["player"];
 			}
 
-			$dest = $this->container->universe->getTable()->where("id_planet", $row->id_destination)->fetch();
+			$dest = $this->glotrApi->getPlanetDetail($row->id_destination);
 			if($dest)
 			{
 				$dest = $dest->toArray();
-				$player_dest = $this->container->players->getTable()
-						->where(array("id_player_ogame" => $dest["id_player"]))->fetch();
-				if($player_dest)
-				{
-					$player_dest = $player_dest->toArray();
-					$player_dest["_computed_status_class"] = $this->container->players->getClassForPlayerStatus($this->container->players->getRelativeStatus($player_dest, $userPlayer));
-				}
+				$player_dest = $this->glotrApi->getPlayerDetail($dest["id_player"], $userPlayer, array("player"));
+				$player_dest = $player_dest["player"];
 			}
 			$init = false;
 			if(isset($row->id_parent))
@@ -117,8 +101,7 @@ class FleetMovements extends Table
 	}
 	public function getFleetKeys()
 	{
-		$tmp = $this->container->espionages->getAllInfo();
-		$tmp = $tmp["planet_fleet"];
+		$tmp = $this->glotrApi->getEspionageKeys("planet_fleet");
 		unset($tmp[array_search("sollar_sattelite", $tmp)]);
 		return $tmp;
 	}

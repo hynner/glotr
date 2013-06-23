@@ -1,88 +1,47 @@
 <?php
-namespace GLOTR;
+namespace GLOTR\Components;
 use Nette\Application\UI\Control;
 
 class SimulatorLinks extends GLOTRControl
 {
-
-	protected $context;
+	/** @var array */
 	protected $userPlayer;
-	public function setContext($context)
+	/** @var \Nette\Localization\ITranslator */
+	protected $translator;
+	/** @var array */
+	protected $serverData;
+	public function injectTranslator(\Nette\Localization\ITranslator $translator)
 	{
-		$this->context = $context;
+		if ($this->translator) {
+            throw new Nette\InvalidStateException('Translator has already been set');
+        }
+        $this->translator = $translator;
 	}
-	public function setUserPlayer($player)
+
+	public function injectUserPlayer($player)
 	{
+		if ($this->userPlayer) {
+            throw new Nette\InvalidStateException('User player has already been set');
+        }
 		$this->userPlayer = $player;
+	}
+	public function injectServerData($data)
+	{
+		if ($this->serverData) {
+            throw new Nette\InvalidStateException('Server data has already been set');
+        }
+		$this->serverData = $data;
 	}
 	public function render($result, $resources, $fleet, $defence, $buildings, $researches, $prefix)
 	{
-
-
-		$server = $this->context->server->data;
+		$server = $this->serverData;
 		$template = $this->createTemplate();
 		$template = $template->setFile(__DIR__ .'/SimulatorLinks.latte');
-		$template->setTranslator($this->context->translator);
+		$template->setTranslator($this->translator);
+		$osimulate = new Simulators\OSimulate($this->userPlayer);
+		$osimulate->setLang($this->getPresenter()->lang);
+		$template->osimulate = $osimulate->makeLink($result, $resources, $fleet, $defence, $buildings, $researches, $prefix, $server);
 
-		/**
-		 * OSIMULATE parameters
-		 * for attacker it is the same except d is replaced by a and of course there is no defence
-		 * changing the defender/attacker number doesn´t work
-		 */
-		$def = array(
-				"ship_d0_0_b" => $prefix."small_cargo",
-				"ship_d0_1_b" => $prefix."large_cargo",
-				"ship_d0_2_b" => $prefix."light_fighter",
-				"ship_d0_3_b" => $prefix."heavy_fighter",
-				"ship_d0_4_b" => $prefix."cruiser",
-				"ship_d0_5_b" => $prefix."battleship",
-				"ship_d0_6_b" => $prefix."colony_ship",
-				"ship_d0_7_b" => $prefix."recycler",
-				"ship_d0_8_b" => $prefix."espionage_probe",
-				"ship_d0_9_b" => $prefix."bomber",
-				"ship_d0_10_b" => $prefix."solar_satellite",
-				"ship_d0_11_b" => $prefix."destroyer",
-				"ship_d0_12_b" => $prefix."deathstar",
-				"ship_d0_13_b" => $prefix."battlecruiser",
-				"ship_d0_14_b" => $prefix."rocket_launcher",
-				"ship_d0_15_b" => $prefix."light_laser",
-				"ship_d0_16_b" => $prefix."heavy_laser",
-				"ship_d0_17_b" => $prefix."gauss_cannon",
-				"ship_d0_18_b" => $prefix."ion_cannon",
-				"ship_d0_19_b" => $prefix."plasma_turret",
-				"ship_d0_20_b" => $prefix."small_shield_dome",
-				"ship_d0_21_b" => $prefix."large_shield_dome",
-				"abm_b" => "antiballistic_missiles"
-			);
-		$template->osimulate = "http://www.osimulate.com?ref=glotr&lang=".$this->getPresenter()->lang."&uni_speed=".$server["speed"]."&defense_debris=".((int) ($server["defToTF"]*$server["debrisFactor"]))."&defense_repair=".((int) ($server["repairFactor"]*100));
-		$template->osimulate .= "&fleet_debris=".((int) ($server["debrisFactor"]*100))."&enemy_pos=".$result['galaxy'].":".$result['system'].":".$result['position'];
-		/*
-		 * If researches are unknown, $researches is the array with all keys set to NULL
-		 */
-		$researchesUnknown = array_values(array_unique($researches));
-		$researchesUnknown = is_null($researchesUnknown[0]) && (count($researchesUnknown) === 1);
-
-		if(!$researchesUnknown)
-			$template->osimulate .= "&tech_d0_0=".((int) $researches["weapons_technology"])."&tech_d0_1=".((int) $researches["shielding_technology"])."&tech_d0_2=".((int) $researches["armour_technology"]);
-
-		if(!empty($this->userPlayer))
-		{
-			if(!$researchesUnknown) // don´t fill in techs if target´s techs are unknown
-				$template->osimulate .= "&tech_a0_0=".((int) $this->userPlayer["player"]["weapons_technology"])."&tech_a0_1=".((int) $this->userPlayer["player"]["shielding_technology"])."&tech_a0_2=".((int) $this->userPlayer["player"]["armour_technology"]);
-
-			$template->osimulate .= "&engine0_0=".((int) $this->userPlayer["player"]["combustion_drive"])."&engine0_1=".((int) $this->userPlayer["player"]["impulse_drive"])."&engine0_2=".((int) $this->userPlayer["player"]["hyperspace_drive"]);
-
-		}
-		$template->osimulate .= "&enemy_name=".$result[$prefix."name"]."&enemy_metal=".$resources[$prefix."metal"]."&enemy_crystal=".$resources[$prefix."crystal"]."&enemy_deut=".$resources[$prefix."deuterium"];
-		$f_empty = !empty($fleet);
-		$d_empty = !empty($defence);
-		foreach($def as $os_key => $gl_key)
-		{
-			if($f_empty && isset($fleet[$gl_key]))
-				$template->osimulate .= "&$os_key=".$fleet[$gl_key];
-			elseif($d_empty && isset($defence[$gl_key]))
-				$template->osimulate .= "&$os_key=".$defence[$gl_key];
-		}
 		$template->render();
 	}
 

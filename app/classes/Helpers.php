@@ -1,14 +1,26 @@
 <?php
 namespace GLOTR;
+/**
+ * Template helpers
+ */
 class Helpers
 {
+	/**
+	 * Used by Nette to obtain helper callback
+	 * @param string $helper
+	 * @return callable
+	 */
 	public static function loader($helper)
     {
         if (method_exists(__CLASS__, $helper)) {
             return callback(__CLASS__, $helper);
         }
     }
-
+	/**
+	 * Format seconds to time string
+	 * @param int $seconds
+	 * @return string
+	 */
     public static function formatSeconds($seconds)
     {
 		$days = $hours = $weeks = $months = $years = NULL;
@@ -70,6 +82,11 @@ class Helpers
 		}
 		return $ret;
     }
+	/**
+	 * Format database key to label
+	 * @param string $key
+	 * @return string
+	 */
 	public static function key2Text($key)
 	{
 		$key = str_replace("moon_", "", $key);

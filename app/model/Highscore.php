@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette;
 
-class Highscore extends Table
+class Highscore extends OgameApiModel
 {
 	/** @var string */
 	protected $tableName = "score_history";
@@ -10,9 +10,8 @@ class Highscore extends Table
 	protected $apiFile = "highscore.xml";
 	protected $categories;
 	protected $types;
-	public function __construct(Nette\Database\Connection $database, Nette\DI\Container $container)
+	protected function setup()
 	{
-		parent::__construct($database, $container);
 		/**
 		 * 1 - player
 		 * 2 - alliance
@@ -31,12 +30,8 @@ class Highscore extends Table
 		$this->types = array(0,1,2,3,4,5,6,7);
 
 	}
-	public function updateFromApi($cat = 1, $type = 0)
+	public function updateFromApi()
 	{
-
-
-		if(!in_array($cat, $this->categories) || !in_array($type, $this->types))
-			throw new Nette\Application\ApplicationException("Unknown type or category when updating highscores!");
 		$queryData = array();
 
 
@@ -44,7 +39,7 @@ class Highscore extends Table
 		{
 			foreach($this->types as $type)
 			{
-				$data = $this->container->ogameApi->getData($this->apiFile, array("category" => $cat, "type" => $type));
+				$data = $this->ogameApi->getData($this->apiFile, array("category" => $cat, "type" => $type));
 				if($data !== false)
 				{
 					if($data->name != "highscore")
@@ -89,18 +84,19 @@ class Highscore extends Table
 		}
 		$pids = implode(", ", array_keys($queryData[1])); // ids of all players
 		// delete data of old players
-		$this->container->mysqli->query("delete from ".$this->container->players->tableName." where id_player_ogame  not in ($pids) and status != 'a'"); // delete non-existent players
-		$this->container->mysqli->query("delete from ".$this->container->universe->tableName." where id_player not in ($pids) "); // delete old planets
-		$this->container->mysqli->query("delete from ".$this->tableName." where id_item not in ($pids) and category = 1"); // delete score history
-		$this->container->mysqli->query("delete from ".$this->container->activities->tableName." where id_player not in ($pids)"); // delete activities
-		$this->container->mysqli->query("delete from ".$this->container->fs->tableName." where id_player not in ($pids)"); // delete fleetsaves
+		$this->mysqli->query("delete from ".$this->glotrApi->getTableName("players")." where id_player_ogame  not in ($pids) and status != 'a'"); // delete non-existent players
+		$this->mysqli->query("delete from ".$this->glotrApi->getTableName("universe")." where id_player not in ($pids) "); // delete old planets
+		$this->mysqli->query("delete from ".$this->tableName." where id_item not in ($pids) and category = 1"); // delete score history
+		$this->mysqli->query("delete from ".$this->glotrApi->getTableName("activities")." where id_player not in ($pids)"); // delete activities
+		$this->mysqli->query("delete from ".$this->glotrApi->getTableName("fs")." where id_player not in ($pids)"); // delete fleetsaves
 
 		/* delete old alliances */
-		$aids = implode(", ", array_keys($queryData[2])); // ids of all alliances, PHP is case sensitive, so aids != AIDS :-)
-		$this->container->mysqli->query("delete from ".$this->container->alliances->tableName." where id_alliance_ogame  not in ($aids)"); // delete non-existent alliances
-		$this->container->mysqli->query("delete from ".$this->tableName." where id_item not in ($aids) and category = 2"); // delete score history
+		// don´t delete, it´s not that much data and it´s neccessary to preserve them
+		/*$aids = implode(", ", array_keys($queryData[2])); // ids of all alliances, PHP is case sensitive, so aids != AIDS :-)
+		$this->mysqli->query("delete from ".$this->glotrApi->getTableName("alliances")." where id_alliance_ogame  not in ($aids)"); // delete non-existent alliances
+		$this->mysqli->query("delete from ".$this->tableName." where id_item not in ($aids) and category = 2"); // delete score history*/
 
-		$period = ceil(intval(date("z"))/intval($this->container->parameters["scoreHistoryPeriod"])); // compute current period
+		$period = ceil(intval(date("z"))/intval($this->params["scoreHistoryPeriod"])); // compute current period
 		$year = intval(date("Y"));
 		$query = "";
 
@@ -118,7 +114,7 @@ class Highscore extends Table
 				$service = "alliances";
 			}
 
-			$tbl_name = $this->container->$service->getTableName();
+			$tbl_name = $this->glotrApi->getTableName($service);
 			$time = time();
 			foreach($entries as $id => $entry)
 			{
@@ -143,7 +139,7 @@ class Highscore extends Table
 						$entry["score_0"] = 0;
 					}
 					// score_inactivity
-					$query .= "insert into ".$this->container->scoreInactivity->getTableName()."
+					$query .= "insert into ".$this->glotrApi->getTableName("scoreInactivity")."
 						set id_player=$id, score_0 = $entry[score_0], last_update = $time, duration = 0 on duplicate key update
 						duration = (score_0 >= $entry[score_0])*(duration + $time -last_update), score_0 = $entry[score_0], last_update = $time;";
 				}
@@ -151,13 +147,13 @@ class Highscore extends Table
 			}
 		}
 		$this->chunkedMultiQuery($query);
-		$this->container->config->save("$this->tableName-finished", $timestamp);
+		$this->config->save("$this->tableName-finished", $timestamp);
 	}
 
 	public function needApiUpdate()
 	{
 
-		return ($this->container->config->load("$this->tableName-finished")+$this->container->parameters["ogameApiExpirations"][$this->apiFile] < time());
+		return ($this->config->load("$this->tableName-finished")+$this->params["ogameApiExpirations"][$this->apiFile] < time());
 	}
 	public function getCategories()
 	{
@@ -175,7 +171,7 @@ class Highscore extends Table
 			{
 				if($this->needApiUpdate($cat, $type))
 				{
-					$ret[] = $this->container->ogameApi->url.$this->apiFile."?category=$cat&type=$type";
+					$ret[] = $this->ogameApi->url.$this->apiFile."?category=$cat&type=$type";
 				}
 				else
 					$ret[] = false;

@@ -1,28 +1,33 @@
 <?php
-namespace GLOTR;
+namespace GLOTR\Components;
 use Nette\Application\UI\Control;
 
 class PlayerInfoRow extends GLOTRControl
 {
-
-	protected $context;
-	protected $userPlayer;
-	public function setContext($context)
+	/** @var \Nette\Callback */
+	protected $planetInfoFactory;
+	/** @var \Nette\Localization\ITranslator */
+	protected $translator;
+	public function injectTranslator(\Nette\Localization\ITranslator $translator)
 	{
-		$this->context = $context;
+		if ($this->translator) {
+            throw new Nette\InvalidStateException('Translator has already been set');
+        }
+        $this->translator = $translator;
 	}
-	public function setUserPlayer($player)
+
+	public function injectPlanetInfoFactory(\Nette\Callback $f)
 	{
-		$this->userPlayer = $player;
+		if ($this->planetInfoFactory) {
+            throw new Nette\InvalidStateException('PlanetInfo factory has already been set');
+        }
+        $this->planetInfoFactory = $f;
 	}
 	public function render($result, $odd = false)
 	{
-
-
-
 		$template = $this->createTemplate();
 		$template = $template->setFile(__DIR__ .'/PlayerInfoRow.latte');
-		$template->setTranslator($this->context->translator);
+		$template->setTranslator($this->translator);
 		$template->odd = $odd;
 
 		$template->result = $result;
@@ -31,10 +36,7 @@ class PlayerInfoRow extends GLOTRControl
 	}
 	protected function createComponentPlanetInfo()
 	{
-		$control =  new PlanetInfo;
-		$control->setContext($this->context);
-		$control->setUserPlayer($this->userPlayer);
-		return $control;
+		return $this->planetInfoFactory->invoke();
 	}
 
 }

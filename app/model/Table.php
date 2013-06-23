@@ -8,27 +8,34 @@ class Table extends Nette\Object
 	protected $connection;
 	/** @var string Name of the table used by model*/
 	protected $tableName;
-	protected $container;
-	protected $apiFile;
+	//protected $container;
+	protected $params = array();
 	protected $count;
 	protected $columns = array();
+	protected $mysqli;
 
 	/** @var string $columnListPrefix prefix used by \GLOTR\Table::getPrefixedColumnList method */
 	protected $columnListPrefix;
-	public function __construct(Nette\Database\Connection $database,  Nette\DI\Container $container)
+	public function __construct(Nette\Database\Connection $database,  Nette\DI\Container $container, LazyMysqli $mysqli)
 	{
 		$this->connection = $database;
-
 		if($this->tableName === NULL)
 		{
 			$class =  get_class($this);
 			throw new Nette\InvalidStateException("Table name must be filled in $class::\$tableName");
 
 		}
-		$this->container = $container;
-		$this->tableName = $this->container->parameters["tablePrefix"].$this->tableName;
+		$this->params = $container->parameters;
+		$this->tableName = $this->params["tablePrefix"].$this->tableName;
 		$this->columnListPrefix = "_".$this->tableName."_";
+		$this->mysqli = $mysqli;
+		$this->setup();
 	}
+	/**
+	 * Setup the object
+	 */
+	protected function setup()
+	{}
 	/**
 	 * returns whole table from db
 	 * @return \Nette\Database\Table\Selection
@@ -103,6 +110,10 @@ class Table extends Nette\Object
 		}
 
     }
+	/**
+	 * Get database columns names
+	 * @return array
+	 */
     public function getColumns()
     {
 		if(empty($this->columns))
@@ -118,32 +129,12 @@ class Table extends Nette\Object
         return $this->columns;
     }
 	/**
-	 * checks if model needs update from Ogame API
-	 * @return boolean
+	 * Run query on database connection and fetch the results
+	 * @param string $query
+	 * @param array $params parameters to bind to the query
+	 * @return array
 	 */
-	public function needApiUpdate()
-	{
-		return ($this->container->config->load("$this->tableName-finished")+$this->container->parameters["ogameApiExpirations"][$this->apiFile] < time());
-	}
-
-	public function ogameApiGetFileNeeded()
-	{
-		if($this->needApiUpdate())
-		{
-			return $this->container->ogameApi->url.$this->apiFile;
-		}
-		else
-			return false;
-	}
-	protected function getMoonsFromPlanets($planets)
-	{
-		$moons = array();
-			foreach($planets as $planet)
-				if($planet["moon_size"] || $planet["moon_res_updated"])
-					$moons[] = $planet;
-		return $moons;
-	}
-	protected function invokeQuery($query, $params)
+	public function invokeQuery($query, $params)
 	{
 		$args = array();
 		$args[] = $query;
@@ -160,9 +151,16 @@ class Table extends Nette\Object
 		}
 		return $results;
 	}
+	/**
+	 * Runs mysli::multi_query on database, splits query into smaller chunks if neccessary
+	 * @param string $query
+	 * @param string $delimiter
+	 * @return boolean
+	 * @throws Nette\Application\ApplicationException
+	 */
 	protected function chunkedMultiQuery($query, $delimiter = ';')
 	{
-		$mysqli = $this->container->mysqli;
+		$mysqli = $this->mysqli;
 		$r = $mysqli->query("SHOW VARIABLES LIKE 'max_allowed_packet'");
 		$max = 1024*1024; // DEFAULT settings
 		if($r)
@@ -219,7 +217,7 @@ class Table extends Nette\Object
 			while ($mysqli->more_results() && $mysqli->next_result()){}
 		}
 
-		return false;
+		return true;
 	}
 	public function getCount()
 	{

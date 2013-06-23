@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette;
 
-class Sync extends Table
+class Sync extends GLOTRApiModel
 {
 	/** @var string */
 	protected $tableName = "sync";
@@ -14,7 +14,7 @@ class Sync extends Table
 
 	public function insertSync($action, $data,$compression, $timestamp = NULL, $id_server = NULL)
 	{
-		if($this->container->parameters["enableSync"] === FALSE)
+		if($this->params["enableSync"] === FALSE)
 			return false;
 		if($timestamp === NULL)
 			$timestamp = time();
@@ -33,21 +33,7 @@ class Sync extends Table
 		));
 		return $row->id_update;
 	}
-	public function applySync($args)
-	{
-		if(!isset($args["action"]) || !isset($args["data"]) || !isset($args["compression"]) || !isset($args["timestamp"]))
-			return false;
-		switch($args["action"])
-		{
-			case "Galaxyplugin":
-				return $this->container->gtp->update($args["data"], $args["timestamp"]);
-				break;
-			default:
-				return false;
-				break;
-		}
-		return true;
-	}
+
 	public function getCompressions()
 	{
 		if(empty($this->availableCompressions))
@@ -74,9 +60,9 @@ class Sync extends Table
 	}
 	public function needUpdate()
 	{
-		if($this->container->parameters["enableSync"])
+		if($this->params["enableSync"])
 		{
-			$count = $this->container->syncServers->getServersNeedingUpdate()->count("id_server");
+			$count = $this->glotrApi->getSyncServersNeedingUpdate()->count("id_server");
 			return $count > 0;
 
 		}
@@ -84,7 +70,7 @@ class Sync extends Table
 	}
 	public function update()
 	{
-		$server = $this->container->syncServers->getServersNeedingUpdate()->limit(1)->fetch();
+		$server = $this->glotrApi->getSyncServersNeedingUpdate()->limit(1)->fetch();
 		if($server === FALSE)
 		{
 			return false;
@@ -99,7 +85,7 @@ class Sync extends Table
 			$data = $data->order("id_update ASC")->limit($limit)->fetchPairs("id_update");
 			if(!empty($data))
 			{
-				$packet = $this->container->createTransferPacket($this->getCompressions(), explode("|", $server["compression"]));
+				$packet = $this->glotrApi->createTransferPacket($this->getCompressions(), explode("|", $server["compression"]));
 				foreach($data as $d)
 				{
 					$packet->addItem($d->toArray());
@@ -107,30 +93,48 @@ class Sync extends Table
 				$last_id = end($data);
 				$last_id = $last_id["id_update"];
 				try{
-					$success = $this->container->syncServers->upload($server,$packet->toString());
+					$success = $this->glotrApi->syncUpload($server,$packet->toString());
 					if($success)
 					{
-						$this->container->syncServers->getTable()->where("id_server", $server["id_server"])->update(array("last_upload_id" => $last_id));
+						$this->glotrApi->updateSyncServer($server["id_server"], array("last_upload_id" => $last_id));
 					}
 				}
 				// something wrong with server, deactivate
 				catch(\Nette\Application\ApplicationException $e)
 				{
-					$this->container->syncServers->getTable()->where("id_server", $server["id_server"])->update(array("active" => "0"));
+					$this->glotrApi->updateSyncServer($server["id_server"], array("active" => "0"));
 				}
 			}
 		}
 		else
 		{
-			$success = $this->container->syncServers->download($server);
-		}
+			$items = $this->glotrApi->syncDownload($server);
+			$packet = $this->glotrApi->createTransferPacket($this->getCompression());
+			foreach($items as $i)
+			{
+				$tmp = $i;
+				$tmp["data"] = $packet->uncompress($tmp["data"], $tmp["compression"]);
+				if($tmp["data"] === FALSE) continue;
+				$tmp["compression"] = \TransferPacket::COMPRESSION_PLAIN;
+				$success = $this->applySync($tmp);
+				// don´t store invalid updates
+				if($success !== FALSE)
+				{
+					$this->insertSync($i["action"], $i["data"], $i["compression"], $i["timestamp"], $server["id_server"]);
+				}
 
+			}
+			$last_id = end($items);
+			$last_id = $last_id["id_update"];
+			$this->glotrApi->updateSyncServer($server["id_server"],array("last_download_id" => $last_id));
+		}
+		return true;
 
 
 	}
 	public function getTransferLimit($serverLimit)
 	{
-		$syncLimit = $this->container->parameters["syncLimit"];
+		$syncLimit = $this->params["syncLimit"];
 		if(($syncLimit < $serverLimit) && $syncLimit !== NULL)
 		{
 			return $syncLimit;
@@ -140,6 +144,6 @@ class Sync extends Table
 	public function needUpload($last_upload_id, $id_server)
 	{
 		$max = $this->getTable()->where("id_server != ? OR id_server IS NULL", $id_server)->max("id_update");
-		return (($last_upload_id + $this->container->parameters["syncMinimum"]) < $max);
+		return (($last_upload_id + $this->params["syncMinimum"]) < $max);
 	}
 }

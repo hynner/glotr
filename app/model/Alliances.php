@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette;
 
-class Alliances extends Table
+class Alliances extends OGameApiModel
 {
 	/** @var string */
 	protected $tableName = "alliances";
@@ -10,7 +10,7 @@ class Alliances extends Table
 	protected $apiFile = "alliances.xml";
 	public function updateFromApi()
 	{
-		$data = $this->container->ogameApi->getData($this->apiFile);
+		$data = $this->ogameApi->getData($this->apiFile);
 
 		if($data !== false)
 		{
@@ -48,8 +48,8 @@ class Alliances extends Table
 			$this->chunkedMultiQuery($query);
 
 			// this is the end of update, save the timestamp
-			$this->container->config->save("$this->tableName-finished", $timestamp);
-			$this->container->config->save("$this->tableName-start", 0);
+			$this->config->save("$this->tableName-finished", $timestamp);
+			$this->config->save("$this->tableName-start", 0);
 			return true;
 		}
 		else
@@ -71,21 +71,6 @@ class Alliances extends Table
 
 		}
 		return true;
-	}
-	public function search($id_alliance)
-	{
-		if(!$id_alliance)
-			return array();
-		$ret["alliance"] = $this->getTable()->where(array("id_alliance_ogame" => $id_alliance))->fetch()->toArray();
-		$res = $this->container->players->findBy(array("id_alliance" => $id_alliance));
-		while($r = $res->fetch())
-			$ret["players"][$r->id_player_ogame] = $r->toArray();
-
-		$res = $this->container->universe->getTable()->where("id_player", array_keys($ret["players"]))->order("galaxy ASC, system ASC, position ASC");
-		while($r = $res->fetch())
-			$ret["planets"][] = $r->toArray();
-		$ret["moons"] = $this->getMoonsFromPlanets($ret["planets"]);
-		return $ret;
 	}
 	public function getNumAlliances()
 	{

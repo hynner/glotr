@@ -1,7 +1,7 @@
 <?php
 namespace GLOTR;
 use Nette;
-use Nette\Diagnostics\Debugger as DBG;
+
 class Activities extends Table
 {
 	/** @var string */
@@ -10,19 +10,17 @@ class Activities extends Table
 	protected $strongTypes;
 	/** @var array $types all types of activity */
 	protected $types;
-	public function __construct(Nette\Database\Connection $database, Nette\DI\Container $container)
+	protected function setup()
 	{
-		parent::__construct($database, $container);
-
 		$this->strongTypes = array("alliance_page", "message", "scan", "apg_inactivity");
 		$this->types = array("galaxyview", "inactivity", "manual", "manual_inactivity");
 		$this->types = array_merge($this->types, $this->strongTypes);
-
 	}
 	/**
 	 * checks whether activity can be inserted into db, there can be only one record per user, type, 15 minutes and coordinates (only for galaxyview and inactivity)
 	 * @param array $data neccessary indexes are type, timestamp, id_player, if type is galaxyview or inactivity galaxy, system and position are neccessary
 	 * @return boolean
+	 * @throws Nette\Application\ApplicationException
 	 */
 	public function isOverlapping($data)
 	{
@@ -38,6 +36,10 @@ class Activities extends Table
 
 		return ($res !== false);
 	}
+	/**
+	 * Insert activity
+	 * @param array $act
+	 */
 	public function insertActivity($act)
 	{
 		if(in_array($act["type"], $this->strongTypes))
@@ -45,18 +47,23 @@ class Activities extends Table
 				$this->getTable()->where("timestamp > ? AND timestamp < ?", $act["timestamp"]-(15*60), $act["timestamp"])->where(array("type" => "inactivity", "id_player" => $act["id_player"]))->delete();
 		if(!$this->isOverlapping($act))
 		{
-
 			$res = $this->getTable()->insert($act);
-
 		}
+		return true;
 	}
 	public function getTypes()
 	{
 		return $this->types;
 	}
+	/**
+	 * Search player activity grouped by type and period - used in activity chart
+	 * @param int $id_player
+	 * @param array $filter
+	 * @return array
+	 */
 	public function search($id_player, $filter = array())
 	{
-		$activities = $this->container->activities->getTable()->select("id, type, id_player, timestamp, ((hour(from_unixtime(timestamp))*3600 + minute(from_unixtime(timestamp))*60) DIV (15*60)) AS period, count(id) AS records, max(planets) AS planet_factor")
+		$activities = $this->getTable()->select("id, type, id_player, timestamp, ((hour(from_unixtime(timestamp))*3600 + minute(from_unixtime(timestamp))*60) DIV (15*60)) AS period, count(id) AS records, max(planets) AS planet_factor")
 				->where(array("id_player" => $id_player))
 				->where($filter)
 				->group("type, period")
@@ -75,7 +82,7 @@ class Activities extends Table
 		{
 
 			// initialize activities
-			foreach($this->container->activities->types as $type)
+			foreach($this->types as $type)
 			{
 				$activities[$i][$type] = 0;
 				$activities[$i]["label"] = floor(($i)/4);
@@ -100,9 +107,15 @@ class Activities extends Table
 		}
 		return $activities;
 	}
+	/**
+	 * Search ungrouped activities for player
+	 * @param int $id_player
+	 * @param array $filter
+	 * @return array
+	 */
 	public function searchUngrouped($id_player, $filter = array())
 	{
-		$activities = $this->container->activities->getTable()
+		$activities = $this->getTable()
 				->where(array("id_player" => $id_player))
 				->where($filter)
 				->order("timestamp DESC");

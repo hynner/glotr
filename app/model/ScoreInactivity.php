@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette;
 
-class ScoreInactivity extends Table
+class ScoreInactivity extends GLOTRApiModel
 {
 	/** @var string */
 	protected $tableName = "score_inactivity";
@@ -13,9 +13,9 @@ class ScoreInactivity extends Table
 	}
 	public function search($paginator = NULL, $filter = array())
 	{
-		$playersT = $this->container->players->getTableName();
+		$playersT = $this->glotrApi->getTableName("players");
 		$inactT = $this->getTableName();
-		$univT = $this->container->universe->getTableName();
+		$univT = $this->glotrApi->getTableName("universe");
 		$where = "where $inactT.duration > 0 and $playersT.status = ''";
 		$group = "group by score_inactivity.id_player";
 		$params = array();
@@ -68,6 +68,18 @@ class ScoreInactivity extends Table
 		$what = "$inactT.*, $playersT.playername as playername,$playersT.score_0_position as pos, GROUP_CONCAT(galaxy,':',system,':',position SEPARATOR ' ') as planets";
 		$query = "select $what from $inactT join $playersT on $inactT.id_player = $playersT.id_player_ogame join $univT on $inactT.id_player = $univT.id_player $where $group $order $limit;";
 		return $this->invokeQuery($query, $params);
+	}
+	/**
+	 * Get score inactivity for player
+	 * @param integer $id
+	 * @return array|boolean
+	 */
+	public function getByPlayer($id)
+	{
+		$ret = $this->getTable()->where(array("id_player" => $id))->fetch();
+		if($ret !== FALSE)
+			$ret = $ret->toArray();
+		return $ret;
 	}
 
 

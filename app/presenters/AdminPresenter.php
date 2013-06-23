@@ -2,12 +2,20 @@
 use Nette\Application\UI\Form;
 class AdminPresenter extends BasePresenter
 {
+	/** @var \GLOTR\SyncServers */
+	protected $syncServers;
+	public function injectSyncServers(\GLOTR\SyncServers $srv)
+	{
+		if ($this->syncServers) {
+            throw new Nette\InvalidStateException('SyncServers has already been set');
+        }
+        $this->syncServers = $srv;
+	}
 	protected function startup()
 	{
 		parent::startup();
 		if(!$this->getUser()->isLoggedIn())
 		{
-
 			$this->redirect("Sign:in");
 		}
 
@@ -26,7 +34,7 @@ class AdminPresenter extends BasePresenter
 	}
 	public function actionSyncSetup()
 	{
-		if($this->context->parameters["enableSync"] === FALSE)
+		if($this->parameters["enableSync"] === FALSE)
 		{
 			$this->flashMessage("Synchronization is disabled!", "error");
 			$this->redirect("Homepage:");
@@ -36,12 +44,12 @@ class AdminPresenter extends BasePresenter
 	}
 	public function handletoggleActive($id)
 	{
-		$usr = $this->context->users->find($id);
+		$usr = $this->users->find($id);
 		if($usr !== FALSE)
 		{
 			$active = (int) !((bool) $usr["active"]); // toggle active
 
-			$this->context->users->getTable()->where(array("id_user" => $id))->update(array("active" => $active));
+			$this->users->getTable()->where(array("id_user" => $id))->update(array("active" => $active));
 			if($this->isAjax())
 			{
 				$this->loadUsers2Template();
@@ -57,12 +65,12 @@ class AdminPresenter extends BasePresenter
 	protected function loadUsers2Template()
 	{
 		$this->template->users = array();
-		$res =  $this->context->users->findAll();
+		$res =  $this->users->findAll();
 		while($r = $res->fetch())
 		{
 			$this->template->users[$r->id_user] = $r->toArray();
 			if($r->id_player)
-				$this->template->users[$r->id_user]["player"] = $this->context->players->findOneBy(array("id_player_ogame" => $r->id_player));
+				$this->template->users[$r->id_user]["player"] = $this->glotrApi->getPlayerDetail($r->id_player);
 			else
 				$this->template->users[$r->id_user]["player"] = "";
 		}
@@ -70,11 +78,11 @@ class AdminPresenter extends BasePresenter
 	}
 	protected function loadSyncServers2Template()
 	{
-		$this->template->servers = $this->context->syncServers->getTable()->fetchPairs("id_server");
+		$this->template->servers = $this->syncServers->getTable()->fetchPairs("id_server");
 	}
 	public function handledelete($id)
 	{
-		$this->context->users->getTable()->where(array("id_user" => $id))->delete();
+		$this->users->getTable()->where(array("id_user" => $id))->delete();
 		if($this->isAjax())
 		{
 			$this->loadUsers2Template();
@@ -87,7 +95,7 @@ class AdminPresenter extends BasePresenter
 	}
 	public function handleDeleteSyncServer($id)
 	{
-		$this->context->syncServers->getTable()->where(array("id_server" => $id))->delete();
+		$this->syncServers->getTable()->where(array("id_server" => $id))->delete();
 		if($this->isAjax())
 		{
 			$this->loadSyncServers2Template();
@@ -100,7 +108,7 @@ class AdminPresenter extends BasePresenter
 	}
 	public function handleVerifySyncServer($id)
 	{
-		$this->context->syncServers->verify($id);
+		$this->glotrApi->syncVerify($id);
 		if($this->isAjax())
 		{
 			$this->loadSyncServers2Template();
@@ -113,7 +121,7 @@ class AdminPresenter extends BasePresenter
 	}
 	public function handleSyncServerDeactivate($id)
 	{
-		$this->context->syncServers->getTable()->where("id_server", $id)->update(array("active" =>"0"));
+		$this->glotrApi->updateSyncServer($id, array("active" =>"0"));
 		if($this->isAjax())
 		{
 			$this->loadSyncServers2Template();
@@ -165,7 +173,7 @@ class AdminPresenter extends BasePresenter
 		));
 
 		$form->addSubmit("add", "Add server");
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		return $form;
 	}
 	public function addSyncFormSubmitted($form)
@@ -175,7 +183,7 @@ class AdminPresenter extends BasePresenter
 		// remove protocol from url
 		try
 		{
-			$success = $this->context->syncServers->register($values);
+			$success = $this->syncServers->register($values);
 		}
 		catch(\Nette\Application\ApplicationException $e)
 		{
@@ -207,7 +215,7 @@ class AdminPresenter extends BasePresenter
 			$id = (int) str_replace("user", "", $id);
 			foreach($perms as &$perm)
 				$perm = (int) $perm;
-			$this->context->users->setPermissions($id, $perms);
+			$this->users->setPermissions($id, $perms);
 		}
 		$this->flashMessage("Users permissions has been changed!", "success");
 

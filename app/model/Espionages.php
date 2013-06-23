@@ -1,21 +1,17 @@
 <?php
 namespace GLOTR;
 use Nette;
-use Nette\Diagnostics\Debugger as DBG;
-class Espionages extends Table
+class Espionages extends GLOTRApiModel
 {
 	/** @var string */
 	protected $tableName = "espionages";
-	/** @var string api filename */
-	protected $apiFile = "";
+
 	protected $researches;
 	protected $planet_buildings, $planet_resources, $planet_defence, $planet_fleet, $moon_resources, $moon_defence, $moon_buildings, $moon_fleet;
 	protected $planet, $moon;
 	protected $allInfo;
-	public function __construct(Nette\Database\Connection $database, Nette\DI\Container $container)
+	protected function setup()
 	{
-		parent::__construct($database, $container);
-
 		$this->researches = array(
 			"intergalactic_research_network",
 			"impulse_drive",
@@ -148,7 +144,7 @@ class Espionages extends Table
 		//now if it is moon, it is neccessary to add moon_ prefix
 		if($dbData["moon"])
 		{
-			$dbData = $this->container->espionages->addPrefixToKeys("moon_", $dbData, array_merge(array("timestamp", "scan_depth", "id_planet", "moon", "id_message_ogame"), $this->researches));
+			$dbData = $this->addPrefixToKeys("moon_", $dbData, array_merge(array("timestamp", "scan_depth", "id_planet", "moon", "id_message_ogame"), $this->researches));
 		}
 
 		$this->setPlanetInfo($dbData);
@@ -156,7 +152,6 @@ class Espionages extends Table
 	}
 	public function setResearchesFromData($id_player, $dbData)
 	{
-
 		$tmp = array();
 		foreach($dbData as $key => $value)
 		{
@@ -168,20 +163,20 @@ class Espionages extends Table
 		if(!empty($tmp))
 		{
 			$tmp["research_updated"] = $dbData["timestamp"];
-			$this->container->players->setResearches($id_player, $tmp);
+			$this->glotrApi->setResearches($id_player, $tmp);
 		}
 	}
-	public function setPlanetInfo($dbData, $empty = true)
+	/**
+	 * set planet/moon info from espionage
+	 * @param array $dbData
+	 */
+	public function setPlanetInfo($dbData)
 	{
-
-
 		$tmp = array();
 		foreach($dbData as $key => $value)
 		{
 			if($dbData["moon"])
 			{
-
-
 				if(in_array($key, $this->moon))
 						$tmp[$key] = $value;
 
@@ -198,106 +193,56 @@ class Espionages extends Table
 			$prefix = "moon";
 
 		switch($dbData["scan_depth"]):
-				case "research":
-				case "building":
-					$key = $prefix."_build_updated";
-					$tmp[$key] = $dbData["timestamp"];
-					// select planet by id, don´t overwrite newer data
-					// for buildings there is $empty parameter, because from planetinfo I get this data in parts (resources + factories), so I don´t want to overwrite mines when i update factories
-					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])
-							->where("$key < ? OR $key IS NULL", $tmp[$key])
-							->update(array_merge($this->filterData($tmp, $this->{$prefix."_buildings"}, $empty), array($key => $tmp[$key])));
-					if(isset($dbData["planetinfo"])) // another workaround, for GTP planetinfo update
-						goto fleet;
-				case "defence":
-
-					$key = $prefix."_defence_updated";
-					$tmp[$key] = $dbData["timestamp"];
-					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_defence"}), array($key => $tmp[$key])));
-					if(isset($dbData["planetinfo"])) // another workaround, for GTP planetinfo update
-						goto resources;
-				fleet:
-				case "fleet":
-					// a little workaround, because in GTP update of buildings(resources) is also solar satellite and this caused erasing of the fleet
-					$prf = "";
-
-					if($prefix == "moon")
-						$prf = $prefix."_";
-					if($empty == false && $dbData["scan_depth"] == "building"):
-						$empty = false;
-					elseif($dbData["scan_depth"] == "fleet" && !isset($dbData[$prf."solar_satellite"])): // this means that this is update from fleet page, not espionage
-							unset( $dbData[$prf."solar_satellite"]);
-							$empty = true;
-					else:
-						$empty = true;
-					endif;
-					$key = $prefix."_fleet_updated";
-					$tmp[$key] = $dbData["timestamp"];
-					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_fleet"}, $empty), array($key => $tmp[$key])));
-
-				resources:
-				default:
-					$key = $prefix."_res_updated";
-					$tmp[$key] = $dbData["timestamp"];
-					$this->container->universe->getTable()->where("id_planet", $dbData["id_planet"])->where("$key < ? OR $key IS NULL", $tmp[$key])->update(array_merge($this->filterData($tmp, $this->{$prefix."_resources"}), array($key => $tmp[$key])));
-
-			endswitch;
+			case "research":
+			case "building":
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "building", $this->glotrApi->filterData($tmp, $this->{$prefix."_buildings"}, true));
+			case "defence":
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "defence", $this->glotrApi->filterData($tmp, $this->{$prefix."_defence"}, true));
+			case "fleet":
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "fleet", $this->glotrApi->filterData($tmp, $this->{$prefix."_fleet"}, true));
+			default:
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "resources", $this->glotrApi->filterData($tmp, $this->{$prefix."_resources"}, true));
+		endswitch;
 	}
 
-	public function filterData($data, $filter, $empty = true)
-	{
-		$tmp = array();
-
-			foreach($filter as $f)
-			{
-				$tmp[$f] = 0; // set it to 0, so there will be a difference between unknown and known but empty
-			}
-
-
-		foreach($data as $key => $value)
-		{
-
-			if(in_array($key, $filter))
-			{
-				$tmp[$key] = $value;
-
-			}
-
-
-		}
-		if(!$empty)
-			foreach($tmp as $key => $value)
-				if(!$value)
-					unset($tmp[$key]);
-		return $tmp;
-
-	}
 	public function getAllInfo()
 	{
 		return $this->allInfo;
 	}
+	/**
+	 * Determines scan depth of espionage by given data
+	 * @param array $data
+	 * @return string|boolean
+	 */
 	public function getScanDepthByData($data)
 	{
 
 		$tmp = array();
-		$tmp = $this->filterData($data, $this->researches, false);
+		$tmp = $this->glotrApi->filterData($data, $this->researches, false);
 		if(!empty($tmp))
 			return "research";
-		$tmp = $this->filterData($data, array_merge($this->planet_buildings, $this->moon_buildings), false);
+		$tmp = $this->glotrApi->filterData($data, array_merge($this->planet_buildings, $this->moon_buildings), false);
 		if(!empty($tmp))
 			return "building";
 
-		$tmp = $this->filterData($data,array_merge($this->planet_defence, $this->moon_defence), false);
+		$tmp = $this->glotrApi->filterData($data,array_merge($this->planet_defence, $this->moon_defence), false);
 		if(!empty($tmp))
 			return "defence";
-		$tmp = $this->filterData($data,array_merge($this->planet_fleet, $this->moon_fleet), false);
+		$tmp = $this->glotrApi->filterData($data,array_merge($this->planet_fleet, $this->moon_fleet), false);
 		if(!empty($tmp))
 			return "fleet";
-		$tmp = $this->filterData($data,array_merge($this->planet_resources, $this->moon_resources) , false);
+		$tmp = $this->glotrApi->filterData($data,array_merge($this->planet_resources, $this->moon_resources) , false);
 		if(!empty($tmp))
 			return "resources"; // resources have to be last, because they are on every page
 		return false;
 	}
+	/**
+	 * Add prefix to array keys
+	 * @param string $prefix
+	 * @param array $data
+	 * @param array $exceptions array of keys you don´t want to add prefix to
+	 * @return array
+	 */
 	public function addPrefixToKeys($prefix, $data, $exceptions = array())
 	{
 		$tmp  = array();

@@ -15,8 +15,9 @@ class Fleetsaves extends Table
 		}
 		catch(\PDOException $e)
 		{
-			echo $e->getMessage();
+			return false;
 		}
+		return true;
 	}
 	public function search($id_player)
 	{

@@ -14,6 +14,7 @@ class Galaxyplugin extends Nette\Object
 		$this->connection = $database;
 
 	}
+
 	public function update($data, $time = NULL)
 	{
 		if($time === NULL)
@@ -297,6 +298,7 @@ class Galaxyplugin extends Nette\Object
 
 					return $code;
 				break;
+				// espionage reports
 				case "reports":
 					$code = 611; // reports updated
 					foreach($xml->report as $report):
@@ -392,6 +394,11 @@ class Galaxyplugin extends Nette\Object
 				break;
 		endswitch;
 	}
+	/**
+	 * Convert GTP date format to UNIX Timestamp
+	 * @param type $date
+	 * @return type
+	 */
 	public function dateTime2Timestamp($date)
 	{
 		$tmp = explode(" ", $date);
@@ -399,6 +406,11 @@ class Galaxyplugin extends Nette\Object
 		$tmp[1] = explode(":", $tmp[1]);
 		return mktime($tmp[1][0], $tmp[1][1], $tmp[1][2], $tmp[0][1], $tmp[0][2], $tmp[0][0]);
 	}
+	/**
+	 * Map galaxyplugin fields to database columns
+	 * @param string $item
+	 * @return string
+	 */
 	public function getColumnName($item)
 	{
 		return str_replace(" ", "_", str_replace("-", "", strtolower($item)));

@@ -199,6 +199,13 @@ $tests[] = array(
 );
 
 $tests[] = array(
+	'title' => 'fsockopen function',
+	'required' => TRUE,
+	'passed' => function_exists("fsockopen"),
+	'description' => 'fsockopen is required to use OgameApi!',
+);
+
+$tests[] = array(
 	'title' => 'HTTP_HOST or SERVER_NAME',
 	'required' => TRUE,
 	'passed' => isset($_SERVER["HTTP_HOST"]) || isset($_SERVER["SERVER_NAME"]),

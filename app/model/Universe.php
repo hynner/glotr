@@ -1,8 +1,7 @@
 <?php
 namespace GLOTR;
 use Nette;
-use Nette\Diagnostics\Debugger as DBG;
-class Universe extends Table
+class Universe extends OgameApiModel
 {
 	/** @var string */
 	protected $tableName = "universe";
@@ -11,7 +10,7 @@ class Universe extends Table
 	public function updateFromApi()
 	{
 		$mc = microtime(1);
-		$data = $this->container->ogameApi->getData($this->apiFile);
+		$data = $this->ogameApi->getData($this->apiFile);
 
 		if($data !== false)
 		{
@@ -62,51 +61,13 @@ class Universe extends Table
 
 			$this->chunkedMultiQuery($query);
 			// this is the end of update, save the timestamp
-			$this->container->config->save("$this->tableName-finished", $timestamp);
-			$this->container->config->save("$this->tableName-start", 0);
+			$this->config->save("$this->tableName-finished", $timestamp);
+			$this->config->save("$this->tableName-start", 0);
 			return true;
 
 		}
 		else
 			return false;
-
-	}
-	public function search($values, $paginator = NULL)
-	{
-		$uniT = $this->tableName;
-		$playersT = $this->container->players->getTableName();
-		$tmp = array();
-		$escaped = array("playername", "alli_tag");
-		foreach($escaped as $key)
-			if(isset($values["$key"]) && $values["$key"])
-			{
-				$tmp["$key"] =$values["$key"];
-
-				// escape MySQL wildcards
-				$values["$key"] = str_replace("_", "\\_", $values["$key"]);
-				$values["$key"] = str_replace("%", "\\%", $values["$key"]);
-
-				// convert wildcards to MySQL wildcards
-				$values["$key"] = str_replace("*", "%", $values["$key"]);
-				$values["$key"] = str_replace("?", "_", $values["$key"]);
-			}
-
-		$alliances_columns = $this->container->alliances->getPrefixedColumnList("_");
-		$columns = "$uniT.*, $alliances_columns $playersT.*";
-		if(!is_null($paginator))
-		{
-			$count = $this->sendQuery("count($uniT.id_planet) as count", $values);
-			$paginator->setItemCount($count[0]["count"]);
-			$paginator->setItemsPerPage(((isset($values["results_per_page"]) && $values["results_per_page"] !== "")) ? $values["results_per_page"] : 20);
-		}
-
-		$results = $this->sendQuery($columns, $values, $paginator);
-		foreach($escaped as $key)
-		if(isset($values["$key"]) && $values["$key"])
-		{
-			$values["$key"] =$tmp["$key"];
-		}
-		return $results;
 
 	}
 	/**
@@ -159,169 +120,6 @@ class Universe extends Table
 		return true;
 	}
 
-	protected function sendQuery($what, $values, $paginator = NULL)
-	{
-		$uniT = $this->tableName;
-		$playersT = $this->container->players->getTableName();
-		$allianceT = $this->container->alliances->getTableName();
-		$scoreT = $this->container->highscore->getTableName();
-		$select = "select $what from $uniT left join $playersT on $uniT.id_player = $playersT.id_player_ogame left join $allianceT on $allianceT.id_alliance_ogame = $playersT.id_alliance where 1  ";
-		$params = array();
 
-		// if both values are set search with OR
-		if((isset($values["playername"]) && $values["playername"] !== "") && (isset($values["alli_tag"]) && $values["alli_tag"] !== ""))
-		{
-
-			$select .= "and ($playersT.playername like ? OR $allianceT.tag like ?)";
-			$params[] = $values["playername"];
-			$params[] = $values["alli_tag"];
-		}
-		else
-		{
-
-			if((isset($values["playername"]) && $values["playername"] !== ""))
-			{
-
-					$select .= " and $playersT.playername like ? ";
-					$params[] = $values["playername"];
-			}
-			if((isset($values["alli_tag"]) && $values["alli_tag"] !== ""))
-			{
-				$select .= " and $allianceT.tag like ?";
-					$params[] = $values["alli_tag"];
-			}
-		}
-		if((isset($values["galaxy"]) && $values["galaxy"] !== ""))
-		{
-			$select .= " and $uniT.galaxy = ?";
-			$params[] = $values["galaxy"];
-		}
-		if((isset($values["system_start"]) && $values["system_start"] !== ""))
-		{
-			$select .= " and $uniT.system >= ?";
-			$params[] = $values["system_start"];
-		}
-		if((isset($values["system_end"]) && $values["system_end"] !== ""))
-		{
-			$select .= " and $uniT.system <= ?";
-			$params[] = $values["system_end"];
-		}
-		if((isset($values["score_0_position_s"]) && $values["score_0_position_s"] !== ""))
-		{
-			$select .= " and $playersT.score_0_position > ?";
-			$params[] = $values["score_0_position_s"];
-		}
-		if((isset($values["score_0_position_e"]) && $values["score_0_position_e"] !== ""))
-		{
-			$select .= " and $playersT.score_0_position < ?";
-			$params[] = $values["score_0_position_e"];
-		}
-		if((isset($values["score_3_position_s"]) && $values["score_3_position_s"] !== ""))
-		{
-			$select .= " and $playersT.score_3_position > ?";
-			$params[] = $values["score_3_position_s"];
-		}
-		if((isset($values["score_3_position_e"]) && $values["score_3_position_e"] !== ""))
-		{
-			$select .= " and $playersT.score_0_position < ?";
-			$params[] = $values["score_3_position_e"];
-		}
-		if((isset($values["score_6_position_s"]) && $values["score_6_position_s"] !== ""))
-		{
-			$select .= " and $playersT.score_6_position > ?";
-			$params[] = $values["score_6_position_s"];
-		}
-		if((isset($values["score_6_position_e"]) && $values["score_6_position_e"] !== ""))
-		{
-			$select .= " and $playersT.score_6_position < ?";
-			$params[] = $values["score_6_position_e"];
-		}
-		if((isset($values["score_7_position_s"]) && $values["score_7_position_s"] !== ""))
-		{
-			$select .= " and $playersT.score_7_position > ?";
-			$params[] = $values["score_7_position_s"];
-		}
-		if((isset($values["score_7_position_e"]) && $values["score_7_position_e"] !== ""))
-		{
-			$select .= " and $playersT.score_7_position < ?";
-			$params[] = $values["score_7_position_e"];
-		}
-		if((isset($values["with_moons"]) && $values["with_moons"] ))
-		{
-			$select .= " and  $uniT.id_moon_ogame  is not null";
-		}
-		if((isset($values["statuses"]) && $values["statuses"] ))
-		{
-
-			if(!$values["statuses"]["all"])
-			{
-				$select .= " and ( 0 "; // 0 so I don´t have to care about OR statement
-				$not = " and ( 1  ";
-				if($values["statuses"]["inactives"])
-				{
-					$select .= " or $playersT.status  like \"%i%\" ";
-				}
-				else // if it is false it means, players can´t be inactives!
-				{
-					$not .= " and $playersT.status not like \"%i%\" ";
-				}
-
-				if($values["statuses"]["vmode"])
-				{
-					$select .= " or $playersT.status  like \"%v%\" ";
-				}
-				else
-				{
-					$not .= " and $playersT.status not  like \"%v%\"  ";
-				}
-
-				if($values["statuses"]["banned"])
-				{
-					$select .= " or $playersT.status  like \"%b%\" ";
-				}
-				else
-				{
-					$not .= " and $playersT.status not  like \"%b%\"  ";
-				}
-				$not .= " ) ";
-				$select .=  ") $not" ;
-
-			}
-
-		}
-
-		if((isset($values["order_direction"]) && $values["order_direction"] !== "") && (isset($values["order_by"]) && $values["order_by"] !== ""))
-		{
-			$dir = "asc";
-			if($values["order_direction"] == "desc")
-				$dir = "desc";
-			$select .= " order by ";
-
-			switch($values["order_by"])
-			{
-				case "coords":
-					$select .= "$uniT.galaxy $dir, $uniT.system $dir, $uniT.position $dir";
-					break;
-				case "player":
-					$select .= "$playersT.playername $dir";
-					break;
-				case "tag":
-					$select .= "$allianceT.tag $dir";
-					break;
-				default:
-					$select .= "$uniT.id_planet $dir";
-					break;
-			}
-		}
-		if(!is_null($paginator))
-		{
-			$select .= " limit ?, ?";
-			$params[] =$paginator->getOffset();
-			$params[] = $paginator->getLength();
-		}
-
-		return $this->invokeQuery($select, $params);
-
-	}
 
 }

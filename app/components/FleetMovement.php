@@ -1,15 +1,28 @@
 <?php
-namespace GLOTR;
+namespace GLOTR\Components;
 use Nette\Application\UI\Control;
 
 class FleetMovement extends GLOTRControl
 {
-
-	protected $context;
+	/** @var array */
+	protected $keys;
 	protected $data;
-	public function setContext($context)
+	/** @var \Nette\Localization\ITranslator */
+	protected $translator;
+
+	public function injectTranslator(\Nette\Localization\ITranslator $translator)
 	{
-		$this->context = $context;
+		if ($this->translator) {
+            throw new Nette\InvalidStateException('Translator has already been set');
+        }
+        $this->translator = $translator;
+	}
+	public function injectFleetKeys($keys)
+	{
+		if ($this->keys) {
+            throw new Nette\InvalidStateException('Fleet keys have already been set');
+        }
+        $this->keys = $keys;
 	}
 	public function setData($data)
 	{
@@ -22,8 +35,8 @@ class FleetMovement extends GLOTRControl
 
 		$template = $this->createTemplate();
 		$template = $template->setFile(__DIR__ .'/FleetMovement.latte');
-		$template->setTranslator($this->context->translator);
-		$template->fleetKeys = $this->context->fleetMovements->getFleetKeys();
+		$template->setTranslator($this->translator);
+		$template->fleetKeys = $this->keys;
 		$template->movement = $data;
 		$template->id = $id;
 		$template->child = $child;
@@ -37,7 +50,8 @@ class FleetMovement extends GLOTRControl
 	protected function createComponentFleetMovement()
 	{
 		$control = new FleetMovement;
-		$control->setContext($this->context);
+		$control->injectTranslator($this->translator);
+		$control->injectFleetKeys($this->keys);
 		return $control;
 	}
 

@@ -11,16 +11,12 @@ use Nette\Application\UI\Form,
 class UpdatePresenter extends BasePresenter
 {
 	protected $userIdentity;
-	protected function beforeRender()
-	{
-
-	}
 	protected function startup()
 	{
 		$check = true;
 		parent::startup();
 		// this is for galaxyplugin validation
-		$post = $this->context->httpRequest->getPost();
+		$post = $this->getHttpRequest()->getPost();
 		//Nette\Diagnostics\Debugger::log(serialize($post));
 		// is it galaxyplugin request?
 		if(isset($post["type"]))
@@ -40,7 +36,7 @@ class UpdatePresenter extends BasePresenter
 				{
 					$check = false;
 					try{
-						$this->userIdentity = $this->context->authenticator->authenticateByLogonKey($token);
+						$this->userIdentity = $this->authenticator->authenticateByLogonKey($token);
 						//$this->getUser()->getStorage()->setAuthenticated(true);
 						//$this->getUser()->setExpiration("+30 minutes");
 					}
@@ -64,50 +60,41 @@ class UpdatePresenter extends BasePresenter
 		$response = array("status" => "ok");
 		try
 		{
-			if($this->context->players->needApiUpdate())
+			if($this->glotrApi->needUpdate("players"))
 			{
-				$this->context->players->updateFromApi();
-				if($this->context->players->needApiUpdate())
-					$response = array("status" => "continue", "what" => $this->context->translator->translate("players"));
-				else
-					$response = array("status" => "continue");
+				$this->glotrApi->updateFromOgameApi("players");
+				$response = array("status" => "continue");
 				goto send;
 			}
-			if($this->context->alliances->needApiUpdate())
+			if($this->glotrApi->needUpdate("alliances"))
 			{
-				$this->context->alliances->updateFromApi();
-				if($this->context->alliances->needApiUpdate())
-					$response = array("status" => "continue", "what" => $this->context->translator->translate("alliances"));
-				else
-					$response = array("status" => "continue");
+				$this->glotrApi->updateFromOgameApi("alliances");
+				$response = array("status" => "continue");
 				goto send;
 			}
 
-			if($this->context->universe->needApiUpdate())
+			if($this->glotrApi->needUpdate("universe"))
 			{
-				$this->context->universe->updateFromApi();
-				if($this->context->universe->needApiUpdate())
-					$response = array("status" => "continue", "what" => $this->context->translator->translate("universe"));
-				else
-					$response = array("status" => "continue");
-				goto send;
-			}
-			if($this->context->highscore->needApiUpdate())
-			{
-				$this->context->highscore->updateFromApi();
+				$this->glotrApi->updateFromOgameApi("universe");
 				$response = array("status" => "continue");
 				goto send;
 			}
-			if($this->context->server->needApiUpdate())
+			if($this->glotrApi->needUpdate("highscore"))
 			{
-				$this->context->server->updateFromApi();
+				$this->glotrApi->updateFromOgameApi("highscore");
 				$response = array("status" => "continue");
 				goto send;
 			}
-			if($this->context->sync->needUpdate())
+			if($this->glotrApi->needUpdate("server"))
+			{
+				$this->glotrApi->updateFromOgameApi("server");
+				$response = array("status" => "continue");
+				goto send;
+			}
+			if($this->glotrApi->needUpdate("sync"))
 			{
 				try{
-				$this->context->sync->update();
+				$this->glotrApi->syncUpdate();
 				}
 				catch(\Nette\Application\ApplicationException $e)
 				{
@@ -117,7 +104,7 @@ class UpdatePresenter extends BasePresenter
 					);
 					goto send;
 				}
-				if($this->context->sync->needUpdate())
+				if($this->glotrApi->needUpdate("sync"))
 					$response = array("status" => "continue", "sync" => 1);
 				else
 					$response = array("status" => "continue");
@@ -126,38 +113,20 @@ class UpdatePresenter extends BasePresenter
 
 		}
 		catch(Nette\Application\ApplicationException $e)
-		{
-			// allow_url_fopen disable, we need client to upload xml files himself
-			$response = array(
-				"status" => "failed",
-				"what" => array(
-					$this->context->universe->ogameApiGetFileNeeded(),
-					$this->context->alliances->ogameApiGetFileNeeded(),
-					$this->context->players->ogameApiGetFileNeeded()
-					),
-				"message" => $e->getMessage()
-				);
-			$response["what"] = array_merge($response["what"], $this->context->highscore->ogameApiGetFileNeeded());
-		}
+		{}
 
 		send:
 			$this->sendResponse(new Nette\Application\Responses\JsonResponse($response));
 	}
-	protected function anythingNeedsUpdate()
-	{
-		$cond = ($this->context->players->needApiUpdate() || $this->context->alliances->needApiUpdate() || $this->context->universe->needApiUpdate());
-
-		return $cond;
-	}
 	public function actionGalaxyplugin()
 	{
-		$post = $this->context->httpRequest->getPost();
-		$xml = new SimpleXMLElement("<?"."xml version=\"1.0\" encoding=\"UTF-8\"?>\n <galaxytool universe=\"".str_replace("http://", "", $this->context->parameters["server"])."\">\n</galaxytool>");
+		$post = $this->getHttpRequest()->getPost();
+		$xml = new SimpleXMLElement("<?"."xml version=\"1.0\" encoding=\"UTF-8\"?>\n <galaxytool universe=\"".str_replace("http://", "", $this->parameters["server"])."\">\n</galaxytool>");
 		$version = $xml->addChild("version");
 		$version->addAttribute("major", 4);
 		$version->addAttribute("minor", 9);
 		$version->addAttribute("revision", 2);
-		$version->addAttribute("glotr_version", $this->context->parameters["version"]);
+		$version->addAttribute("glotr_version", $this->parameters["version"]);
 		if(isset($post["type"]) && ($post["type"] == "validate" || isset($post["content"])))
 		{
 			if($post["type"] == "validate")

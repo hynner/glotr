@@ -1,6 +1,7 @@
 
 
 {block content}
+{if $results["player"] !== FALSE}
 <div class="tabs-container">
 	<ul>
 		<li><a href="#detail">{_ "Detail"}</a></li>
@@ -193,4 +194,7 @@
 		</div>
 	</div>
 </div>
+{else}
+<p>{_ "Player not found"}!</p>
+{/if}
 {/block}

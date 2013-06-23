@@ -1,15 +1,29 @@
 <?php
-namespace GLOTR;
+namespace GLOTR\Components;
 use Nette\Application\UI\Control;
 
 class ActivityChart extends GLOTRControl
 {
 
-	protected $context;
+	/** @var \Nette\Localization\ITranslator */
+	protected $translator;
+	/** @var boolean */
 	protected $redraw;
-	public function setContext($context)
+	/** @var array */
+	protected $activityTypes;
+	public function injectTranslator(\Nette\Localization\ITranslator $translator)
 	{
-		$this->context = $context;
+		if ($this->translator) {
+            throw new Nette\InvalidStateException('Translator has already been set');
+        }
+        $this->translator = $translator;
+	}
+	public function injectActivityTypes($types)
+	{
+		if ($this->activityTypes) {
+            throw new Nette\InvalidStateException('Activity types have already been set');
+        }
+        $this->activityTypes = $types;
 	}
 	public function render($results)
 	{
@@ -18,10 +32,10 @@ class ActivityChart extends GLOTRControl
 
 		$template = $this->createTemplate();
 		$template = $template->setFile(__DIR__ .'/ActivityChart.latte');
-		$template->setTranslator($this->context->translator);
+		$template->setTranslator($this->translator);
 		$template->results = $results;
 		$template->redraw = $this->redraw;
-		$template->types = $this->context->activities->types;
+		$template->types = $this->activityTypes;
 
 		$template->render();
 	}

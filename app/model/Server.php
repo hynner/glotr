@@ -2,7 +2,7 @@
 namespace GLOTR;
 use Nette;
 
-class Server extends Table
+class Server extends OgameApiModel
 {
 	/** @var string */
 	protected $tableName = "server";
@@ -11,7 +11,7 @@ class Server extends Table
 	private $data;
 	public function updateFromApi()
 	{
-		$data = $this->container->ogameApi->getData($this->apiFile, array(), "SimpleXML");
+		$data = $this->ogameApi->getData($this->apiFile, array(), "SimpleXML");
 		if($data !== false)
 		{
 			$timestamp = (int)$data["timestamp"];
@@ -43,7 +43,7 @@ class Server extends Table
 				// I don´t have to care about exceptions, the only source is duplicate unique keys => newer data I don´t want to replace
 				catch(\PDOException $e)
 				{}
-				$this->container->config->save($this->tableName."-finished", $timestamp);
+				$this->config->save($this->tableName."-finished", $timestamp);
 				$this->data = $dbData;
 				return true;
 			}

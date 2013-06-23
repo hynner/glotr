@@ -1,5 +1,11 @@
 
 {block content}
+<?php
+$reports = $archive["reports"];
+$planet = $archive["planet"];
+$player = $archive["player"];
+$labels = $archive["labels"];
+?>
 {if !empty($reports)}
 <table class="dataTable">
 	<caption>{_ "Report archive"} - {$planet["galaxy"]}:{$planet["system"]}:{$planet["position"]}{($moon) ? " ". __("moon") : ""}</caption>
@@ -23,10 +29,10 @@
 			{foreach $reports as $report}
 			<?php
 				$prefix = ($moon == 1) ? "moon_" : "planet_";
-				$allInfo = $context->espionages->getAllInfo();
+				$allInfo = $labels;
 				$result = $report;
 				if($moon == 1)
-					$result = $context->espionages->addPrefixToKeys($prefix, $result, array_merge(array("scan_depth", "timestamp" ), $allInfo["researches"]));
+					$result = $addPrefixToKeys($prefix, $result, array_merge(array("scan_depth", "timestamp" ), $allInfo["researches"]));
 
 				$init = array("research_updated",$prefix."build_updated", $prefix."defence_updated", $prefix."fleet_updated" );
 				foreach($init as $key)

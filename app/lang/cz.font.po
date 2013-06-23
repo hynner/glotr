@@ -1,10 +1,10 @@
 # Gettext keys exported by GettextTranslator and Translation Panel
-# Created: 2013-05-18 18:14:18
+# Created: 2013-06-15 08:22:02
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-18 18:14+0000\n"
+"PO-Revision-Date: 2013-06-15 08:22+0000\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -622,6 +622,9 @@ msgstr "Synchronizace"
 msgid "Synchronization failed!"
 msgstr "Synchronizace selhala"
 
+msgid "Synchronization is disabled!"
+msgstr "Synchronizace je zakázána!"
+
 msgid "Synchronization setup"
 msgstr "Nastavení synchronizace"
 
@@ -1090,6 +1093,6 @@ msgstr "wing"
 msgid "yes"
 msgstr "ano"
 
-msgid "Synchronization is disabled!"
-msgstr "Synchronizace je zakázána!"
+msgid "Player not found"
+msgstr "Hráč nebyl nalezen"
 

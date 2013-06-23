@@ -43,7 +43,17 @@ class InformationPresenter extends BasePresenter
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
 		$this->id_player = $id;
-		$this->template->results = $this->context->players->search($id, $this->getUser()->getIdentity()->id_user);
+		$keys = array("player", "alliance", "fs", "score_inactivity", "planets");
+		if($this->glotrApi->checkPermissions('perm_activity'))
+		{
+			$keys[] = "activity";
+			$keys[] = "activity_all";
+			$this->template->show_activity = true;
+		}
+		else
+			$this->template->show_activity = false;
+
+		$this->template->results = $this->glotrApi->getPlayerDetail($id, $this->getUserPlayer(), $keys);
 		$this->template->scores = array(
 			0 => "Total",
 			1 => "Economy",
@@ -54,15 +64,9 @@ class InformationPresenter extends BasePresenter
 			4 => "Military Lost",
 			7 => "Honor"
 		);
-		if(!$this->context->authenticator->checkPermissions('perm_activity'))
-		{
-			unset($this->template->results["activity"]);
-			$this->template->show_activity = false;
-		}
-		else
-			$this->template->show_activity = true;
+
 		$this->template->statuses = $this->player_statuses;
-		$this->template->perm_diplomacy =  $this->context->authenticator->checkPermissions("perm_diplomacy");
+		$this->template->perm_diplomacy =  $this->glotrApi->checkPermissions("perm_diplomacy");
 	}
 	public function actionAllianceInfo($id)
 	{
@@ -70,8 +74,7 @@ class InformationPresenter extends BasePresenter
 		$this->handlePermissions("perm_detail");
 		if(!$id)
 			throw new Nette\Application\BadRequestException;
-		$this->template->results = $this->context->alliances->search($id);
-		$this->getRelativeStatusForResults($this->template->results["players"]);
+		$this->template->results = $this->glotrApi->getAllianceDetail($id, $this->getUserPlayer(), array("all"));
 		$this->template->scores = array(
 			0 => "Total",
 			1 => "Economy",
@@ -86,11 +89,8 @@ class InformationPresenter extends BasePresenter
 	}
 	public function actionReportArchive($id_planet, $moon = 0)
 	{
-		$this->template->labels = $this->context->espionages->getAllInfo();
-		$this->template->reports = $this->context->espionages->getTable()->where(array("id_planet" => $id_planet, "moon" => $moon))->select("*")->fetchPairs("id_message_ogame");
-		$this->template->planet = $this->context->universe->getTable()->where(array("id_planet" => $id_planet))->fetch();
-		$this->template->player = $this->context->players->getTable()->where(array("id_player_ogame" => $this->template->planet->id_player))->fetch();
-		$this->template->context = $this->context;
+		$this->template->archive = $this->glotrApi->getEspionageArchive($id_planet, $moon);
+		$this->template->addPrefixToKeys = $this->glotrApi->addPrefixToKeys;
 		$this->template->moon = $moon;
 
 	}
@@ -100,16 +100,16 @@ class InformationPresenter extends BasePresenter
 		$this->handlePermissions("perm_galaxyview");
 		$galaxy = (int) $galaxy;
 		$system = (int) $system;
-		$maxGal = $this->context->server->galaxies;
-		$maxSys = $this->context->server->systems;
+		$maxGal = $this->glotrApi->getServerData("galaxies");
+		$maxSys = $this->glotrApi->getServerData("systems");
 		if($galaxy < 1 || $galaxy > $maxGal)
 		{
-			$this->flashMessage(sprintf($this->context->translator->translate("Galaxy must be a number from %d to %d"), 1, $maxGal), "error", true);
+			$this->flashMessage(sprintf($this->translator->translate("Galaxy must be a number from %d to %d"), 1, $maxGal), "error", true);
 			$galaxy = 1;
 		}
 		if($system < 1 || $system > $maxSys)
 		{
-			$this->flashMessage(sprintf($this->context->translator->translate("System must be a number from %d to %d"), 1, $maxSys), "error", true);
+			$this->flashMessage(sprintf($this->translator->translate("System must be a number from %d to %d"), 1, $maxSys), "error", true);
 			$system = 1;
 		}
 		$this->loadSearchResults(array("galaxy" => $galaxy, "system_start" => $system, "system_end" => $system));
@@ -121,7 +121,7 @@ class InformationPresenter extends BasePresenter
 	public function actionFleetMovements()
 	{
 		$vp = $this->getComponent("vp");
-		$this->template->movements = $this->context->fleetMovements->search($this->getUserPlayer(),$vp->getPaginator());
+		$this->template->movements = $this->glotrApi->getFleetMovements($this->getUserPlayer(),$vp->getPaginator());
 		if($this->isAjax())
 		{
 			$this->invalidateControl("fleetMovements");
@@ -133,16 +133,16 @@ class InformationPresenter extends BasePresenter
 		if(!$sess->selected)
 			$sess->selected = array();
 		$this->template->selected = $sess->selected;
-		$this->template->scoreHistory = $this->context->highscore->scoreHistory($sess->selected);
-		$this->template->alliances =  $this->context->alliances->getTable()->order("tag")->fetchPairs("id_alliance_ogame", "tag");
-		$this->template->players = $this->context->players->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername");
-		$this->template->periodDuration = $this->context->parameters["scoreHistoryPeriod"];
+		$this->template->scoreHistory = $this->glotrApi->getScoreHistory($sess->selected);
+		$this->template->alliances =  $this->glotrApi->getTable("alliances")->order("tag")->fetchPairs("id_alliance_ogame", "tag");
+		$this->template->players = $this->glotrApi->getTable("players")->order("playername")->fetchPairs("id_player_ogame", "playername");
+		$this->template->periodDuration = $this->parameters["scoreHistoryPeriod"];
 		$this->template->redraw = false;
 	}
 	public function actionScoreInactivity()
 	{
 		$vp = $this->getComponent("vp");
-		$this->template->inactivity = $this->context->scoreInactivity->search($vp->getPaginator());
+		$this->template->inactivity = $this->glotrApi->searchScoreInactivity($vp->getPaginator());
 		if($this->isAjax())
 		{
 			$this->invalidateControl("inactivityList");
@@ -152,7 +152,7 @@ class InformationPresenter extends BasePresenter
 	{
 		$values = $form->getValues();
 		$vp = $this->getComponent("vp");
-		$this->template->inactivity = $this->context->scoreInactivity->search($vp->getPaginator(),$values);
+		$this->template->inactivity = $this->glotrApi->searchScoreInactivity($vp->getPaginator(),$values);
 		if($this->isAjax())
 		{
 			$this->invalidateControl("inactivityList");
@@ -167,7 +167,7 @@ class InformationPresenter extends BasePresenter
 		$form->addMultiSelect("players", __("Players"), $this->template->players)
 				->setTranslator(NULL);
 		$form->addSubmit("add", "Add");
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->scoreHistoryFormSubmitted;
 		return $form;
 	}
@@ -228,7 +228,7 @@ class InformationPresenter extends BasePresenter
 	protected function scoreHistoryRefreshData($search)
 	{
 			$this->template->selected = $search;
-			$this->template->scoreHistory = $this->context->highscore->scoreHistory($search);
+			$this->template->scoreHistory = $this->glotrApi->getScoreHistory($search);
 			$this->template->redraw = true;
 			$this->invalidateControl("scoreHistoryCharts");
 			$this->invalidateControl("scoreHistorySelected");
@@ -240,15 +240,15 @@ class InformationPresenter extends BasePresenter
 		$form->addText("galaxy", "Galaxy:", 4)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "Galaxy must be a number!")
-					->addRule(Form::RANGE, "Galaxy must be a number from %d to %d", array(1, $this->context->server->getGalaxies()) );
+					->addRule(Form::RANGE, "Galaxy must be a number from %d to %d", array(1, $this->glotrApi->getServerData("galaxies")) );
 		$form->addText("system_start", "Start system:", 4)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "System must be a number!")
-					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->context->server->getSystems()) );
+					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->glotrApi->getServerData("systems")) );
 		$form->addText("system_end", "End system:", 4)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "System must be a number!")
-					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->context->server->getSystems()) );
+					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->glotrApi->getServerData("systems")) );
 		$form->addText("score_0_position_s", "Position(total) from:", 5)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "Position must be a number!");
@@ -263,7 +263,7 @@ class InformationPresenter extends BasePresenter
 				"results_per_page" => 50
 			));
 
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->scoreInactivityFormSubmitted;
 		return $form;
 	}
@@ -277,15 +277,15 @@ class InformationPresenter extends BasePresenter
 		$form->addText("galaxy", "Galaxy:", 4)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "Galaxy must be a number!")
-					->addRule(Form::RANGE, "Galaxy must be a number from %d to %d", array(1, $this->context->server->getGalaxies()) );
+					->addRule(Form::RANGE, "Galaxy must be a number from %d to %d", array(1, $this->glotrApi->getServerData("galaxies")) );
 		$form->addText("system_start", "Start system:", 4)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "System must be a number!")
-					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->context->server->getSystems()) );
+					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->glotrApi->getServerData("systems")) );
 		$form->addText("system_end", "End system:", 4)
 				->addCondition(Form::FILLED)
 					->addRule(Form::INTEGER, "System must be a number!")
-					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->context->server->getSystems()) );
+					->addRule(Form::RANGE, "System must be a number from %d to %d", array(1, $this->glotrApi->getServerData("systems")) );
 
 		$form->addText("score_0_position_s", "Position(total) from:", 5)
 				->addCondition(Form::FILLED)
@@ -352,7 +352,7 @@ class InformationPresenter extends BasePresenter
 		}
 
 
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->searchFormSubmitted;
 		return $form;
 	}
@@ -385,11 +385,11 @@ class InformationPresenter extends BasePresenter
 	}
 	public function handlePlayerStatusChange($status, $mode = "local")
 	{
-		$this->context->players->setPlayerStatus($this->id_player, $status, $mode, $this->getUser()->getIdentity()->id_user);
+		$this->glotrApi->setPlayerStatus($this->id_player, $status, $mode, $this->getUser()->getIdentity()->id_user);
 		if($this->isAjax())
 		{
 			$this->invalidateControl("playerStatus");
-			$this->template->results = $this->context->players->search($this->id_player, $this->getUser()->getIdentity()->id_user);
+			$this->template->results = $this->glotrApi->getPlayerDetail($this->id_player, $this->getUserPlayer());
 		}
 		else
 		{
@@ -398,30 +398,35 @@ class InformationPresenter extends BasePresenter
 	}
 	protected function createComponentPlayerInfoRow()
 	{
-		$control = new GLOTR\PlayerInfoRow;
-		$control->setContext($this->context);
-		$control->setUserPlayer($this->getUserPlayer());
+		$control = new GLOTR\Components\PlayerInfoRow;
+		$control->injectPlanetInfoFactory(new \Nette\Callback($this, "createComponentPlanetInfo"));
+		$control->injectTranslator($this->translator);
 		return $control;
 	}
-	protected function createComponentPlanetInfo()
+	public function createComponentPlanetInfo()
 	{
-			$control = new GLOTR\PlanetInfo;
-			$control->setContext($this->context);
-			$control->setUserPlayer($this->getUserPlayer());
+			$control = new GLOTR\Components\PlanetInfo;
+			$control->injectUserPlayer($this->getUserPlayer());
+			$control->injectAuthenticator($this->authenticator);
+			$control->injectEspionageKeys($this->glotrApi->getEspionageKeys());
+			$control->injectFilterDataCallback($this->glotrApi->filterData);
+			$control->injectTranslator($this->translator);
+			$control->injectServerData($this->glotrApi->getServerData());
 			return $control;
 
 	}
 	protected function createComponentFleetMovement()
 	{
-			$control = new GLOTR\FleetMovement;
-			$control->setContext($this->context);
+			$control = new GLOTR\Components\FleetMovement;
+			$control->injectTranslator($this->translator);
+			$control->injectFleetKeys($this->glotrApi->getFleetKeys());
 			return $control;
 	}
 	public function createComponentVp()
 	{
 
 		$vp = new \VisualPaginator($this, "vp");
-		$vp->setTranslator($this->context->translator);
+		$vp->setTranslator($this->translator);
 		return $vp;
 	}
 	protected function createComponentManualActivityForm()
@@ -442,7 +447,7 @@ class InformationPresenter extends BasePresenter
 				->getSeparatorPrototype()->setName(NULL);
 		$form->addSubmit("send_activity", "Send");
 		$form->setDefaults(array("type" => "activity"/*, "activity_date" => date(\JanTvrdik\Components\DatePicker::W3C_DATE_FORMAT)*/));
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->manualActivityFormSubmitted;
 		return $form;
 	}
@@ -459,14 +464,15 @@ class InformationPresenter extends BasePresenter
 						"type" => $type
 					);
 
-		$this->context->activities->insertActivity($act);
+		$this->glotrApi->insertActivity($act);
 
 		if($this->isAjax())
 		{
 			$this->invalidateControl("manualActivityForm");
 			$this->invalidateControl("activityChart");
 			$this->getComponent("activityChart")->redraw = true;
-			$this->template->results["activity"] = $this->context->activities->search($this->id_player);
+			$tmp = $this->glotrApi->getPlayerDetail($this->id_player, array(), array("activity"));
+			$this->template->results["activity"] = $tmp["activity"];
 		}
 		else
 		{
@@ -483,7 +489,7 @@ class InformationPresenter extends BasePresenter
 				->addRule(Form::INTEGER, "System must be a number!");
 		$form->addSubmit("show", "Show");
 
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->setDefaults(array("galaxy" => 1, "system" => 1));
 		$form->setValues(array("galaxy" => $this->template->galaxy, "system" => $this->template->system));
 
@@ -494,8 +500,8 @@ class InformationPresenter extends BasePresenter
 	public function validateSystemsControlsForm($form)
 	{
 		$values = $form->values;
-		$maxGal = $this->context->server->galaxies;
-		$maxSys = $this->context->server->systems;
+		$maxGal = $this->glotrApi->getServerData("galaxies");
+		$maxSys = $this->glotrApi->getServerData("systems");
 		if(!isset($values["galaxy"]) || $values["galaxy"] >= $maxGal)
 			$values["galaxy"] = 1;
 		elseif($values["galaxy"] < 1)
@@ -528,20 +534,22 @@ class InformationPresenter extends BasePresenter
 	}
 	protected function createComponentActivityChart()
 	{
-		$control = new GLOTR\ActivityChart;
-		$control->setContext($this->context);
+		$control = new GLOTR\Components\ActivityChart;
+		$control->injectTranslator($this->translator);
+		$control->injectActivityTypes($this->glotrApi->getActivityTypes());
 		return $control;
 	}
 	protected function createComponentAllianceMembersChart()
 	{
-		$control = new GLOTR\AllianceMembersCharts;
-		$control->setContext($this->context);
+		$control = new GLOTR\Components\AllianceMembersCharts;
+		$control->injectTranslator($this->translator);
 		return $control;
 	}
 	protected function createComponentScoreHistoryCharts()
 	{
-		$control = new GLOTR\ScoreHistoryCharts;
-		$control->setContext($this->context);
+		$control = new GLOTR\Components\ScoreHistoryCharts;
+		$control->injectParams($this->parameters);
+		$control->injectTranslator($this->translator);
 		return $control;
 	}
 	protected function createComponentActivityFilterForm()
@@ -552,7 +560,7 @@ class InformationPresenter extends BasePresenter
 		$form->addDatePicker("activity_start", "From");
 		$form->addDatePicker("activity_end", "To");
 		$container = $form->addContainer("types");
-		foreach($this->context->activities->types as $type):
+		foreach($this->glotrApi->getActivityTypes() as $type):
 			$container->addCheckbox("$type", $type)->setDefaultValue(TRUE);
 		endforeach;
 		$container = $form->addContainer("days");
@@ -563,7 +571,7 @@ class InformationPresenter extends BasePresenter
 		}
 
 		$form->addSubmit("filter", "Filter");
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->activityFilterFormSubmitted;
 		return $form;
 	}
@@ -600,9 +608,9 @@ class InformationPresenter extends BasePresenter
 		{
 			$this->invalidateControl("activityChart");
 			$this->getComponent("activityChart")->redraw = true;
-			$this->template->results["activity"] = $this->context->activities->search($this->id_player, $filter);
+			$this->template->results["activity"] = $this->glotrApi->getPlayerDetail($this->id_player, array(), array("activity"), $filter);
 			$this->invalidateControl("activityTextView");
-			$this->template->results["activity_all"] = $this->context->activities->searchUngrouped($this->id_player, $filter);
+			$this->template->results["activity_all"] = $this->glotrApi->getPlayerDetail($this->id_player, array(), array("activity_all"), $filter);
 		}
 	}
 	protected function createComponentPlayerNotesForm()
@@ -612,14 +620,14 @@ class InformationPresenter extends BasePresenter
 		$form->addTextArea("notes", "Notes:")
 				->setDefaultValue($this->template->results["player"]["notes"]);
 		$form->addSubmit("save", "Save");
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->playerNotesFormSubmitted;
 		return $form;
 	}
 	public function playerNotesFormSubmitted($form)
 	{
 		$values = $form->values;
-		$this->context->players->getTable()->where(array("id_player_ogame" => $this->id_player))->update(array("notes" => ($values["notes"]) ? $values["notes"] : ""));
+		$this->glotrApi->getTable("players")->where(array("id_player_ogame" => $this->id_player))->update(array("notes" => ($values["notes"]) ? $values["notes"] : ""));
 		if($this->isAjax())
 		{
 			$this->invalidateControl("playerNotesForm");
@@ -656,7 +664,7 @@ class InformationPresenter extends BasePresenter
 		$form->addTextArea("note", "Note:")	;
 
 		$form->addSubmit("save", "Save");
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->playerFSFormSubmitted;
 		return $form;
 	}
@@ -672,11 +680,11 @@ class InformationPresenter extends BasePresenter
 		);
 		if($data["start"] >= $data["end"])
 			throw new \Nette\Application\BadRequestException("FS start must be a date smaller than FS end!");
-		$this->context->fs->insertFS($data);
+		$this->glotrApi->insertFS($data);
 		if($this->isAjax())
 		{
 			$this->invalidateControl("fsTable");
-			$this->template->results["fs"] = $this->context->fs->search($this->id_player);
+			$this->template->results["fs"] = $this->glotrApi->getPlayerDetail($this->id_player, array(), array("fs"));
 		}
 		else
 		{
@@ -689,7 +697,7 @@ class InformationPresenter extends BasePresenter
 			$vp = $this->getComponent("vp");
 			$paginator = $vp->getPaginator();
 
-			$this->template->results = $this->context->universe->search($search, $paginator);
+			$this->template->results = $this->glotrApi->searchUniverse($search, $paginator);
 
 			$this->getRelativeStatusForResults($this->template->results);
 			if($this->isAjax())
@@ -700,22 +708,28 @@ class InformationPresenter extends BasePresenter
 				$this->invalidateControl ("planetInfo");
 			}
 	}
-	protected function getRelativeStatusForResults(&$results)
-	{
-		$player2 = $this->getUserPlayer();
-		if(!empty($player2))
-			$player2 = $player2["player"];
-
-			foreach($results as &$r)
-			{
-				$r["_computed_player_status"] = $this->context->players->getRelativeStatus($r, $player2);
-				$r["_computed_status_class"] = $this->context->players->getClassForPlayerStatus($r["_computed_player_status"]);
-			}
-	}
+	/**
+	 * Get user´s player data
+	 * @return array
+	 */
 	protected function getUserPlayer()
 	{
 		if(!isset($this->userPlayerData))
-			$this->userPlayerData = $this->context->players->search($this->getUser()->getIdentity()->id_player, NULL, true);
+		{
+			$this->userPlayerData = $this->glotrApi->getPlayerDetail($this->getUser()->getIdentity()->id_player);
+			$this->userPlayerData = $this->userPlayerData["player"];
+			$this->userPlayerData["id_user"] = $this->getUser()->getIdentity()->id_user;
+		}
+
 		return $this->userPlayerData;
+	}
+	protected function getRelativeStatusForResults(&$results)
+	{
+		$player2 = $this->getUserPlayer();
+		foreach($results as &$r)
+		{
+			$r["_computed_player_status"] = $this->glotrApi->getRelativePlayerStatus($r, $player2);
+			$r["_computed_status_class"] = $this->glotrApi->getClassForPlayerStatus($r["_computed_player_status"]);
+		}
 	}
 }

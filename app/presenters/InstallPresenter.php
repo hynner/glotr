@@ -2,29 +2,10 @@
 use Nette\Application\UI\Form;
 class InstallPresenter extends BasePresenter
 {
-	/** @var \GLOTR\Users */
-	protected $users;
-
-	protected function startup()
-	{
-		try
-		{
-			parent::startup();
-		}
-		catch(\Nette\Application\ApplicationException $e)
-		{
-			// allow_url_fopen disabled
-		}
-
-		$this->users = $this->context->users;
-
-
-	}
-
 	public function actionSetupDatabase()
 	{
 		$conn = $this->users->getConnection();
-		$db = unserialize(file_get_contents($this->context->parameters["dbSetupFile"]));
+		$db = unserialize(file_get_contents($this->parameters["dbSetupFile"]));
 		$current = $this->getDatabaseStructure(true);
 		$refresh = false;
 		// if they are the same database is already fully updated
@@ -33,7 +14,7 @@ class InstallPresenter extends BasePresenter
 			$refresh = true;
 			foreach($db["tables"] as $name)
 			{
-				$tblName = $this->context->parameters["tablePrefix"].$name;
+				$tblName = $this->parameters["tablePrefix"].$name;
 				if(in_array($name, $current["tables"]))
 				{
 					if($current["columns"][$name] != $db["columns"][$name])
@@ -90,7 +71,7 @@ class InstallPresenter extends BasePresenter
 
 			foreach($db["tables"] as $name)
 			{
-				$tblName = $this->context->parameters["tablePrefix"].$name;
+				$tblName = $this->parameters["tablePrefix"].$name;
 				// handle indexes
 				foreach($db["indexes"][$name] as $key_name => $index)
 				{
@@ -111,10 +92,10 @@ class InstallPresenter extends BasePresenter
 		}
 		$this->flashMessage("All tables are OK!", "success");
 
-		if(!$this->context->server->updateFromApi())
+		if(!$this->glotrApi->updateFromOgameApi("server"))
 		{
-			$this->flashMessage("Setting server properties from Ogame API failed! You have to set server properties manually!", "error");
-			$this->redirect("Install:serverSetup");
+			$this->flashMessage("Setting server properties from Ogame API failed! Please check if your server passes checker script. If it does try installtion later.", "error");
+			$this->redirect("Sign:in");
 		}
 		elseif($this->users->getAdminCount() == 0)
 		{
@@ -152,7 +133,7 @@ class InstallPresenter extends BasePresenter
 	protected function createComponentUserRegistrationForm()
 	{
 		$form = new GLOTR\UserRegistrationForm();
-		$form->setTranslator($this->context->translator);
+		$form->setTranslator($this->translator);
 		$form->onSuccess[] = $this->UserRegistrationFormSubmitted;
 		return $form;
 	}
@@ -165,7 +146,7 @@ class InstallPresenter extends BasePresenter
 		try{
 			$this->users->getTable()->insert(array(
 				"username" => $values["username"],
-				"password" => $this->context->authenticator->calculateHash($values["password"]),
+				"password" => $this->authenticator->calculateHash($values["password"]),
 				"email" => $values["email"],
 				"is_admin" => 1,
 				"active" => 1
@@ -186,7 +167,7 @@ class InstallPresenter extends BasePresenter
 	public function actionSaveDatabase()
 	{
 		$save = $this->getDatabaseStructure();
-		$success = file_put_contents($this->context->parameters["dbSetupFile"], serialize($save));
+		$success = file_put_contents($this->parameters["dbSetupFile"], serialize($save));
 		if($success !== FALSE)
 			$this->flashMessage("Database structure saved", "success");
 		else
@@ -201,7 +182,7 @@ class InstallPresenter extends BasePresenter
 		$res = $conn->query("show tables");
 		$tables = array();
 		while($r = $res->fetch())
-			$tables[] =($remove_table_prefix)  ? preg_replace("/^". $this->context->parameters["tablePrefix"]."/", "", $r->offsetGet(0)) : $r->offsetGet(0);
+			$tables[] =($remove_table_prefix)  ? preg_replace("/^". $this->parameters["tablePrefix"]."/", "", $r->offsetGet(0)) : $r->offsetGet(0);
 
 		$columns = array();
 		$indexes = array();
@@ -216,44 +197,5 @@ class InstallPresenter extends BasePresenter
 		}
 		$save = array("tables" => $tables, "columns" => $columns, "indexes" => $indexes);
 		return $save;
-	}
-	protected function createComponentServerSetupForm()
-	{
-		$form = new GLOTR\MyForm;
-		$form->addUpload("xml", "serverData.xml")
-				->addRule(Form::FILLED, "You have to upload %label");
-
-		$form->addSubmit("upload", "Upload");
-		$form->onSuccess[] = $this->serverSetupFormSubmitted;
-		return $form;
-	}
-	public function serverSetupFormSubmitted($form)
-	{
-		if($this->context->server->getTable()->limit(1)->fetch()->last_update)
-		{
-			$this->flashMessage("Server data already initialized!", "error");
-			$this->redirect("Sign:in");
-		}
-		$values = $form->getValues();
-		$cache = new Nette\Caching\Cache($this->context->cacheStorage, 'OgameAPI');
-		$cache->save("serverData.xml", $values["xml"]->contents);
-		$this->context->server->updateFromApi();
-		// some errore handling come here
-
-		if($this->users->getAdminCount() == 0)
-		{
-			$this->flashMessage("No admin account found, you should now create one!", "error");
-			$this->redirect("createAdmin");
-		}
-
-		else
-		{
-			$this->flashMessage("Installation complete!", "success");
-			$this->redirect("Sign:in");
-		}
-	}
-	public function actionServerSetup()
-	{
-		$this->template->xmlHref = $this->context->server->ogameApiGetFileNeeded();
 	}
 }

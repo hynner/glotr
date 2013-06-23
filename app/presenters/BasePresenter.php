@@ -11,10 +11,33 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	protected $permissions;
 	protected $player_statuses;
 	protected $alliance_statuses;
+	/** @var \GLOTR\GLOTRApi */
+	protected $glotrApi;
+	/** @var array */
+	protected $parameters;
+	/** @var \Nette\Localization\ITranslator */
+	protected $translator;
+	/** @var \Nette\Database\Connection */
+	protected $connection;
+	/** @var \GLOTR\Users */
+	protected $users;
+	/** @var \GLOTR\Authenticator */
+	protected $authenticator;
+
+	public function __construct(\Nette\DI\Container $context, \GLOTR\GLOTRApi $glotrApi, \Nette\Localization\ITranslator $translator, \Nette\Database\Connection $conn, \GLOTR\Users $usr, \GLOTR\Authenticator $auth)
+	{
+		parent::__construct($context);
+		$this->glotrApi = $glotrApi;
+		$this->parameters = $context->parameters;
+		$this->translator = $translator;
+		$this->connection = $conn;
+		$this->users = $usr;
+		$this->authenticator = $auth;
+	}
 	protected function startup()
 	{
 		parent::startup();
-		$this->context->translator->setLang($this->lang);
+
 		/* for case I need to get all strings to translate, that cannot be analyzed from code directly
 		$aI = $this->context->espionages->allInfo;
 		$keys = array("planet_buildings", "planet_resources", "planet_defence", "planet_fleet", "researches", "moon_buildings");
@@ -24,28 +47,23 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		// setup permissions
 		if($this->getUser()->isLoggedIn())
 		{
-			$acl = new Nette\Security\Permission;
-			// each user gets his own role, by his username
 			$user = $this->getUser();
-			$user->authenticatedRole = $user->getIdentity()->username;
-			$acl->addRole($user->getIdentity()->username);
-			// now create resources
-			$acl->addResource("administration");
-			//$acl->allow($user->getIdentity()->username, "administration");
-			$user->setAuthorizator($acl);
-			if(!isset($this->lang) && array_key_exists($user->identity->lang, $this->context->parameters["langs"]))
+			if(!isset($this->lang) && array_key_exists($user->identity->lang, $this->parameters["langs"]))
 			{
 				$this->lang = $user->identity->lang;
 			}
 
 		}
 
-		if(!isset($this->lang) || !array_key_exists($this->lang, $this->context->parameters["langs"]))
+		if(!isset($this->lang) || !array_key_exists($this->lang, $this->parameters["langs"]))
 		{
-			$this->lang = $this->context->parameters["lang"];
+			$this->lang = $this->parameters["lang"];
 
 		}
-
+		$this->translator->setLang($this->lang);
+		/**
+		 * @TODO: wait for nette 2.1 to be stable and use factory
+		 */
 		$nav = new Navigation\Navigation($this, "nav_info");
 		$homepage = $nav->setupHomepage(__("Information"), "");
 		$homepage->add(__("Overview"), $this->link("Homepage:"));
@@ -54,7 +72,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$homepage->add(__("Score history"), $this->link("Information:scoreHistory"));
 		$homepage->add(__("Score inactivity"), $this->link("Information:scoreInactivity"));
 		$homepage->add(__("Fleet movements"), $this->link("Information:fleetMovements"), "perm_fleet_movements");
-		$nav->setTranslator($this->context->translator);
+		$nav->setTranslator($this->translator);
 		$nav->setCurrentByUrl();
 
 		$nav = new Navigation\Navigation($this, "nav_admin");
@@ -62,9 +80,9 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$homepage->add(__("Your settings"), $this->link("User:userSettings"));
 		$homepage->add(__("User management"), $this->link("Admin:users"), "perm_user_mng");
 		$homepage->add(__("Permissions"), $this->link("Admin:permissions"), "perm_perm_mng");
-		if($this->context->parameters["enableSync"] === TRUE)
+		if($this->parameters["enableSync"] === TRUE)
 			$homepage->add(__("Synchronization"), $this->link("Admin:syncSetup"), "perm_sync_mng");
-		$nav->setTranslator($this->context->translator);
+		$nav->setTranslator($this->translator);
 		$nav->setCurrentByUrl();
 
 		// setup permissions
@@ -93,7 +111,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		else
 		{
 			try{
-				date_default_timezone_set($this->context->server->timezone);
+				date_default_timezone_set($this->glotrApi->getServerData("timezone"));
 			}
 			catch(\PDOException $e)
 			{
@@ -115,14 +133,14 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 				$m = "0".$m;
 			$zone .= $m;
 
-			$this->context->server->getConnection()->query("SET time_zone = ?;", $zone);
+			$this->connection->query("SET time_zone = ?;", $zone);
 		}
 		catch(\PDOException $e)
 		{
 			echo $e->getMessage();
 		}
 
-		$translator = $this->context->translator;
+		$translator = $this->translator;
 		// I write it in this way, so that translations could be statically analyzed
 		$this->player_statuses = array(
 			"war" => $translator->translate("war"),
@@ -146,8 +164,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		$template = parent::createTemplate($class);
 		$template->registerHelperLoader("\GLOTR\Helpers::loader");
-		$template->setTranslator($this->context->translator);
-		$template->parameters = $this->context->parameters;
+		$template->setTranslator($this->translator);
+		$template->parameters = $this->parameters;
 		return $template;
 
 	}
@@ -156,16 +174,16 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		if($this->isAjax())
 			$this->invalidateControl("flashMessages");
 
-		if($this->context->hasService("translator") && $noTranslate === FALSE)
+		if($this->translator && $noTranslate === FALSE)
 		{
-			$message = $this->context->translator->translate($message);
+			$message = $this->translator->translate($message);
 		}
 		parent::flashMessage($message, $type);
 	}
 
 	protected function handlePermissions($perm_needed)
 	{
-		if(!$this->context->authenticator->checkPermissions($perm_needed))
+		if(!$this->glotrApi->checkPermissions($perm_needed))
 		{
 			$this->flashMessage("You don´t have permission for this action!", "error");
 			$this->redirect("Homepage:");
@@ -175,7 +193,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		if(is_null($label))
 			$label = $name;
-        $this->context->users->addPermissionColumn($name);
+        $this->users->addPermissionColumn($name);
 		$this->permissions[$name] = $label;
 	}
 	protected function setUserParams($params)
@@ -186,6 +204,13 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	}
 	protected function createComponentLangSelectionForm()
 	{
-		return new GLOTR\LangSelectionForm($this->context->parameters["langs"], $this->lang);
+		return new GLOTR\LangSelectionForm($this->parameters["langs"], $this->lang);
+	}
+	/**
+	 * @return \GLOTR\Authenticator
+	 */
+	public function getAuthenticator()
+	{
+		return $this->authenticator;
 	}
 }
