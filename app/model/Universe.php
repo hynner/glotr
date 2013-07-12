@@ -86,9 +86,9 @@ class Universe extends OgameApiModel
 		catch(\PDOException $e)
 		{
 			// exception means, there is already planet on that position in Database
-			// first I try to "delete" planet with the same coordinates but different id_player
-			$this->getTable()->where($coords)->where("NOT id_player",$dbData["id_player"])
-					->where("last_update < ?", $dbData["last_update"])
+			// first I try to "delete" planet with the same coordinates but different id_planet_ogame
+			$this->getTable()->where($coords)->where("NOT id_planet_ogame",$dbData["id_planet_ogame"])
+					->where("last_update < ? OR last_update IS NULL", $dbData["last_update"])
 					->update(array("galaxy" => NULL, "system" => NULL, "position" => NULL));
 
 			try{ // problem could be solved, try insert again
@@ -96,9 +96,9 @@ class Universe extends OgameApiModel
 			}
 			catch(\PDOException $e)
 			{
-				// exception means there is a planet on this coordinates and it is the planet of the same player, update it
+				// exception means there is a planet on this coordinates and it is the same planet, update it
 				$this->getTable()->where($coords)
-						->where("last_update < ?", $dbData["last_update"])->update($dbData);
+						->where("last_update < ? OR last_update IS NULL", $dbData["last_update"])->update($dbData);
 
 			}
 		}
@@ -119,7 +119,18 @@ class Universe extends OgameApiModel
 		));
 		return true;
 	}
-
+	/**
+	 * Gets count of planets + moons for player
+	 * @param int $id_player id_player_ogame
+	 * @return int|boolean
+	 */
+	public function getPlanetsMoonsCountForPlayer($id_player)
+	{
+		$ret = $this->getTable()->select("id_planet, COUNT(id_planet) + COUNT(id_moon_ogame) AS planet_count")->where(array("id_player" => $id_player))->fetch();
+		if($ret !== FALSE)
+			return $ret->planet_count;
+		return FALSE;
+	}
 
 
 }

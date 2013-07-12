@@ -64,7 +64,7 @@ class Galaxyplugin extends Nette\Object
 							//now handle activity
 
 							// don´t record activity for obviously inactive players
-							if(!preg_match("/i|v/i", (string) $position->player["status"]))
+							if(!preg_match("/[i|v|b|a]/i", (string) $position->player["status"]))
 							{
 								$planets = $this->container->universe->getTable()->select("id_planet")->where(array("id_player" => $dbData["id_player"]))->count();
 								if($planets !== FALSE)

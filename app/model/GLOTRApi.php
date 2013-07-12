@@ -247,13 +247,15 @@ class GLOTRApi extends \Nette\Object
 	/**
 	 * Updates planet/moon data
 	 * @param integer $id_planet
-	 * @param string $what - resources,building,fleet,defence
+	 * @param string $what - resources,buildings,fleet,defence
 	 * @param array $dbData data to be updated in form column_name => value, calling method must ensure that only relevant data are passed
+	 * @param integer $timestamp
 	 * @param boolean $moon
+	 * @param string $id_field ogame workaround id_planet_ogame|id_moon_ogame
 	 * @return integer|boolean
 	 * @throws \Nette\InvalidArgumentException
 	 */
-	public function updatePlanet($id_planet,$what, $dbData, $moon)
+	public function updatePlanet($id_planet,$what, $dbData, $timestamp,  $moon, $id_field = "id_planet_ogame")
 	{
 		$prefix = ($moon) ? "moon" : "planet";
 		switch($what)
@@ -261,7 +263,7 @@ class GLOTRApi extends \Nette\Object
 			case "resources":
 				$key = $prefix."_res_updated";
 				break;
-			case "building":
+			case "buildings":
 				$key = $prefix."_build_updated";
 				break;
 			case "fleet":
@@ -271,14 +273,63 @@ class GLOTRApi extends \Nette\Object
 				$key = $prefix."_defence_updated";
 				break;
 			default:
-				throw new \Nette\InvalidArgumentException("Unknown $what parameter. Allowed values are resources, building, fleet and defence!");
+				throw new \Nette\InvalidArgumentException("Unknown \$what parameter '$what' . Allowed values are resources, buildings, fleet and defence!");
 				break;
 		}
-		$dbData[$key] = $dbData["timestamp"];
-		unset($dbData["timestamp"]);
-		return $this->container->universe->getTable()->where("id_planet", $id_planet)
-						->where("$key < ? OR $key IS NULL", $dbData[$key])
+		$dbData[$key] = $timestamp;
+		return $this->container->universe->getTable()->where($id_field, $id_planet)
+						->where("$key < ? OR $key IS NULL", $timestamp)
 						->update($dbData);
+	}
+	/**
+	 * Update player - playername, researches and alliance
+	 * @param integer $id_player
+	 * @param array $data
+	 */
+	public function updatePlayer($id_player, $data)
+	{
+		if(!empty($data["researches"]))
+		{
+			$res = $data["researches"];
+			var_dump($res);
+			$res["research_updated"] = $data["timestamp"];
+			$this->container->players->setResearches($id_player, $res);
+		}
+		$this->container->players->setAlliance($id_player, $data["id_alliance"], $data["timestamp"]);
+		$this->container->players->insertPlayer(array("id_player_ogame" => $id_player, "playername" => $data["playername"], "last_update" => $data["timestamp"]));
+	}
+	public function updateAlliance($id_alliance, $data)
+	{
+		if($data["alliance"])
+		{
+			$ali = $data["alliance"];
+			$ali["last_update"] = $data["timestamp"];
+			$ali["id_alliance_ogame"] = $id_alliance;
+			$this->container->alliances->insertAlliance($ali);
+		}
+		if($data["members"])
+		{
+			foreach($data["members"] as $id_player => $activity)
+			{
+				$this->container->players->setAlliance($id_player, $id_alliance, $data["timestamp"]);
+				// NULL means that current player can´t see online statuses
+				if($activity !== NULL)
+				{
+					$act =  array("id_player" => $id_player);
+					if($activity)
+					{
+						$act["timestamp"] = $activity;
+						$this->container->activities->insertActivityMultiple($act, $data["timestamp"], "alliance_page", "apg_inactivity");
+					}
+					else
+					{
+						$act["timestamp"] = $data["timestamp"];
+						$this->container->activities->insertInactivity($act, "apg_inactivity");
+					}
+				}
+			}
+		}
+
 	}
 	/**
 	 * Get score inactivity records
@@ -690,6 +741,140 @@ class GLOTRApi extends \Nette\Object
 	public function insertActivity($data)
 	{
 		return $this->container->activities->insertActivity($data);
+	}
+	/**
+	 * Insert data from galaxy
+	 * @param array $data
+	 * @return boolean
+	 * @throws \Nette\Application\BadRequestException
+	 */
+	public function insertSystem($data)
+	{
+		if(
+			!isset($data["galaxy"], $data["system"], $data["planets"], $data["timestamp"])
+			|| intval($data["galaxy"]) > $this->getServerData("galaxies") || intval($data["system"]) > $this->getServerData("systems")
+			|| intval($data["system"]) < 1 || intval($data["galaxy"]) < 1 || empty($data["planets"])
+		)
+		{
+			throw new \Nette\Application\BadRequestException("Wrong arguments for system insertion!");
+		}
+		$time = $data["timestamp"];
+		// to avoid updating these uselessly
+		$updated_allis = array();
+		$update_players = array();
+		$player_planet_count = array();
+		foreach($data["planets"] as $position => $planet)
+		{
+			$coords = array(
+				"galaxy" => $data["galaxy"],
+				"system" => $data["system"],
+				"position" => $position,
+			);
+			// if position is empty delete any potential planet
+			if(empty($planet))
+			{
+				$this->container->universe->deletePlanet($coords);
+			}
+			else
+			{
+				// first update planet
+				$dbData = array(
+					"name" => $planet["name"],
+					"id_planet_ogame" => $planet["id"],
+					"galaxy" => $data["galaxy"],
+					"system" => $data["system"],
+					"position" => $position,
+					"debris_metal" => ((isset($planet["df"]["metal"]) ? $planet["df"]["metal"] : 0)),
+					"debris_crystal" => ((isset($planet["df"]["crystal"]) ? $planet["df"]["crystal"] : 0)),
+					"id_player" => $planet["player"]["id"],
+					"id_moon_ogame" => ((isset($planet["moon"]["id"])) ? $planet["moon"]["id"] : NULL),
+					"moon_size" => ((isset($planet["moon"]["size"])) ? $planet["moon"]["size"] : NULL),
+					"moon_name" => ((isset($planet["moon"]["name"])) ? $planet["moon"]["name"] : NULL),
+					"last_update" => $time
+				);
+				$this->container->universe->insertPlanet($dbData);
+				// if player is already updated, alliance is updated too
+				if(!in_array($planet["player"]["id"], $update_players))
+				{
+					// now update the player
+					$player = $planet["player"];
+					$alliance = $player["alliance"];
+					$dbData = array(
+						"id_player_ogame" => $player["id"],
+						"playername" => $player["playername"],
+						"status" => $player["status"],
+						"id_alliance" => ((!empty($alliance) ? $alliance["id"] : NULL)),
+						"last_update" => $time
+					);
+					$this->container->players->insertPlayer($dbData);
+					$update_players[] = $player["id"];
+					// now update alliance
+					if(!empty($alliance) && !in_array($alliance["id"], $updated_allis))
+					{
+						$dbData = array(
+							"id_alliance_ogame" => $alliance["id"],
+							"tag" => $alliance["tag"],
+							"name" => $alliance["name"],
+							"last_update" => $time
+						);
+						$this->container->alliances->insertAlliance($dbData);
+						$updated_allis[] = $alliance["id"];
+					}
+				}
+				// handle activities
+				// only players with empty status are active
+				if($player["status"] == "")
+				{
+					if(!isset($player_planet_count[$player["id"]]))
+					{
+						$player_planet_count[$player["id"]] = $planets = $this->container->universe->getPlanetsMoonsCountForPlayer($player["id"]);
+					}
+					else
+					{
+						$planets = $player_planet_count[$player["id"]];
+					}
+
+					if($planets !== FALSE)
+					{
+						// first handle planet
+						$act = array(
+							"id_player" => $player["id"],
+							"planets" => $planets,
+							"moon" => "0"
+						);
+						$act = array_merge($act, $coords);
+						if($planet["activity"])
+						{
+							$act["timestamp"] = $planet["activity"];
+							$this->container->activities->insertActivityMultiple($act, $time, "galaxyview", "inactivity");
+						}
+						else
+						{
+							$act["timestamp"] = $time;
+							$this->container->activities->insertInactivity($act, "inactivity");
+						}
+						if(!empty($planet["moon"]))
+						{
+							$act["moon"] = "1";
+							if($planet["moon"]["activity"])
+							{
+								$act["timestamp"] = $planet["activity"];
+								$this->container->activities->insertActivityMultiple($act, $time, "galaxyview", "inactivity");
+							}
+							else
+							{
+								$act["timestamp"] = $time;
+								$this->container->activities->insertInactivity($act, "inactivity");
+							}
+						}
+					}
+
+				}
+
+
+			}
+		}
+		return true;
 	}
 	/**
 	 * Add prefix to array keys

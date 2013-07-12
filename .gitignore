@@ -11,6 +11,7 @@ temp/btfj.dat
 temp/cache/*
 temp/sessions/*
 app/config/testServerAuth.txt
+composer.lock
 composer.json
 php.tags
 readme.txt

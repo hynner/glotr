@@ -21,9 +21,6 @@ class Users extends Table
 			return false;
 		$id = $user->id;
 		$key = Nette\Utils\Strings::random (32, "0-9a-f");
-
-
-
 		try
 		{
 			$this->getTable()->where(array("id_user" =>$id))->update(array("logon_key" => $key));
@@ -45,5 +42,10 @@ class Users extends Table
             $this->getConnection()->query("Alter table $this->tableName ADD COLUMN $name tinyint(1) NOT NULL DEFAULT 0 ");
         }
     }
-
+	public function getApiKeyByUsername($username)
+	{
+		$ret = $this->getTable()->where(array("username" => $username))->select("logon_key")->fetch();
+		if($ret === FALSE) return $ret;
+		return $ret->logon_key;
+	}
 }

@@ -18,8 +18,6 @@ class Server extends OgameApiModel
 			// data in ogame api are always valid at the time of their creation, so I can delete all older data, because they will be replaced anyway
 			if($data->domain)
 			{
-
-				$res = $this->getTable()->where("last_update < ?", $timestamp)->delete();
 				$dbData = array();
 				foreach($data as $key => $value)
 					$dbData[$key] = (string) $value;
@@ -37,12 +35,12 @@ class Server extends OgameApiModel
 				$dbData["last_update"] = $timestamp;
 
 				try{
-					// only insertion matters, there is no need for update, because there is no old data in the database
 					$this->getTable()->insert($dbData);
 				}
-				// I don´t have to care about exceptions, the only source is duplicate unique keys => newer data I don´t want to replace
 				catch(\PDOException $e)
-				{}
+				{
+					$this->getTable()->update($dbData);
+				}
 				$this->config->save($this->tableName."-finished", $timestamp);
 				$this->data = $dbData;
 				return true;

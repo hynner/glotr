@@ -1,5 +1,5 @@
 <?php
-
+namespace FrontModule;
 
 use Nette\Application\UI\Form,
 	Nette\Security as NS;
@@ -116,7 +116,7 @@ class UpdatePresenter extends BasePresenter
 		{}
 
 		send:
-			$this->sendResponse(new Nette\Application\Responses\JsonResponse($response));
+			$this->sendResponse(new \Nette\Application\Responses\JsonResponse($response));
 	}
 	public function actionGalaxyplugin()
 	{
@@ -156,3 +156,5 @@ class UpdatePresenter extends BasePresenter
 	}
 
 }
+
+

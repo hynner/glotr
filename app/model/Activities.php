@@ -51,6 +51,51 @@ class Activities extends Table
 		}
 		return true;
 	}
+	/**
+	 * Helper method for inserting activities which can also reveal inactivity - like galaxyview or alliance_page
+	 * @param array $act
+	 * @param int $time when was activity record obtained
+	 * @param string $act_type eg. galaxyview, alliance_page
+	 * @param string $inact_type eg. inactivity, apg_inactivity
+	 * @return boolean
+	 */
+	public function insertActivityMultiple($act, $time, $act_type, $inact_type)
+	{
+		$act["type"] = $act_type;
+		$this->insertActivity($act);
+		// if activity is more than 15mins old, insert inactivity too
+		$inactivities = floor(($time - $act["timestamp"])/(15*60));
+		if($inactivities > 0)
+		{
+			for($i = 1; $i <= $inactivities; $i++)
+			{
+				$tmp = $act;
+				$tmp["timestamp"] += $i*(15*60); // add x*15 minutes to timestamp
+				$tmp["type"] = $inact_type;
+				$this->insertActivity($tmp);
+			}
+		}
+		return TRUE;
+	}
+	/**
+	 * Helper method to insert inactivity for past hour
+	 * @param type $act
+	 * @param type $type
+	 * @return boolean
+	 */
+	public function insertInactivity($act, $type)
+	{
+		$act["type"] = $type;
+		$act["timestamp"] += (15*60); // add 15 minutes, I will be substracting it again
+		// inactvity shows after 60minutes => 4*15
+		for($i = 1; $i <= 4; $i++)
+		{
+			$act["timestamp"] -= 15*60;
+
+			$this->insertActivity($act);
+		}
+		return true;
+	}
 	public function getTypes()
 	{
 		return $this->types;

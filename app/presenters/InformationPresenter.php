@@ -1,8 +1,9 @@
 <?php
 
-
-use Nette\Application\UI\Form,
-	Nette\Security as NS;
+namespace FrontModule;
+use \Nette\Application\UI\Form,
+	\Nette\Security as NS,
+	\GLOTR;
 
 class InformationPresenter extends BasePresenter
 {
@@ -548,7 +549,7 @@ class InformationPresenter extends BasePresenter
 	protected function createComponentScoreHistoryCharts()
 	{
 		$control = new GLOTR\Components\ScoreHistoryCharts;
-		$control->injectParams($this->parameters);
+		$control->injectParameters($this->parameters);
 		$control->injectTranslator($this->translator);
 		return $control;
 	}

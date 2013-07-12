@@ -1,9 +1,9 @@
 <?php
-
+namespace FrontModule;
 /**
  * Base presenter for all application presenters.
  */
-abstract class BasePresenter extends Nette\Application\UI\Presenter
+abstract class BasePresenter extends \Nette\Application\UI\Presenter
 {
 
 	/** @persistent */
@@ -64,7 +64,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		/**
 		 * @TODO: wait for nette 2.1 to be stable and use factory
 		 */
-		$nav = new Navigation\Navigation($this, "nav_info");
+		$nav = new \Navigation\Navigation($this, "nav_info");
 		$homepage = $nav->setupHomepage(__("Information"), "");
 		$homepage->add(__("Overview"), $this->link("Homepage:"));
 		$homepage->add(__("Search in database"), $this->link("Information:search"), "perm_search");
@@ -75,7 +75,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$nav->setTranslator($this->translator);
 		$nav->setCurrentByUrl();
 
-		$nav = new Navigation\Navigation($this, "nav_admin");
+		$nav = new \Navigation\Navigation($this, "nav_admin");
 		$homepage = $nav->setupHomepage(__("Settings"), $this->link("User:"));
 		$homepage->add(__("Your settings"), $this->link("User:userSettings"));
 		$homepage->add(__("User management"), $this->link("Admin:users"), "perm_user_mng");
@@ -204,7 +204,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	}
 	protected function createComponentLangSelectionForm()
 	{
-		return new GLOTR\LangSelectionForm($this->parameters["langs"], $this->lang);
+		return new \GLOTR\LangSelectionForm($this->parameters["langs"], $this->lang);
 	}
 	/**
 	 * @return \GLOTR\Authenticator

@@ -67,7 +67,7 @@ class Alliances extends OGameApiModel
 
 			// if alliance already exists update it
 			$this->getTable()->where(array("id_alliance_ogame" => $dbData["id_alliance_ogame"]))
-					->where("last_update < ?", $dbData["last_update"])->update($dbData);
+					->where("last_update < ? OR last_update IS NULL", $dbData["last_update"])->update($dbData);
 
 		}
 		return true;

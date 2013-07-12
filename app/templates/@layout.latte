@@ -70,7 +70,8 @@
 								$.ajax({
 								dataType: "json",
 								cache: false,
-								url: "{!$presenter->link("Update:updateAll")}",
+								type: "GET",
+								url: "{!$_control->link(":Api:Update:all", "json")}",
 								success: function (data)
 								{
 									if(data["status"] == "ok")

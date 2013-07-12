@@ -1,4 +1,5 @@
 <?php
+namespace FrontModule;
 use Nette\Application\UI\Form;
 class UserPresenter extends BasePresenter
 {
@@ -20,7 +21,7 @@ class UserPresenter extends BasePresenter
 	protected function createComponentUserSettingsForm()
 	{
 		$user = $this->getUser()->getIdentity();
-		$form = new GLOTR\MyForm;
+		$form = new \GLOTR\MyForm;
 		$form->getElementPrototype()->class("ajax");
 		$form->addPassword("oldPass", "Old password", 12)
 				->addRule(Form::FILLED, "Verify the setting change with your password please.");
@@ -33,13 +34,13 @@ class UserPresenter extends BasePresenter
 				->setDefaultValue($user->email)
 				->addCondition(Form::FILLED)
 					->AddRule(Form::EMAIL, "You must enter valid email address!");
-		$form->addSelect("id_player", __("Ingame nickname"), $this->glotrApi->getTable("players")->getTable()->order("playername")->fetchPairs("id_player_ogame", "playername"))
+		$form->addSelect("id_player", __("Ingame nickname"), $this->glotrApi->getTable("players")->order("playername")->fetchPairs("id_player_ogame", "playername"))
 				->setPrompt("Choose player")
 				->setTranslator(NULL)
 				->setDefaultValue($user->id_player);
-		$form->addSelect("timezone", __("Your timezone"), DateTimeZone::listIdentifiers())
+		$form->addSelect("timezone", __("Your timezone"), \DateTimeZone::listIdentifiers())
 				->setPrompt("Use ogame server timezone")
-				->setDefaultValue(array_search(date_default_timezone_get(), DateTimeZone::listIdentifiers()))
+				->setDefaultValue(array_search(date_default_timezone_get(), \DateTimeZone::listIdentifiers()))
 				->setTranslator(NULL);
 		$form->addSelect("lang", __("Language"), $this->parameters["langs"])
 				->setDefaultValue(($user->lang) ? $user->lang : $this->parameters["lang"])
@@ -57,11 +58,11 @@ class UserPresenter extends BasePresenter
 		$params = array();
 		if($values["newPass"])
 		{
-			$params["password"] = GLOTR\Authenticator::calculateHash($values["newPass"]);
+			$params["password"] = \GLOTR\Authenticator::calculateHash($values["newPass"]);
 		}
 		$params["email"] = $values["email"];
 		$params["id_player"] = $values["id_player"];
-		$timezones = DateTimeZone::listIdentifiers();
+		$timezones = \DateTimeZone::listIdentifiers();
 		$params["timezone"] = (!is_null($values["timezone"])) ? $timezones[$values["timezone"]] : "";
 		$params["lang"] = $values["lang"];
 		$this->users->getTable()->where("id_user", $this->getUser()->getIdentity()->id)->update($params);
@@ -80,7 +81,7 @@ class UserPresenter extends BasePresenter
 	{
 		$values = $form->getValues();
 		$tmp = $this->users->find($this->getUser()->getIdentity()->id_user);
-		if($tmp->password != GLOTR\Authenticator::calculateHash($values["oldPass"], $tmp->password))
+		if($tmp->password != \GLOTR\Authenticator::calculateHash($values["oldPass"], $tmp->password))
 				$form->addError("Wrong old password!");
 		if($this->isAjax())
 		{

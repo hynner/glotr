@@ -1,5 +1,5 @@
 <?php
-
+namespace FrontModule;
 use Nette\Application\UI,
 	Nette\Security as NS;
 
@@ -24,7 +24,7 @@ class SignPresenter extends BasePresenter
 	 */
 	protected function createComponentSignInForm()
 	{
-		$form = new GLOTR\MyForm;
+		$form = new \GLOTR\MyForm;
 		$form->addText('username', 'Username')
 			->setRequired('Please provide a username.');
 
@@ -67,7 +67,7 @@ class SignPresenter extends BasePresenter
 	 */
 	protected function createComponentForgottenPasswordForm()
 	{
-		$form = new GLOTR\MyForm;
+		$form = new \GLOTR\MyForm;
 		$form->addText('username', 'Username:')
 			->setRequired('Please provide a username.');
 
@@ -91,7 +91,7 @@ class SignPresenter extends BasePresenter
 			$usr = $this->users->findOneBy(array("email" => $values["email"], "username" => $values["username"]));
 			if($usr)
 			{
-				$template = new Nette\Templating\FileTemplate(APP_DIR."/templates/Emails/forgotPass-email.latte");
+				$template = new \Nette\Templating\FileTemplate(APP_DIR."/templates/Emails/forgotPass-email.latte");
 				$template->registerFilter(new Nette\Latte\Engine);
 				$template->pass = Nette\Utils\Strings::random(12);
 				$template->setTranslator($this->translator);
@@ -99,7 +99,7 @@ class SignPresenter extends BasePresenter
 				$this->users->findOneBy(array("email" => $values["email"], "username" => $values["username"]))
 						->update(array("password" => $this->authenticator->calculateHash($template->pass)));
 
-				$mail = new Nette\Mail\Message;
+				$mail = new \Nette\Mail\Message;
 				$mail->setFrom($this->parameters["adminEmail"])
 						->addTo($values["email"])
 						->setSubject($this->translator->translate("GLOTR password reset"))
@@ -138,7 +138,7 @@ class SignPresenter extends BasePresenter
 	}
 	protected function createComponentRegistrationForm()
 	{
-		$form = new GLOTR\UserRegistrationForm();
+		$form = new \GLOTR\UserRegistrationForm();
 		// player don´t have to be chosen, someone could be just admin without playing that server at all
 		$form->addSelect("id_player", "Ingame nickname:", $this->glotrApi->getTable("players")->order("playername")->fetchPairs("id_player_ogame", "playername"))
 				->setPrompt("Choose player")

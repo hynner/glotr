@@ -52,7 +52,10 @@ class Espionages extends GLOTRApiModel
 			"shipyard"   ,
 			"research_lab"   ,
 			"terraformer"   ,
-			"nanite_factory"
+			"nanite_factory",
+			"shielded_metal_den",
+			"underground_crystal_den",
+			"seabed_deuterium_den"
 
 		);
 		$this->planet_defence = array(
@@ -191,7 +194,9 @@ class Espionages extends GLOTRApiModel
 		$prefix = "planet";
 		if($dbData["moon"])
 			$prefix = "moon";
-
+		/**
+		 * @TODO following code isn´t gonna work!
+		 */
 		switch($dbData["scan_depth"]):
 			case "research":
 			case "building":

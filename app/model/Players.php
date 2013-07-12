@@ -64,18 +64,8 @@ class Players extends OGameApiModel
 
 			catch(\PDOException $e)
 			{
-					try { // if 2 players swap their names it will make PDOEception or one player gets deleted and anothe uses his name
-					//if player already exists update it
 					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))
-							->where("last_update < ?", $dbData["last_update"])->update($dbData);
-				}
-				catch (\PDOException $e)
-				{
-					// if last_update < $dbData["last_update"] then PDOExpection shouldn´t be raised, so it´s safe to let it unchecked
-					// ogame playername is max 20 chars long, so this will ensure there is no same playername
-					$this->getTable()->where(array("playername" => $dbData["playername"]))->update(array("playername" => Nette\Utils\Strings::random(21)));
-					$this->getTable()->where(array("id_player_ogame" => $dbData["id_player_ogame"]))->update($dbData);
-				}
+							->where("last_update < ? OR last_update IS NULL", $dbData["last_update"])->update($dbData);
 
 			}
 		return true;
@@ -91,7 +81,7 @@ class Players extends OGameApiModel
 	{
 		if($last_update === NULL) $last_update = time();
 		$this->getTable()->where("id_player_ogame" , $id_player)
-				->where("last_update < ?", $last_update)->update(array("id_alliance" => $id_alliance));
+				->where("last_update < ? OR last_update IS NULL", $last_update)->update(array("id_alliance" => $id_alliance));
 		return true;
 	}
 	/**
@@ -103,7 +93,7 @@ class Players extends OGameApiModel
 	public function setResearches($id_player, $dbData)
 	{
 		$this->getTable()->where("id_player_ogame" , $id_player)
-				->where("research_updated < ?", $dbData["research_updated"])->update($dbData);
+				->where("research_updated < ? OR research_updated IS NULL", $dbData["research_updated"])->update($dbData);
 		return true;
 	}
 	/**
