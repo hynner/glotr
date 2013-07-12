@@ -823,7 +823,7 @@ class GLOTRApi extends \Nette\Object
 				}
 				// handle activities
 				// only players with empty status are active
-				if($player["status"] == "")
+				if($this->playerActive($player["status"]))
 				{
 					if(!isset($player_planet_count[$player["id"]]))
 					{
@@ -840,9 +840,10 @@ class GLOTRApi extends \Nette\Object
 						$act = array(
 							"id_player" => $player["id"],
 							"planets" => $planets,
-							"moon" => "0"
+							"moon" => 0
 						);
 						$act = array_merge($act, $coords);
+
 						if($planet["activity"])
 						{
 							$act["timestamp"] = $planet["activity"];
@@ -855,10 +856,10 @@ class GLOTRApi extends \Nette\Object
 						}
 						if(!empty($planet["moon"]))
 						{
-							$act["moon"] = "1";
+							$act["moon"] = 1;
 							if($planet["moon"]["activity"])
 							{
-								$act["timestamp"] = $planet["activity"];
+								$act["timestamp"] = $planet["moon"]["activity"];
 								$this->container->activities->insertActivityMultiple($act, $time, "galaxyview", "inactivity");
 							}
 							else
@@ -875,6 +876,11 @@ class GLOTRApi extends \Nette\Object
 			}
 		}
 		return true;
+	}
+	public function playerActive($status)
+	{
+		// player can be active even if he is in v-mode!!!
+		return $status == "" || ((stripos("i", $status) === FALSE) && (strpos("a", $status) === FALSE) && (strpos("b", $status) === FALSE));
 	}
 	/**
 	 * Add prefix to array keys

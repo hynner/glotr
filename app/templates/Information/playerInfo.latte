@@ -182,7 +182,7 @@
 							<td>{$a["timestamp"]|date:'j. n. Y H:i:s'}</td>
 							<td>{$date}</td>
 							<td>{$a["type_tr"]}</td>
-							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"] : "-"}</td>
+							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"].(($a["moon"] == 1) ? " (M)" : "") : "-"}</td>
 							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["planets"] : "-"}</td>
 						</tr>
 						{/foreach}
