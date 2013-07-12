@@ -15,8 +15,7 @@ class AlliancesPresenter extends BasePresenter
     */
    public function actionUpdateAlliance($id)
    {
-	   //$this->glotrApi->updateAlliance($id, $this->input->getData());
-	   var_dump($this->input->getData());
+	   $this->glotrApi->updateAlliance($id, $this->input->getData());
 	   $this->resource->status = "OK";
    }
 
