@@ -843,23 +843,12 @@ class GLOTRApi extends \Nette\Object
 							"moon" => 0
 						);
 						$act = array_merge($act, $coords);
-
-						if($planet["activity"])
+						// NULL is when player has detailed activity disabled
+						if($planet["activity"] !== NULL)
 						{
-							$act["timestamp"] = $planet["activity"];
-							$this->container->activities->insertActivityMultiple($act, $time, "galaxyview", "inactivity");
-						}
-						else
-						{
-							$act["timestamp"] = $time;
-							$this->container->activities->insertInactivity($act, "inactivity");
-						}
-						if(!empty($planet["moon"]))
-						{
-							$act["moon"] = 1;
-							if($planet["moon"]["activity"])
+							if($planet["activity"])
 							{
-								$act["timestamp"] = $planet["moon"]["activity"];
+								$act["timestamp"] = $planet["activity"];
 								$this->container->activities->insertActivityMultiple($act, $time, "galaxyview", "inactivity");
 							}
 							else
@@ -867,6 +856,25 @@ class GLOTRApi extends \Nette\Object
 								$act["timestamp"] = $time;
 								$this->container->activities->insertInactivity($act, "inactivity");
 							}
+						}
+
+						if(!empty($planet["moon"]))
+						{
+							$act["moon"] = 1;
+							if($planet["moon"]["activity"] !== NULL)
+							{
+								if($planet["moon"]["activity"])
+								{
+									$act["timestamp"] = $planet["moon"]["activity"];
+									$this->container->activities->insertActivityMultiple($act, $time, "galaxyview", "inactivity");
+								}
+								else
+								{
+									$act["timestamp"] = $time;
+									$this->container->activities->insertInactivity($act, "inactivity");
+								}
+							}
+
 						}
 					}
 
