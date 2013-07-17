@@ -85,7 +85,15 @@ class Input extends Object implements IteratorAggregate, IInput
 		}
 		return $this->data;
 	}
-
+	public function getRawData()
+	{
+		if ($this->httpRequest->getPost()) {
+			return http_build_query($this->httpRequest->getPost());
+		} else if ($input = file_get_contents('php://input')) {
+			return $input;
+		}
+		return http_build_query($this->httpRequest->getQuery());
+	}
 	/**
 	 * Parse data from input
 	 * @return array|mixed|\Traversable

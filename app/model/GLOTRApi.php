@@ -291,12 +291,18 @@ class GLOTRApi extends \Nette\Object
 		if(!empty($data["researches"]))
 		{
 			$res = $data["researches"];
-			var_dump($res);
 			$res["research_updated"] = $data["timestamp"];
 			$this->container->players->setResearches($id_player, $res);
 		}
-		$this->container->players->setAlliance($id_player, $data["id_alliance"], $data["timestamp"]);
-		$this->container->players->insertPlayer(array("id_player_ogame" => $id_player, "playername" => $data["playername"], "last_update" => $data["timestamp"]));
+		if(isset($data["id_alliance"]))
+		{
+			$this->container->players->setAlliance($id_player, $data["id_alliance"], $data["timestamp"]);
+		}
+		if(isset($data["playername"]))
+		{
+			$this->container->players->insertPlayer(array("id_player_ogame" => $id_player, "playername" => $data["playername"], "last_update" => $data["timestamp"]));
+		}
+
 	}
 	public function updateAlliance($id_alliance, $data)
 	{
@@ -979,5 +985,48 @@ class GLOTRApi extends \Nette\Object
 				if(!$value)
 					unset($tmp[$key]);
 		return $tmp;
+	}
+	/**
+	 * @param array $data
+	 */
+	public function insertMessages($data)
+	{
+		if(!empty($data["espionage_reports"])){
+			foreach($data["espionage_reports"] as $id_msg => &$report)
+			{
+				// for now (Ogame v5.5.2) id_player and id_planet can´t be determined from espionage report
+				if(!isset($report["id_player"]))
+				{
+					$report["id_player"] = $this->container->players->getTable()->select("id_player_ogame")->where(array("playername" => $report["playername"]))->fetch();
+					if($report["id_player"] === FALSE) continue;
+					$report["id_player"] = $report["id_player"]->id_player_ogame;
+				}
+				if(!isset($report["id_planet"]))
+				{
+					$coords = array(
+						"galaxy" => $report["coordinates"]["galaxy"],
+						"system" => $report["coordinates"]["system"],
+						"position" => $report["coordinates"]["position"]
+					);
+					$report["id_planet"] = $this->container->universe->getTable()->select("id_planet_ogame")->where($coords)->fetch();
+					if($report["id_planet"] === FALSE) continue;
+					$report["id_planet"] = $report["id_planet"]->id_planet_ogame;
+				}
+				$moon = $report["coordinates"]["moon"];
+				$dbData = array(
+					"moon" => ($moon) ? "1" : "0",
+					"id_planet" => $report["id_planet"],
+					"scan_depth" => $report["scan_depth"],
+					"id_message_ogame" => $id_msg,
+					"timestamp" => $report["timestamp"],
+					"resources" => $report["resources"],
+					"fleet" => $report["fleet"],
+					"defence" => $report["defence"],
+					"building" => $report["building"],
+					"research" => $report["research"],
+				);
+				$this->container->espionages->insertEspionage($dbData, $report["id_player"]);
+			}
+		}
 	}
 }

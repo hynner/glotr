@@ -127,8 +127,15 @@ class Espionages extends GLOTRApiModel
 	 * @param array $dbData - contains all the neccessary info about planet
 	 * @return bool
 	 */
-	public function insertEspionage($dbData, $id_player)
+	public function insertEspionage($data, $id_player)
 	{
+		$dbData = array_merge(array(
+			"moon" => $data["moon"],
+			"id_planet" => $data["id_planet"],
+			"scan_depth" => $data["scan_depth"],
+			"id_message_ogame" => $data["id_message_ogame"],
+			"timestamp" => $data["timestamp"],
+		), $data["resources"], $data["fleet"], $data["defence"], $data["building"], $data["research"]);
 
 		try{
 			$this->getTable()->insert($dbData);
@@ -137,76 +144,40 @@ class Espionages extends GLOTRApiModel
 		{
 				// just to be sure, there could be some crash or whatever
 				$this->getTable()->where(array("id_message_ogame" => $dbData["id_message_ogame"]))->update($dbData);
-
 		}
 		// update research info for player
-		if($dbData["scan_depth"] == "research")
+		if($data["scan_depth"] == "research")
 		{
-			$this->setResearchesFromData($id_player, $dbData);
+			$this->glotrApi->updatePlayer($id_player,array("timestamp" => $data["timestamp"], "researches" => $data["research"]));
 		}
-		//now if it is moon, it is neccessary to add moon_ prefix
-		if($dbData["moon"])
-		{
-			$dbData = $this->addPrefixToKeys("moon_", $dbData, array_merge(array("timestamp", "scan_depth", "id_planet", "moon", "id_message_ogame"), $this->researches));
-		}
-
-		$this->setPlanetInfo($dbData);
+		$this->setPlanetInfo($data);
 		return true;
 	}
-	public function setResearchesFromData($id_player, $dbData)
-	{
-		$tmp = array();
-		foreach($dbData as $key => $value)
-		{
-			if(in_array($key, $this->researches))
-			{
-				$tmp[$key] = $value;
-			}
-		}
-		if(!empty($tmp))
-		{
-			$tmp["research_updated"] = $dbData["timestamp"];
-			$this->glotrApi->setResearches($id_player, $tmp);
-		}
-	}
+
 	/**
 	 * set planet/moon info from espionage
 	 * @param array $dbData
 	 */
 	public function setPlanetInfo($dbData)
 	{
-		$tmp = array();
-		foreach($dbData as $key => $value)
+		//now if it is moon, it is neccessary to add moon_ prefix
+		if($dbData["moon"])
 		{
-			if($dbData["moon"])
+			foreach(array("resources", "fleet", "defence", "building") as $key)
 			{
-				if(in_array($key, $this->moon))
-						$tmp[$key] = $value;
-
-				// this way, multiple of them will be set
-
-			}
-			elseif(in_array($key, $this->planet))
-			{
-				$tmp[$key] = $value;
+				$dbData[$key] = $this->addPrefixToKeys("moon_", $dbData[$key]);
 			}
 		}
-		$prefix = "planet";
-		if($dbData["moon"])
-			$prefix = "moon";
-		/**
-		 * @TODO following code isn´t gonna work!
-		 */
 		switch($dbData["scan_depth"]):
 			case "research":
 			case "building":
-				$this->glotrApi->updatePlanet($dbData["id_planet"], "building", $this->glotrApi->filterData($tmp, $this->{$prefix."_buildings"}, true));
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "buildings",$dbData["building"], $dbData["timestamp"], $dbData["moon"] == "1");
 			case "defence":
-				$this->glotrApi->updatePlanet($dbData["id_planet"], "defence", $this->glotrApi->filterData($tmp, $this->{$prefix."_defence"}, true));
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "defence",$dbData["defence"], $dbData["timestamp"], $dbData["moon"] == "1");
 			case "fleet":
-				$this->glotrApi->updatePlanet($dbData["id_planet"], "fleet", $this->glotrApi->filterData($tmp, $this->{$prefix."_fleet"}, true));
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "fleet", $dbData["fleet"], $dbData["timestamp"], $dbData["moon"] == "1");
 			default:
-				$this->glotrApi->updatePlanet($dbData["id_planet"], "resources", $this->glotrApi->filterData($tmp, $this->{$prefix."_resources"}, true));
+				$this->glotrApi->updatePlanet($dbData["id_planet"], "resources",$dbData["resources"], $dbData["timestamp"], $dbData["moon"] == "1");
 		endswitch;
 	}
 
