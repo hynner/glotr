@@ -21,26 +21,29 @@ abstract class BasePresenter extends ResourcePresenter
 	protected $parameters;
 	/** @var \GLOTR\Users */
 	protected $users;
+	/** @var \Nette\Database\Connection */
+	protected $connection;
 
 	  /** @var UserSecuredAuthentication */
     private $auth;
 	/** @var boolean It needs to be set to FALSE, otherwise it will redirect automatically! */
 	public $autoCanonicalize = FALSE;
 
-	public function __construct(\Nette\DI\Container $context = NULL, \GLOTR\GLOTRApi $glotrApi, \GLOTR\Users $users, UserSecuredAuthentication $auth)
+	public function __construct(\Nette\DI\Container $context = NULL, \GLOTR\GLOTRApi $glotrApi, \GLOTR\Users $users, UserSecuredAuthentication $auth,  \Nette\Database\Connection $conn)
 	{
 		parent::__construct($context);
 		$this->glotrApi = $glotrApi;
 		$this->parameters = $context->parameters;
 		$this->users = $users;
 		$this->auth = $auth;
+		$this->connection = $conn;
 
 
 	}
 	protected function startup()
 	{
 		parent::startup();
-		date_default_timezone_set($this->glotrApi->getServerData("timezone"));
+
 		$response = $this->getHttpResponse();
 		$request = $this->getHttpRequest();
 		// allow cross-domain requests - neccessary for ingame tools

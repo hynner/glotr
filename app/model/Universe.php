@@ -126,7 +126,7 @@ class Universe extends OgameApiModel
 	 */
 	public function getPlanetsMoonsCountForPlayer($id_player)
 	{
-		$ret = $this->getTable()->select("id_planet, COUNT(id_planet) + COUNT(id_moon_ogame) AS planet_count")->where(array("id_player" => $id_player))->fetch();
+		$ret = $this->getTable()->select("id_planet_ogame, COUNT(id_planet_ogame) + COUNT(id_moon_ogame) AS planet_count")->where(array("id_player" => $id_player))->fetch();
 		if($ret !== FALSE)
 			return $ret->planet_count;
 		return FALSE;
