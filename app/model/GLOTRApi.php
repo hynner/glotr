@@ -377,7 +377,7 @@ class GLOTRApi extends \Nette\Object
 		$columns = "$uniT.*, $alliances_columns $playersT.*";
 		if(!is_null($paginator))
 		{
-			$count = $this->sendUniverseSearchQuery("count($uniT.id_planet) as count", $values);
+			$count = $this->sendUniverseSearchQuery("count($uniT.id_planet_ogame) as count", $values);
 			$paginator->setItemCount($count[0]["count"]);
 			$paginator->setItemsPerPage(((isset($values["results_per_page"]) && $values["results_per_page"] !== "")) ? $values["results_per_page"] : 20);
 		}
@@ -548,7 +548,7 @@ class GLOTRApi extends \Nette\Object
 					$select .= "$allianceT.tag $dir";
 					break;
 				default:
-					$select .= "$uniT.id_planet $dir";
+					$select .= "$uniT.id_planet_ogame $dir";
 					break;
 			}
 		}
@@ -600,14 +600,26 @@ class GLOTRApi extends \Nette\Object
 	 * @param integer $moon 0|1
 	 * @return array
 	 */
-	public function getEspionageArchive($id_planet, $moon = 0)
+	public function getEspionageArchive($id_planet, $moon = 0, $userPlayer = array())
 	{
 		$ret = array(
 			"labels" => $this->getEspionageKeys(),
 			"reports" => $this->container->espionages->getTable()->where(array("id_planet" => $id_planet, "moon" => $moon))->select("*")->fetchPairs("id_message_ogame"),
-			"planet" => $this->container->universe->getTable()->where(array("id_planet" => $id_planet))->fetch()
+			"planet" => $this->container->universe->getTable()->where(array("id_planet_ogame" => $id_planet))->fetch()
 		);
-		$ret["player"] = $this->container->players->getTable()->where(array("id_player_ogame" => $ret["planet"]->id_player))->fetch();
+		$ret = array_merge($ret, $this->getPlayerDetail($ret["planet"]->id_player, $userPlayer, array("player")));
+
+		if($ret["reports"])
+		{
+			foreach($ret["reports"] as $id => $r)
+			{
+				$ret["reports"][$id] = $r->toArray();
+			}
+		}
+		if($ret["planet"])
+		{
+			$ret["planet"] = $ret["planet"]->toArray();
+		}
 		return $ret;
 	}
 	/**

@@ -90,7 +90,7 @@ class InformationPresenter extends BasePresenter
 	}
 	public function actionReportArchive($id_planet, $moon = 0)
 	{
-		$this->template->archive = $this->glotrApi->getEspionageArchive($id_planet, $moon);
+		$this->template->archive = $this->glotrApi->getEspionageArchive($id_planet, $moon, $this->getUserPlayer());
 		$this->template->addPrefixToKeys = $this->glotrApi->addPrefixToKeys;
 		$this->template->moon = $moon;
 

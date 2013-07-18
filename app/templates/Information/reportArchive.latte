@@ -52,10 +52,10 @@ $labels = $archive["labels"];
 
 				}
 
-				$copy = array("galaxy", "system", "position", "id_planet", "moon_name", "name");
+				$copy = array("galaxy", "system", "position", "id_planet_ogame", "moon_name", "name");
 				foreach($copy as $key)
 					$result[$key] = $planet[$key];
-
+				$result = array_merge($result, $player);
 
 			?>
 			<td>{control planetInfo, $result, ($moon == 1)}</td>

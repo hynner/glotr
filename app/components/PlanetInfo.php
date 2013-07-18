@@ -81,7 +81,7 @@ class PlanetInfo extends GLOTRControl
 		$template->defence = $this->filterData->invokeArgs(array($result, $tmp[$prefix."defence"], false));
 		$template->buildings = $this->filterData->invokeArgs(array($result,$tmp[$prefix."buildings"], false));
 		$template->researches = $this->filterData->invokeArgs(array($result, $tmp["researches"], true));
-		$template->ident = $result['id_planet'].$moon.  \Nette\Utils\Strings::random(5);
+		$template->ident = $result['id_planet_ogame'].$moon.  \Nette\Utils\Strings::random(5);
 		$template->prefix = $prefix;
 		$template->moon = $moon;
 		$template->render();
