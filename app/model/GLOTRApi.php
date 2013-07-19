@@ -1040,24 +1040,33 @@ class GLOTRApi extends \Nette\Object
 				$this->container->espionages->insertEspionage($dbData, $report["id_player"]);
 			}
 		}
-		if(!empty($data["messages"]))
+		$act_types = array(
+			"messages" => "message",
+			"scans" => "scan"
+		);
+		// scans and messages have the same handling
+		foreach(array("messages", "scans") as $key)
 		{
-			foreach($data["messages"] as $id_msg => &$msg)
+			if(!empty($data[$key]))
 			{
-				if(!isset($msg["id_player"]))
+				foreach($data[$key] as $id_msg => &$msg)
 				{
-					$msg["id_player"] = $this->container->players->getTable()->select("id_player_ogame")->where(array("playername" => $msg["playername"]))->fetch();
-					if($msg["id_player"] === FALSE) continue;
-					$msg["id_player"] = $msg["id_player"]->id_player_ogame;
+					if(!isset($msg["id_player"]))
+					{
+						$msg["id_player"] = $this->container->players->getTable()->select("id_player_ogame")->where(array("playername" => $msg["playername"]))->fetch();
+						if($msg["id_player"] === FALSE) continue;
+						$msg["id_player"] = $msg["id_player"]->id_player_ogame;
+					}
+					$dbData = array(
+						"id_player" => $msg["id_player"],
+						"timestamp" => $msg["timestamp"],
+						"type" => $act_types[$key]
+					);
+					$this->insertActivity($dbData);
 				}
-				$dbData = array(
-					"id_player" => $msg["id_player"],
-					"timestamp" => $msg["timestamp"],
-					"type" => "message"
-				);
-				var_dump($dbData);
-				$this->insertActivity($dbData);
 			}
 		}
+
+
 	}
 }
