@@ -221,6 +221,13 @@ class GLOTRApi extends \Nette\Object
 	{
 		return $this->container->universe->getTable()->where($coords)->limit(1)->fetch();
 	}
+	public function getPlanetIdByCoords($coords)
+	{
+		$tmp = $this->container->universe->getTable()->where($coords)->select("id_planet_ogame")->fetch();
+		if($tmp === FALSE) return FALSE;
+		return $tmp->id_planet_ogame;
+
+	}
 	/**
 	 * Check if logged user has permissions
 	 * @param mixed $perm
@@ -1068,5 +1075,81 @@ class GLOTRApi extends \Nette\Object
 		}
 
 
+	}
+	/**
+	 * @param array $data
+	 * @todo implement some error handling for unknown planets !
+	 */
+	public function insertFleetMovements($data)
+	{
+		$time = $data["timestamp"];
+		// main observation point
+		$mobs = $data["observation"];
+		if(!isset($mobs["id_planet"]))
+		{
+			$mobs["id_planet"] = $this->getPlanetIdByCoords($mobs["coords"]);
+		}
+		if(!$mobs["id_planet"]) return;
+
+		if(!empty($data["movements"]))
+		{
+			foreach($data["movements"] as $id => &$mov)
+			{
+				// first get observation point, if it is different than the main one
+				if(isset($mov["observation"]) && !empty($mov["observation"]))
+				{
+					if(!isset($mov["observation"]["id_planet"]))
+					{
+						$mov["observation"]["id_planet"] = $this->getPlanetIdByCoords($mov["observation"]["coords"]);
+					}
+					// unknown observation point => skip
+					if(!$mov["observation"]["id_planet"]) continue;
+					$obs = $mov["observation"];
+				}
+				else
+				{
+					$obs = $mobs;
+				}
+				// now get origin and destination
+				if(!isset($mov["origin"]["id_planet"]))
+				{
+					$mov["origin"]["id_planet"] = $this->getPlanetIdByCoords($mov["origin"]["coords"]);
+				}
+				if(!isset($mov["destination"]["id_planet"]))
+				{
+					$mov["destination"]["id_planet"] = $this->getPlanetIdByCoords($mov["destination"]["coords"]);
+				}
+				// unknown origin or destination => skip
+				if(!$mov["origin"]["id_planet"] || !$mov["destination"]["id_planet"]) continue;
+				$dbData = array(
+					"last_updated" => $time,
+					"id_fleet_ogame" => $id,
+					"id_parent" => (($mov["mission"] === "acs_attack") ? $mov["id_parent"] : NULL),
+					"mission" => $mov["mission"],
+					"id_origin" => $mov["origin"]["id_planet"],
+					"id_destination" => $mov["destination"]["id_planet"],
+					"origin_moon" => (($mov["origin"]["moon"]) ? "1" : "0"),
+					"destination_moon" => (($mov["destination"]["moon"]) ? "1" : "0")
+				);
+				if($mov["returning"])
+				{
+					$dbData["return_time"] = $mov["arrival"];
+				}
+				else
+				{
+					$dbData["arrival"] = $mov["arrival"];
+				}
+				foreach(array_merge($mov["fleet"], $mov["resources"]) as $key => $value)
+				{
+					$dbData[$key] = $value;
+				}
+				$this->container->fleetMovements->insertFleetMovement($dbData, $obs);
+			}
+		}
+		else
+		{
+			// insert empty record to the history
+			$this->fleetMovements->insertHistory($mobs, $time);
+		}
 	}
 }

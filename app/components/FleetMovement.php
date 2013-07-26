@@ -38,6 +38,15 @@ class FleetMovement extends GLOTRControl
 		$template->setTranslator($this->translator);
 		$template->fleetKeys = $this->keys;
 		$template->movement = $data;
+		if($data["arrival"] === NULL)
+		{
+			$template->movement["arrival"] = $data["return_time"];
+			$template->movement["returning"] = true;
+		}
+		else
+		{
+			$template->movement["returning"] = false;
+		}
 		$template->id = $id;
 		$template->child = $child;
 		$template->odd = $odd;

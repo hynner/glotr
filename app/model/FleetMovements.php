@@ -5,8 +5,20 @@ class FleetMovements extends GLOTRApiModel
 {
 	/** @var string */
 	protected $tableName = "fleet_movements";
+	/** @var string */
+	protected $historyTable = "fleet_movements_history";
 
-	public function insertFleetMovement($dbData)
+	protected function setup()
+	{
+		$this->historyTable = $this->params["tablePrefix"].$this->historyTable;
+	}
+	/**
+	 * Insert fleet movement to database
+	 * @param array $dbData data for the fleet movement itself
+	 * @param array $obs observation point - for history
+	 * @return boolean
+	 */
+	public function insertFleetMovement($dbData, $obs)
 	{
 		try {
 			$this->getTable()->insert($dbData);
@@ -15,7 +27,25 @@ class FleetMovements extends GLOTRApiModel
 		{
 			$this->getTable()->where(array("id_fleet_ogame" => $dbData["id_fleet_ogame"]))->update($dbData);
 		}
+		$this->insertHistory($obs, $dbData["last_updated"], $dbData["id_fleet_ogame"], ((isset($dbData["arrival"])) ? $dbData["arrival"] : $dbData["return_time"]));
 		return true;
+	}
+	/**
+	 * Insert fleet movements history
+	 * @param array $obs - id_planet and moon keys
+	 * @param int $time
+	 * @param int $id_fleet
+	 */
+	public function insertHistory($obs, $time, $id_fleet = NULL, $arrival = NULL)
+	{
+		$history = array(
+			"id_observation_planet" => $obs["id_planet"],
+			"observation_moon" => (($obs["moon"]) ? "1" : "0"),
+			"timestamp" => $time,
+			"id_fleet" => $id_fleet,
+			"arrival" => $arrival
+		);
+		$this->connection->table($this->historyTable)->insert($history);
 	}
 	public function search($userPlayer = array(), $paginator = NULL)
 	{
@@ -32,6 +62,7 @@ class FleetMovements extends GLOTRApiModel
             $ids = array_keys($query->fetchPairs("id_fleet_ogame"));
             if(!$ids)
                 return array();
+			$ids = join(",", $ids);
 			$query = $this->getTable()->where("id_fleet_ogame IN (?) OR id_parent IN (?)", $ids, $ids);
 		}
 		$data = $query->order("arrival ASC")->fetchPairs("id_fleet_ogame");

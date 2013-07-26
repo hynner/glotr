@@ -38,5 +38,12 @@ class UniversePresenter extends BasePresenter
 		$this->resource->status = "OK";
 
 	}
-
+	/**
+	 * @POST fleet_movements
+	 */
+	public function actionFleetMovements()
+	{
+		$this->glotrApi->insertFleetMovements($this->input->getData());
+		$this->resource->status = "OK";
+	}
 }
