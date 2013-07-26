@@ -1,0 +1,61 @@
+.clear
+{
+	clear: both;
+}
+.bold
+{
+	font-weight: bold;
+}
+.italic
+{
+	font-style: italic;
+}
+.underline
+{
+	text-decoration: underline;
+}
+.text-left
+{
+    text-align: left;
+}
+.text-right
+{
+	text-align:  right;
+}
+.text-center
+{
+	text-align: center;
+}
+.list-style-none
+{
+	list-style: none;
+}
+.width-half
+{
+	width: 49%;
+}
+.float-left
+{
+	float: left;
+}
+.float-right
+{
+	float: right;
+}
+.margin-right
+{
+	margin-right: 1em;
+}
+.chart-margin
+{
+	margin: 10px 0;
+}
+.scroll-x
+{
+	width: 100%;
+	overflow-x: auto;
+}
+.fullTable
+{
+	width: 100%;
+}

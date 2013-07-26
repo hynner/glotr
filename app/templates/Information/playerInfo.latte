@@ -1,0 +1,200 @@
+
+
+{block content}
+{if $results["player"] !== FALSE}
+<div class="tabs-container">
+	<ul>
+		<li><a href="#detail">{_ "Detail"}</a></li>
+		<li><a href="#notes">{_ "Notes"}</a>
+		<li><a href="#fleetsave">{_ "Fleetsave"}</a>
+
+		<li n:if="$show_activity"><a href="#activity">{_ "Activity"}</a></li>
+
+	</ul>
+	<div id="detail">
+		<table>
+			<caption>{_ "Information about player"} {$results["player"]["playername"]}</caption>
+			<tr>
+				<td>{_ "Status"}</td>
+				<td>
+					{snippet playerStatus}
+					{_ "Global"}: {_ $results["player"]["player_status_global"]}
+					{if $perm_diplomacy}
+					<span class="button-icon player-status-change" icon="ui-icon-person" dialog-id="pscd-global"></span>
+					<div class="hidden player-status-change-dialog" id="pscd-global"  dialog-title="{_ "Set global status"}">
+						<p class="no-margin"><a n:href="playerStatusChange! '', 'global'" class="neutral ajax">{_ "neutral"}</a></p>
+						{foreach $statuses as $key => $status}
+							<p class="no-margin"><a n:href="playerStatusChange! $key, 'global'" class="{$key} ajax">{$status}</a></p>
+						{/foreach}
+					</div>
+					<br>
+					{/if}
+					{_ "Personal"}:{if isset($results["player"]["player_status_local"])}
+						{_ $results["player"]["player_status_local"]}
+					{/if}
+					<span class="button-icon player-status-change" icon="ui-icon-person" dialog-id="pscd-local"></span>
+					<div class="hidden player-status-change-dialog" id="pscd-local"  dialog-title="{_ "Set personal status"}">
+						<p class="no-margin"><a n:href="playerStatusChange! '', 'local'" class="neutral ajax">{_ "neutral"}</a></p>
+						{foreach $statuses as $key => $status}
+							<p class="no-margin"><a n:href="playerStatusChange! $key, 'local'" class="{$key} ajax">{$status}</a></p>
+						{/foreach}
+					</div>
+					{/snippet}
+				</td>
+			</tr>
+			<tr>
+				<td>{_ "Alliance"}:</td>
+				<td>
+					<a n:if="$results['alliance']" n:href="Information:allianceInfo $results['alliance']['id_alliance_ogame']">
+					 {$results["alliance"]["tag"]}
+					</a>
+					{if !$results["alliance"]}-{/if}
+				</td>
+			</tr>
+			{foreach $scores as $num => $label}
+			<tr>
+				<td>{_ $label}:</td>
+				<td>{$results["player"]["score_$num"]} #{$results["player"]["score_".$num."_position"]}</td>
+			</tr>
+			{/foreach}
+			<tr>
+				<td>{_ "Known planets"}:</td>
+				<td>
+					{count($results["planets"])} -
+					{foreach $results["planets"] as $planet}
+					<a n:href="Information:systems $planet['galaxy'], $planet['system']">
+							{$planet["galaxy"].":".$planet["system"].":".$planet["position"]}
+					</a>
+					{if $planet["planet_res_updated"]}
+						{control planetInfo, array_merge( $results["player"], $planet)}
+
+					{/if},
+					{/foreach}
+				</td>
+			</tr>
+
+			<tr>
+				<td>{_ "Known moons"}:</td>
+				<td>
+					{count($results["moons"])} -
+					{foreach $results["moons"] as $moon}
+					<a n:href="Information:systems $moon['galaxy'], $moon['system']">
+							{$moon["galaxy"].":".$moon["system"].":".$moon["position"]}
+					</a>
+					{if $moon["moon_res_updated"]}
+						{control planetInfo, array_merge( $results["player"], $moon), true}
+
+					{/if},
+					{/foreach}
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="notes">
+		{control playerNotesForm}
+	</div>
+	<div id="fleetsave">
+
+		{control playerFSForm}
+		{snippet fsTable}
+		<table>
+			<caption>{_ "Fleetsave records"}</caption>
+			<thead>
+				<tr>
+					<th>{_ "Start:"}</th>
+					<th>{_ "End:"}</th>
+					<th>{_ "Precision:"}</th>
+					<th>{_ "Note:"}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{if !empty($results["fs"])}
+				{foreach $results["fs"] as $fs}
+				<tr>
+					<td>{$fs["start"]|date:'j. n. Y H:i:s'}</td>
+					<td>{$fs["end"]|date:'j. n. Y H:i:s'}</td>
+					<td>{$fs["precision"]}</td>
+					<td>{$fs["note"]}</td>
+				</tr>
+				{/foreach}
+				{/if}
+			</tbody>
+		</table>
+		{/snippet}
+	</div>
+	<div id="activity" n:if="$show_activity">
+		<div class="multi-accordion">
+			<h3>{_ "Activity chart"}</h3>
+			<div class="ma-content">
+				{snippet activityChart}
+					{control activityChart, $results["activity"]}
+				{/snippet}
+			</div>
+			<h3>{_ "Manual activity form"}</h3>
+			<div class="ma-content">
+				{snippet manualActivityForm}
+					{control manualActivityForm}
+				{/snippet}
+			</div>
+			<h3>{_ "Activity filter form"}</h3>
+			<div class="ma-content">
+				{control activityFilterForm}
+			</div>
+			<h3>{_ "Activity - text view"}</h3>
+			<div class="ma-content">
+				{snippet activityTextView}
+				<table>
+					<caption>{_ "Activity text view:"}</caption>
+					<thead>
+						<tr>
+							<th>{_ "Date"}</th>
+							<th>{_ "Day of week"}</th>
+							<th>{_ "Type"}</th>
+							<th>{_ "Coordinates"}</th>
+							<th>{_ "Planets"}</th>
+						</tr>
+					<tbody>
+						<?php
+							$activity_cache = array();
+							$date_cache = array();
+						?>
+						{foreach $results["activity_all"] as $a}
+							<?php
+								$date = date("l", $a["timestamp"]);
+								if(isset($activity_cache[$a["type"]]))
+								{
+									$a["type_tr"] = $activity_cache[$a["type"]];
+								}
+								else
+								{
+									$activity_cache[$a["type"]] = $a["type_tr"] = __($a["type"]);
+								}
+								if(isset($date_cache[$date]))
+								{
+									$date = $date_cache[$date];
+								}
+								else
+								{
+									$date_cache[$date] = $date = __($date);
+								}
+							?>
+						<tr n:class="$iterator->odd ? odd">
+							<td>{$a["timestamp"]|date:'j. n. Y H:i:s'}</td>
+							<td>{$date}</td>
+							<td>{$a["type_tr"]}</td>
+							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["galaxy"].":".$a["system"].":".$a["position"].(($a["moon"] == 1) ? " (M)" : "") : "-"}</td>
+							<td>{($a["type"] == "galaxyview" || $a["type"] == "inactivity") ? $a["planets"] : "-"}</td>
+						</tr>
+						{/foreach}
+					</tbody>
+					</thead>
+				</table>
+				{/snippet}
+			</div>
+		</div>
+	</div>
+</div>
+{else}
+<p>{_ "Player not found"}!</p>
+{/if}
+{/block}

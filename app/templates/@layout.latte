@@ -1,0 +1,149 @@
+{**
+ * My Application layout template.
+ *
+ * @param string   $basePath web base path
+ * @param string   $robots   tell robots how to index the content of a page (optional)
+ * @param array    $flashes  flash messages
+ *}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<meta name="description" content="Nette Framework web application skeleton">
+	<meta name="robots" content="{$robots}" n:ifset="$robots">
+
+	<title>{block title|striptags|upper}GLOTR{/block}</title>
+
+
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/common.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/screen.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/glotr-default/jquery-ui-1.9.0.custom.min.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/tipTip.css" type="text/css">
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/jquery.dataTables_themeroller.css" type="text/css">
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
+	<!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+	<script type="text/javascript" src="{$basePath}/js/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery-ui-1.9.0.custom.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.multi-accordion-1.5.3.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/netteForms.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.nette.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.ajaxform.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.tipTip.minified.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/FixedColumns.min.js"></script>
+	<script type="text/javascript" src="{$basePath}/js/glotr.js"></script>
+
+
+	{block head}{/block}
+</head>
+
+<body>
+	<script> document.body.className+=' js' </script>
+
+	<div id="panel-top">
+		<div id="header">
+			GLOTR tool
+		</div>
+		<div id="user-panel">
+			{if $user->isLoggedIn()}
+				{_ "Logged as: "} {$user->getIdentity()->username}
+			<a n:href="Sign:out" n:attr="title => __('Logout')">{_ "Logout"}</a>
+			{/if}
+		</div>
+		<div class="clear"></div>
+	</div>
+	<div id="inside">
+		<div id="sidebar">
+			{if $user->isLoggedIn()}
+			{control nav_info}
+			{control nav_admin}
+					<div id="update-panel">
+						<script type="text/javascript">
+						// checks for updates from Ogame API
+						var tries = 0;
+						function update()
+						{
+								$.ajax({
+								dataType: "json",
+								cache: false,
+								type: "GET",
+								url: "{!$_control->link(":Api:Update:all", "json")}",
+								success: function (data)
+								{
+									if(data["status"] == "ok")
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update success'>{!_ "Everything is up to date!"}</p>");
+									}
+									else if(data["status"] == "continue")
+									{
+										$("#update-panel p.update").remove();
+										if(data["what"])
+										{
+											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} " + data["what"] + " {!_ "from Ogame API!"}</p>");
+										}
+										else if(data["sync"])
+										{
+											$("#update-panel").append("<p class='update proccess'>{!_ "Synchronizing"}</p>");
+										}
+										else
+										{
+											$("#update-panel").append("<p class='update proccess'>{!_ "Updating"} {!_ "from Ogame API!"}</p>");
+										}
+										update();
+									}
+									// allow_url_fopen disabled
+									else if(data["status"] == "failed")
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update failed'>{!_ "Updating from Ogame API failed!"}<br />{!_ "Your server is NOT properly configured!"}</p>");
+									}
+									else if(data["status"] == "sync-failed")
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update failed'>{!_ "Synchronization failed!"}<br />Message: "+data["message"]+"</p>");
+									}
+									else if(data["status"] == "disabled")
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update disabled'>{!_ "Updating from Ogame API failed!"}<br />{!_ "Ogame API was disabled by server administrator!"}</p>");
+									}
+								},
+								error: function(){
+									if(tries++ < 10)
+									{
+										update();
+									}
+									else
+									{
+										$("#update-panel p.update").remove();
+										$("#update-panel").append("<p class='update failed'>{!_ "Updating from Ogame API failed!"}</p>");
+									}
+								}
+							});
+						}
+						$(document).ready(function() {
+							update();
+						});
+
+
+						</script>
+
+					</div>
+			{control langSelectionForm}
+			{/if}
+		</div>
+		<div id="content">
+			{snippet flashMessages}
+			<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+			{/snippet}
+			{include #content}
+		</div>
+		<div class="clear"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{if $result[$prefix."res_updated"] && $perm}
+	<span  icon="ui-icon-script" n:attr="class => 'report-open button-icon', id => 'open-'.$ident"></span>
+	<div class="planet-info" id="info-{$ident}">
+	<p class="planet-info-title" id="info-title-{$ident}">{_ "Planet info"} - {$result["galaxy"].":".$result["system"].":".$result["position"]} {($moon) ? __("moon") : ""}</p>
+	{control planetInfoBlock, ($resources) /*? $resources : array()*/, "resources", ($result[$prefix."res_updated"]) ? $result[$prefix."res_updated"] : NULL}
+
+	{control planetInfoBlock, ($fleet) /*? $fleet : array()*/, "fleet", ($result[$prefix."fleet_updated"]) ? $result[$prefix."fleet_updated"] : NULL}
+
+	{control planetInfoBlock, ($defence)/* ? $defence : array()*/, "defence", ($result[$prefix."defence_updated"]) ? $result[$prefix."defence_updated"] : NULL}
+
+	{control planetInfoBlock, ($buildings) /*? $buildings : array()*/, "buildings", ($result[$prefix."build_updated"]) ? $result[$prefix."build_updated"] : NULL}
+
+
+	{control planetInfoBlock, ($researches) /*? $researches : array()*/, "researches", ($result["research_updated"]) ? $result["research_updated"] : NULL}
+
+	{control simulatorLinks, $result, $resources, $fleet, $defence, $buildings,  $researches, (($moon) ? $prefix : "")}
+	<a href="{plink Information:reportArchive $result['id_planet_ogame'], (($moon) ? 1 : 0)}">{_ "Report archive"}</a>
+	</div>
+
+{else}
+	<img n:attr="src => $basePath.'/css/glotr-default/images/icons/report-empty.png', alt => '' "/>
+{/if}

@@ -1,0 +1,17 @@
+log/*
+!log/.htaccess
+!log/web.config
+nbproject/
+nbproject/*
+temp/btfj.dat
+!temp/cache
+!temp/sessions
+!temp/.htaccess
+!temp/web.config
+temp/cache/*
+temp/sessions/*
+app/config/testServerAuth.txt
+composer.lock
+composer.json
+php.tags
+readme.txt

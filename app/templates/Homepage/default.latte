@@ -1,0 +1,66 @@
+{block content}
+<div id="galaxyplugin-settings">
+	<h2>{_ "Galaxyplugin settings"}:</h2>
+	<table>
+		<tr>
+			<td>{_ "Galaxyplugin update URL"}</td>
+			<td>
+				{$baseUrl}/Api/
+			</td>
+		</tr>
+		<tr>
+			<td>{_ "Logon key"}</td>
+			<td>{snippet logonKey}{isset($user->getIdentity()->logon_key) ? $user->getIdentity()->logon_key : ""}{/snippet}</td>
+		</tr>
+		<tr>
+			<td colspan="2"><a n:href="getNewKey!" class="ajax">{_ "Get new key"}</a></td>
+		</tr>
+	</table>
+</div>
+<div id="server-specs">
+	<h2>{_ "Server specifications"}:</h2>
+	<table>
+		<tr>
+			<td>{_ "Server name"}:</td>
+			<td>{(isset($serverData["name"])) ? $serverData["name"] : $serverData["number"]}</td>
+		</tr>
+		<tr>
+			<td>{_ "Server URL"}:</td>
+			<td>{$serverData["domain"]}</td>
+		</tr>
+		<tr>
+			<td>{_ "Number of galaxies"}:</td>
+			<td>{$serverData["galaxies"]}</td>
+		</tr>
+		<tr>
+			<td>{_ "Systems per galaxy"}:</td>
+			<td>{$serverData["systems"]}</td>
+		</tr>
+		<tr>
+			<td>{_ "Speed"}:</td>
+			<td>{$serverData["speed"]}</td>
+		</tr>
+		<tr>
+			<td>{_ "ACS"}:</td>
+			<td>{_ ($serverData["acs"] == 1) ? "YES" : "NO"}</td>
+		</tr>
+		<tr>
+			<td>{_ "Defence to debris"}:</td>
+			<td>{_ ($serverData["defToTF"] == 1) ? "YES" : "NO"}</td>
+		</tr>
+		<tr>
+			<td>{_ "Debris field"}:</td>
+			<td>{$serverData["debrisFactor"]*100}%</td>
+		</tr>
+		<tr>
+			<td>{_ "Players"}:</td>
+			<td>{$numPlayers}</td>
+		</tr>
+		<tr>
+			<td>{_ "Alliances"}:</td>
+			<td>{$numAllis}</td>
+		</tr>
+	</table>
+
+</div>
+{/block}

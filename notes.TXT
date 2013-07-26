@@ -1,0 +1,2 @@
+for translators:
+when you trasnlate a message containing %d, %s, etc these symbols MUST be in your translation too, they will be replaced with other value

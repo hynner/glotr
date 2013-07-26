@@ -1,0 +1,32 @@
+
+	<div class="{$name} info-block">
+		<table>
+			<caption>{_ $name}:<span class="font-small">
+			{if $updated != 0}
+					{_ "Last updated:"}&nbsp;{$updated|date:$dateTimeFormat}
+			{else}
+					{_ "Unknown"}
+			{/if}
+				</span></caption>
+			{if !empty($data) && $updated != 0}
+			{foreach $data as $key => $value}
+			<?php
+				$key = str_replace("moon_", "", $key);
+				$key = str_replace("_", " ", $key);
+			?>
+				{if $iterator->isOdd()}
+					<tr>
+				{/if}
+						<td>{_ $key}: {(int) $value}</td>
+				{if $iterator->isEven()}
+					</tr>
+				{/if}
+			{/foreach}
+					{if (count($data)%2) == 1}
+					<td>&nbsp;</td>
+					</tr>
+					{/if}
+			{/if}
+		</table>
+	</div>
+

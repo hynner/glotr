@@ -1,0 +1,135 @@
+
+{block content}
+<?php
+$reports = $archive["reports"];
+$planet = $archive["planet"];
+$player = $archive["player"];
+$labels = $archive["labels"];
+?>
+{if !empty($reports)}
+<table class="dataTable">
+	<caption>{_ "Report archive"} - {$planet["galaxy"]}:{$planet["system"]}:{$planet["position"]}{($moon) ? " ". __("moon") : ""}</caption>
+	<thead>
+		<tr>
+			<th>{_ "Scan time"}</th>
+			{foreach $reports as $report}
+			<th>{date("j. n. Y H:i:s", $report["timestamp"])}</th>
+			{/foreach}
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td class="ui-state-default">{_ "Scan depth"}</td>
+			{foreach $reports as $report}
+			<td>{_ $report["scan_depth"]}</td>
+			{/foreach}
+		</tr>
+		<tr>
+			<td class="ui-state-default">{_ "Detail"}</td>
+			{foreach $reports as $report}
+			<?php
+				$prefix = ($moon == 1) ? "moon_" : "planet_";
+				$allInfo = $labels;
+				$result = $report;
+				if($moon == 1)
+					$result = $addPrefixToKeys($prefix, $result, array_merge(array("scan_depth", "timestamp" ), $allInfo["researches"]));
+
+				$init = array("research_updated",$prefix."build_updated", $prefix."defence_updated", $prefix."fleet_updated" );
+				foreach($init as $key)
+					$result[$key] = null;
+				switch($report["scan_depth"])
+				{
+					case "research":
+						$result["research_updated"] = $report["timestamp"];
+					case "building":
+						$result[$prefix."build_updated"] = $report["timestamp"];
+					case "defence":
+						$result[$prefix."defence_updated"] = $report["timestamp"];
+					case "fleet":
+						$result[$prefix."fleet_updated"] = $report["timestamp"];
+					default:
+						$result[$prefix."res_updated"] = $report["timestamp"];
+
+				}
+
+				$copy = array("galaxy", "system", "position", "id_planet_ogame", "moon_name", "name");
+				foreach($copy as $key)
+					$result[$key] = $planet[$key];
+				$result = array_merge($result, $player);
+
+			?>
+			<td>{control planetInfo, $result, ($moon == 1)}</td>
+			{/foreach}
+		</tr>
+
+		{foreach $labels["planet_resources"] as $label}
+		<tr>
+			<td class="ui-state-default">{_ str_replace("_", " ", $label)}</td>
+			{foreach $reports as $report}
+				<td>{($report[$label]) ? $report[$label] : 0}</td>
+			{/foreach}
+		</tr>
+		{/foreach}
+		{* planet fleet is exactly the same as moon_fleet in espionages table*}
+		{foreach $labels['planet_fleet'] as $label}
+		<tr>
+			<td class="ui-state-default">{_ str_replace("_", " ", str_replace("moon_", "", $label))}</td>
+			{foreach $reports as $report}
+			{if in_array($report["scan_depth"], array('fleet','defence','building','research'))}
+				<td>{($report[$label]) ? $report[$label] : 0}</td>
+			{else}
+				<td>-</td>
+			{/if}
+			{/foreach}
+		</tr>
+		{/foreach}
+		{foreach $labels[(($moon == 1) ? 'moon_defence' : 'planet_defence')] as $label}
+		<?php
+			if($moon == 1)
+				$label = str_replace("moon_", "", $label);
+		?>
+		<tr>
+			<td class="ui-state-default">{_ str_replace("_", " ", $label)}</td>
+			{foreach $reports as $report}
+			{if in_array($report["scan_depth"], array('defence','building','research'))}
+				<td>{($report[$label]) ? $report[$label] : 0}</td>
+			{else}
+				<td>-</td>
+			{/if}
+			{/foreach}
+		</tr>
+		{/foreach}
+		{foreach $labels[(($moon == 1) ? 'moon_buildings' : 'planet_buildings')] as $label}
+		<?php
+			if($moon == 1)
+				$label =  str_replace("moon_", "", $label);
+		?>
+		<tr>
+			<td class="ui-state-default">{_ str_replace("_", " ", $label)}</td>
+			{foreach $reports as $report}
+			{if in_array($report["scan_depth"], array('building','research'))}
+				<td>{($report[$label]) ? $report[$label] : 0}</td>
+			{else}
+				<td>-</td>
+			{/if}
+			{/foreach}
+		</tr>
+		{/foreach}
+		{foreach $labels["researches"] as $label}
+		<tr>
+			<td class="ui-state-default">{_ str_replace("_", " ", $label)}</td>
+			{foreach $reports as $report}
+			{if $report["scan_depth"] == "research"}
+				<td>{($report[$label]) ? $report[$label] : 0}</td>
+			{else}
+				<td>-</td>
+			{/if}
+			{/foreach}
+		</tr>
+		{/foreach}
+	</tbody>
+</table>
+{else}
+<p>{_ "No reports found!"}</p>
+{/if}
+{/block}
